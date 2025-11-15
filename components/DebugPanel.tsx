@@ -177,51 +177,49 @@ export default function DebugPanel() {
               </AlertDialog>
             </div>
             <div className="space-y-1 max-h-[400px] overflow-y-auto">
-              {Object.values(mockUsers)
-                .filter((user) => user.role !== "volunteer")
-                .map((user) => {
-                  const roleInfo = getRoleInfo(user.role)
-                  const isActive = user.id === currentUser.id
+              {Object.values(mockUsers).map((user) => {
+                const roleInfo = getRoleInfo(user.role)
+                const isActive = user.id === currentUser.id
 
-                  return (
-                    <button
-                      key={user.id}
-                      onClick={() => handleUserChange(user.id)}
-                      disabled={isActive}
-                      className={`w-full text-left p-3 rounded-lg transition-all ${
-                        isActive
-                          ? "bg-zinc-100 dark:bg-zinc-800 ring-2 ring-zinc-900 dark:ring-zinc-100 cursor-default"
-                          : "hover:bg-zinc-50 dark:hover:bg-zinc-800 active:scale-95"
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div
-                          className={`p-2 ${roleInfo.color} text-white rounded-lg shrink-0`}
-                        >
-                          {roleInfo.icon}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">
-                              {user.name}
-                            </p>
-                            {isActive && (
-                              <span className="px-1.5 py-0.5 bg-green-500 text-white text-xs font-bold rounded">
-                                ✓
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-zinc-600 dark:text-zinc-400 truncate mb-1">
-                            {user.email}
-                          </p>
-                          <span className="inline-block px-2 py-0.5 bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-semibold rounded capitalize">
-                            {user.role}
-                          </span>
-                        </div>
+                return (
+                  <button
+                    key={user.id}
+                    onClick={() => handleUserChange(user.id)}
+                    disabled={isActive}
+                    className={`w-full text-left p-3 rounded-lg transition-all ${
+                      isActive
+                        ? "bg-zinc-100 dark:bg-zinc-800 ring-2 ring-zinc-900 dark:ring-zinc-100 cursor-default"
+                        : "hover:bg-zinc-50 dark:hover:bg-zinc-800 active:scale-95"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={`p-2 ${roleInfo.color} text-white rounded-lg shrink-0`}
+                      >
+                        {roleInfo.icon}
                       </div>
-                    </button>
-                  )
-                })}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                            {user.name}
+                          </p>
+                          {isActive && (
+                            <span className="px-1.5 py-0.5 bg-green-500 text-white text-xs font-bold rounded">
+                              ✓
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-zinc-600 dark:text-zinc-400 truncate mb-1">
+                          {user.email}
+                        </p>
+                        <span className="inline-block px-2 py-0.5 bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-semibold rounded capitalize">
+                          {user.role}
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </div>
 

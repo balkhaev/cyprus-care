@@ -3,7 +3,7 @@
  * Based on actual backend response structure
  */
 
-import { User, getUserFullName, parseVolunteerAreas, parseVolunteerServices, userToLegacy } from './auth';
+import { User, UserRole, getUserFullName, parseVolunteerAreas, parseVolunteerServices, userToLegacy } from './auth';
 
 // ===== REAL API RESPONSE EXAMPLE =====
 
@@ -361,11 +361,12 @@ export function offersService(user: User, service: string): boolean {
  */
 export function getUserDisplayNameWithRole(user: User): string {
   const name = getUserFullName(user);
-  const roleLabels = {
+  const roleLabels: Record<UserRole, string> = {
     organizer: 'Organizer',
     volunteer: 'Volunteer',
     beneficiary: 'Beneficiary',
-    admin: 'Admin'
+    admin: 'Admin',
+    guest: 'Guest'
   };
   return `${name} (${roleLabels[user.role]})`;
 }

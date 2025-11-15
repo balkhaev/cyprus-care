@@ -1,21 +1,9 @@
 import { API_BASE_URL } from './api';
 import { USE_MOCK_API, MOCK_ROLE, getMockUser } from './mockData';
+import { User as ContractUser, UserRole } from '@/contracts/auth';
 
-export interface User {
-  id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-  role: 'beneficiary' | 'volunteer' | 'organizer';
-  phone: string;
-  municipality: string;
-  is_organization: boolean;
-  organization_name: string;
-  volunteer_areas_of_interest: string;
-  volunteer_services: string;
-  interested_in_donations: boolean;
-  association_name: string;
-}
+export type { UserRole };
+export type User = ContractUser;
 
 export async function getCurrentUser(): Promise<User | null> {
   if (typeof window === 'undefined') return null;

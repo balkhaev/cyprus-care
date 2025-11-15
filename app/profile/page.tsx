@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentUser, User } from '@/lib/auth';
+import { getCurrentUser, User, UserRole } from '@/lib/auth';
 import { USE_MOCK_API } from '@/lib/mockData';
 import BeneficiaryProfile from '@/components/profiles/BeneficiaryProfile';
 import VolunteerProfile from '@/components/profiles/VolunteerProfile';
@@ -53,10 +53,12 @@ export default function ProfilePage() {
     return null;
   }
 
-  const roleLabels: Record<string, string> = {
+  const roleLabels: Record<UserRole, string> = {
     beneficiary: 'Beneficiary',
     volunteer: 'Volunteer',
     organizer: 'Organizer',
+    admin: 'Admin',
+    guest: 'Guest'
   };
 
   return (

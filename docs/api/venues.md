@@ -55,12 +55,7 @@ Content-Type: application/json
       "closeTime": "00:00",
       "isClosed": true
     }
-  ],
-  "contactInfo": {
-    "phone": "+357 99 123 456",
-    "email": "info@hub.cy",
-    "website": "https://hub.cy"
-  }
+  ]
 }
 ```
 

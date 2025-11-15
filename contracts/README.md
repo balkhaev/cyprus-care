@@ -12,7 +12,11 @@ contracts/
 ├── venue-function.ts     # Функции площадок
 ├── response.ts           # Отклики волонтеров и обязательства бенефициаров
 ├── item-category.ts      # Категории предметов
+├── utils.ts              # Вспомогательные функции
+├── examples.ts           # Примеры использования
+├── api-responses.json    # Примеры JSON ответов от API
 ├── index.ts              # Экспорт всех контрактов
+├── CONTRACTS.md          # Полная документация
 └── README.md             # Этот файл
 ```
 
@@ -21,34 +25,34 @@ contracts/
 ### На фронтенде
 
 ```typescript
-import type { 
+import type {
   ApiResponse,
   LoginRequest,
   LoginResponse,
   CreateVenueRequest,
-  Venue 
-} from '@/contracts';
+  Venue,
+} from "@/contracts"
 
 // Типобезопасный API вызов
 async function login(data: LoginRequest): Promise<ApiResponse<LoginResponse>> {
-  const response = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-  });
-  return response.json();
+  })
+  return response.json()
 }
 ```
 
 ### На бэкенде
 
 ```typescript
-import type { 
-  LoginRequest, 
-  LoginResponse, 
+import type {
+  LoginRequest,
+  LoginResponse,
   ApiResponse,
-  ErrorCode 
-} from '../contracts';
+  ErrorCode,
+} from "../contracts"
 
 // Типобезопасный обработчик
 export async function handleLogin(
@@ -64,16 +68,16 @@ export async function handleLogin(
         refreshToken,
       },
       timestamp: new Date().toISOString(),
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error: {
         code: ErrorCode.UNAUTHORIZED,
-        message: 'Invalid credentials',
+        message: "Invalid credentials",
       },
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 }
 ```
@@ -81,17 +85,17 @@ export async function handleLogin(
 ### Использование helper типов
 
 ```typescript
-import type { 
+import type {
   ApiEndpoints,
   RequestOf,
   ResponseOf,
-  ExtractEndpoint 
-} from '@/contracts';
+  ExtractEndpoint,
+} from "@/contracts"
 
 // Извлечение типов для конкретного эндпоинта
-type LoginEndpoint = ExtractEndpoint<'POST', '/auth/login'>;
-type LoginReq = RequestOf<LoginEndpoint>;
-type LoginRes = ResponseOf<LoginEndpoint>;
+type LoginEndpoint = ExtractEndpoint<"POST", "/auth/login">
+type LoginReq = RequestOf<LoginEndpoint>
+type LoginRes = ResponseOf<LoginEndpoint>
 
 // Универсальная функция для API вызовов
 async function apiCall<T extends keyof ApiEndpoints>(
@@ -151,6 +155,7 @@ async function apiCall<T extends keyof ApiEndpoints>(
 ### 1. common.ts
 
 Базовые типы, используемые во всех контрактах:
+
 - `ApiResponse`, `ApiSuccessResponse`, `ApiErrorResponse`
 - `PaginationParams`, `PaginatedResponse`
 - `FilterParams`, `SearchParams`, `SearchResult`
@@ -162,6 +167,7 @@ async function apiCall<T extends keyof ApiEndpoints>(
 ### 2. auth.ts
 
 Аутентификация и управление пользователями:
+
 - Типы: `User`, `UserProfile`, `UserRole`
 - Регистрация: `RegisterRequest/Response`
 - Вход: `LoginRequest/Response`
@@ -173,6 +179,7 @@ async function apiCall<T extends keyof ApiEndpoints>(
 ### 3. venue.ts
 
 Работа с площадками:
+
 - Типы: `Venue`, `VenueType`, `OperatingHours`
 - CRUD операции: Create, Read, Update, Delete
 - Функции: `VenueFunction` (Collection Point, Distribution Point, Services Needed, Custom)
@@ -182,6 +189,7 @@ async function apiCall<T extends keyof ApiEndpoints>(
 ### 4. venue-function.ts
 
 Функции площадок:
+
 - Создание различных типов функций
 - Обновление функций
 - Кастомные типы функций
@@ -190,6 +198,7 @@ async function apiCall<T extends keyof ApiEndpoints>(
 ### 5. response.ts
 
 Отклики волонтеров и обязательства бенефициаров:
+
 - `VolunteerResponse` - отклики волонтеров на потребности
 - `BeneficiaryCommitment` - обязательства бенефициаров посетить точку раздачи
 - `NeedStatusUpdate` - статус потребностей (управляется организаторами)
@@ -198,12 +207,27 @@ async function apiCall<T extends keyof ApiEndpoints>(
 ### 6. item-category.ts
 
 Иерархия категорий предметов:
+
 - `ItemCategory` - категория с поддержкой иерархии
 - `CategoryHierarchy` - дерево категорий
 - `CategoryPath` - путь категории
 - Поиск и валидация
 - Статистика использования
 - Массовое создание категорий
+
+## Примеры JSON ответов
+
+Все примеры JSON ответов от API эндпоинтов находятся в файле **[api-responses.json](./api-responses.json)**
+
+Этот файл содержит:
+
+- ✅ Примеры успешных ответов для всех эндпоинтов
+- ✅ Примеры ответов с ошибками
+- ✅ Примеры запросов (request body)
+- ✅ Описание всех кодов ошибок
+- ✅ Примеры HTTP заголовков
+
+Используйте этот файл как справочник при разработке бэкенда и фронтенда.
 
 ## Правила
 
@@ -237,7 +261,11 @@ async function apiCall<T extends keyof ApiEndpoints>(
 ### Создание площадки
 
 ```typescript
-import type { CreateVenueRequest, CreateVenueResponse, ApiResponse } from '@/contracts';
+import type {
+  CreateVenueRequest,
+  CreateVenueResponse,
+  ApiResponse,
+} from "@/contracts"
 
 const request: CreateVenueRequest = {
   title: "Food Distribution Center",
@@ -246,63 +274,71 @@ const request: CreateVenueRequest = {
   location: {
     lat: 34.6756,
     lng: 33.0431,
-    address: "123 Main St, Limassol, Cyprus"
+    address: "123 Main St, Limassol, Cyprus",
   },
   operatingHours: [
     {
       dayOfWeek: "monday",
       openTime: "09:00",
       closeTime: "17:00",
-      isClosed: false
-    }
-  ]
-};
+      isClosed: false,
+    },
+  ],
+}
 
-const response: ApiResponse<CreateVenueResponse> = await fetch('/api/venues', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(request)
-}).then(r => r.json());
+const response: ApiResponse<CreateVenueResponse> = await fetch("/api/venues", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(request),
+}).then((r) => r.json())
 
 if (response.success) {
-  console.log('Venue created:', response.data.venue);
+  console.log("Venue created:", response.data.venue)
 } else {
-  console.error('Error:', response.error.message);
+  console.error("Error:", response.error.message)
 }
 ```
 
 ### Получение списка площадок с фильтрацией
 
 ```typescript
-import type { GetVenuesRequest, GetVenuesResponse, ApiResponse } from '@/contracts';
+import type {
+  GetVenuesRequest,
+  GetVenuesResponse,
+  ApiResponse,
+} from "@/contracts"
 
 const params: GetVenuesRequest = {
   page: 1,
   limit: 10,
-  type: 'distribution_hub',
+  type: "distribution_hub",
   nearLocation: {
     lat: 34.6756,
     lng: 33.0431,
-    radiusKm: 5
+    radiusKm: 5,
   },
-  status: 'active'
-};
+  status: "active",
+}
 
-const queryString = new URLSearchParams(params as any).toString();
+const queryString = new URLSearchParams(params as any).toString()
 const response: ApiResponse<GetVenuesResponse> = await fetch(
   `/api/venues?${queryString}`
-).then(r => r.json());
+).then((r) => r.json())
 
 if (response.success) {
-  console.log('Found venues:', response.data.items);
-  console.log('Pagination:', response.data.pagination);
+  console.log("Found venues:", response.data.items)
+  console.log("Pagination:", response.data.pagination)
 }
 ```
 
 ### Создание отклика волонтера
 
 ```typescript
-import type { CreateVolunteerResponseRequest, CreateVolunteerResponseResponse, ApiResponse } from '@/contracts';
+import type {
+  CreateVolunteerResponseRequest,
+  CreateVolunteerResponseResponse,
+  ApiResponse,
+} from "@/contracts"
 
 const request: CreateVolunteerResponseRequest = {
   venueId: "venue-uuid",
@@ -311,20 +347,20 @@ const request: CreateVolunteerResponseRequest = {
   categoryId: "category-uuid",
   quantityOffered: 50,
   message: "I can bring 50 units of medicine",
-  deliveryDate: "2024-01-20T10:00:00.000Z"
-};
+  deliveryDate: "2024-01-20T10:00:00.000Z",
+}
 
 const response: ApiResponse<CreateVolunteerResponseResponse> = await fetch(
-  '/api/volunteer-responses',
+  "/api/volunteer-responses",
   {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(request)
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
   }
-).then(r => r.json());
+).then((r) => r.json())
 
 if (response.success) {
-  console.log('Response created:', response.data.response);
+  console.log("Response created:", response.data.response)
 }
 ```
 
@@ -333,25 +369,27 @@ if (response.success) {
 Рекомендуется использовать Zod для валидации на обеих сторонах:
 
 ```typescript
-import { z } from 'zod';
-import type { CreateVenueRequest } from '@/contracts';
+import { z } from "zod"
+import type { CreateVenueRequest } from "@/contracts"
 
 const CreateVenueSchema = z.object({
   title: z.string().min(3).max(100),
   description: z.string().min(10).max(500),
-  type: z.enum(['collection_point', 'distribution_hub', 'shelter']),
+  type: z.enum(["collection_point", "distribution_hub", "shelter"]),
   location: z.object({
     lat: z.number().min(-90).max(90),
     lng: z.number().min(-180).max(180),
-    address: z.string().min(5)
+    address: z.string().min(5),
   }),
-  operatingHours: z.array(z.object({
-    dayOfWeek: z.string(),
-    openTime: z.string().regex(/^\d{2}:\d{2}$/),
-    closeTime: z.string().regex(/^\d{2}:\d{2}$/),
-    isClosed: z.boolean()
-  }))
-}) satisfies z.ZodType<CreateVenueRequest>;
+  operatingHours: z.array(
+    z.object({
+      dayOfWeek: z.string(),
+      openTime: z.string().regex(/^\d{2}:\d{2}$/),
+      closeTime: z.string().regex(/^\d{2}:\d{2}$/),
+      isClosed: z.boolean(),
+    })
+  ),
+}) satisfies z.ZodType<CreateVenueRequest>
 ```
 
 ## Миграция существующих типов
@@ -365,8 +403,8 @@ const CreateVenueSchema = z.object({
 ## Вопросы и поддержка
 
 При возникновении вопросов или необходимости расширения контрактов:
+
 1. Проверьте существующие контракты
 2. Следуйте установленным соглашениям
 3. Документируйте новые типы
 4. Обновляйте этот README
-

@@ -23,10 +23,13 @@ import {
   type CreateFunctionResponse,
   type GetItemCategoriesRequest,
   type GetItemCategoriesResponse,
+  type GetCategoryHierarchyResponse,
   type CreateVolunteerResponseRequest,
   type CreateVolunteerResponseResponse,
+  type GetVolunteerResponsesResponse,
   type CreateBeneficiaryCommitmentRequest,
   type CreateBeneficiaryCommitmentResponse,
+  type GetBeneficiaryCommitmentsResponse,
   type GetVenueProjectionRequest,
   type GetVenueProjectionResponse,
 } from '@/contracts';
@@ -194,7 +197,7 @@ export class VenuesAPI {
       return mockGetVenues(params);
     }
     
-    const response = await apiClient.get<GetVenuesResponse>('/venues', params as Record<string, unknown>);
+    const response = await apiClient.get<GetVenuesResponse>('/venues', params as Record<string, unknown> | undefined);
     return unwrapResponse(response);
   }
 
@@ -312,12 +315,12 @@ export class ItemCategoriesAPI {
   /**
    * Получить иерархию категорий
    */
-  static async getHierarchy() {
+  static async getHierarchy(): Promise<GetCategoryHierarchyResponse> {
     if (USE_MOCK_API) {
       return mockGetCategoryHierarchy();
     }
     
-    const response = await apiClient.get('/item-categories/hierarchy');
+    const response = await apiClient.get<GetCategoryHierarchyResponse>('/item-categories/hierarchy');
     return unwrapResponse(response);
   }
 }
@@ -346,12 +349,12 @@ export class ResponsesAPI {
   /**
    * Получить отклики волонтера
    */
-  static async getMyResponses() {
+  static async getMyResponses(): Promise<GetVolunteerResponsesResponse> {
     if (USE_MOCK_API) {
       return mockGetMyResponses();
     }
     
-    const response = await apiClient.get('/volunteer-responses');
+    const response = await apiClient.get<GetVolunteerResponsesResponse>('/volunteer-responses');
     return unwrapResponse(response);
   }
 }
@@ -380,12 +383,12 @@ export class CommitmentsAPI {
   /**
    * Получить обязательства бенефициара
    */
-  static async getMyCommitments() {
+  static async getMyCommitments(): Promise<GetBeneficiaryCommitmentsResponse> {
     if (USE_MOCK_API) {
       return mockGetMyCommitments();
     }
     
-    const response = await apiClient.get('/beneficiary-commitments');
+    const response = await apiClient.get<GetBeneficiaryCommitmentsResponse>('/beneficiary-commitments');
     return unwrapResponse(response);
   }
 }
@@ -417,7 +420,34 @@ export class ProjectionsAPI {
 // ============================================================================
 
 // Импортируем моковые данные
-import { getMockVenues, getMockUser } from '@/lib/mock-data/venues-with-functions';
+import { mockVenues } from '@/lib/mock-data/venues-with-functions';
+import type { Venue as OldVenue } from '@/types/venue';
+
+// Преобразуем старый тип Venue в новый
+function convertOldVenueToNew(oldVenue: OldVenue): Venue {
+  return {
+    id: oldVenue.id,
+    title: oldVenue.title,
+    description: oldVenue.description,
+    type: oldVenue.type,
+    location: {
+      lat: oldVenue.location.lat,
+      lng: oldVenue.location.lng,
+      address: oldVenue.location.address,
+    },
+    operatingHours: oldVenue.operatingHours.map(oh => ({
+      dayOfWeek: oh.dayOfWeek,
+      openTime: oh.openTime,
+      closeTime: oh.closeTime,
+      isClosed: oh.isClosed ?? false,
+    })),
+    organizerId: oldVenue.organizerId,
+    status: 'active', // Предполагаем, что все моковые площадки активны
+    functionsCount: oldVenue.functions?.length || 0,
+    createdAt: oldVenue.createdAt.toISOString(),
+    updatedAt: oldVenue.updatedAt.toISOString(),
+  };
+}
 
 function mockLogin(data: LoginRequest): LoginResponse {
   // Простая мок-авторизация
@@ -483,7 +513,7 @@ function mockGetCurrentUser(): User | null {
 }
 
 function mockGetVenues(params?: GetVenuesRequest): GetVenuesResponse {
-  const allVenues = getMockVenues();
+  const allVenues = mockVenues.map(convertOldVenueToNew);
   
   // Простая фильтрация
   let filtered = allVenues;
@@ -519,7 +549,7 @@ function mockGetVenues(params?: GetVenuesRequest): GetVenuesResponse {
 }
 
 function mockGetVenue(venueId: string): Venue {
-  const venues = getMockVenues();
+  const venues = mockVenues.map(convertOldVenueToNew);
   const venue = venues.find(v => v.id === venueId);
   
   if (!venue) {
@@ -577,8 +607,11 @@ function mockCreateFunction(data: CreateFunctionRequest): CreateFunctionResponse
 }
 
 function mockGetFunctions(venueId: string) {
-  const venue = mockGetVenue(venueId);
-  return { functions: venue.functions || [] };
+  const oldVenue = mockVenues.find(v => v.id === venueId);
+  if (!oldVenue) {
+    throw new ApiError('NOT_FOUND', `Venue ${venueId} not found`);
+  }
+  return { functions: oldVenue.functions || [] };
 }
 
 function mockGetCategories(params?: GetItemCategoriesRequest): GetItemCategoriesResponse {

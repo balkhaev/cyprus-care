@@ -1,0 +1,1224 @@
+{
+  "endpoints": [
+    {
+      "path": "/auth/register",
+      "method": "POST",
+      "description": "Регистрация нового пользователя",
+      "request": {
+        "email": "organizer@example.com",
+        "password": "securePassword123",
+        "name": "Иван Петров",
+        "role": "organizer",
+        "phone": "+357 99 123 456"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "user": {
+                "id": "user-123e4567-e89b-12d3-a456-426614174000",
+                "email": "organizer@example.com",
+                "name": "Иван Петров",
+                "role": "organizer",
+                "phone": "+357 99 123 456",
+                "isActive": true,
+                "isEmailVerified": false,
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              },
+              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        },
+        "error": {
+          "status": 409,
+          "body": {
+            "success": false,
+            "error": {
+              "code": "ALREADY_EXISTS",
+              "message": "Пользователь с таким email уже существует",
+              "details": {
+                "field": "email",
+                "value": "organizer@example.com"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/auth/login",
+      "method": "POST",
+      "description": "Вход в систему",
+      "request": {
+        "email": "volunteer@example.com",
+        "password": "password123"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "user": {
+                "id": "user-123e4567-e89b-12d3-a456-426614174000",
+                "email": "volunteer@example.com",
+                "name": "Мария Иванова",
+                "role": "volunteer",
+                "phone": "+357 99 234 567",
+                "isActive": true,
+                "isEmailVerified": true,
+                "createdAt": "2024-10-01T08:00:00.000Z",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              },
+              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        },
+        "error": {
+          "status": 401,
+          "body": {
+            "success": false,
+            "error": {
+              "code": "UNAUTHORIZED",
+              "message": "Неверный email или пароль"
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/auth/logout",
+      "method": "POST",
+      "description": "Выход из системы",
+      "request": {},
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "message": "Вы успешно вышли из системы"
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/auth/me",
+      "method": "GET",
+      "description": "Получить текущего пользователя",
+      "request": null,
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "user-123e4567-e89b-12d3-a456-426614174000",
+              "email": "organizer@example.com",
+              "name": "Иван Петров",
+              "role": "organizer",
+              "phone": "+357 99 123 456",
+              "organizerId": "org-123e4567-e89b-12d3-a456-426614174000",
+              "isActive": true,
+              "isEmailVerified": true,
+              "createdAt": "2024-10-01T08:00:00.000Z",
+              "updatedAt": "2024-11-15T10:30:00.000Z"
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        },
+        "error": {
+          "status": 401,
+          "body": {
+            "success": false,
+            "error": {
+              "code": "UNAUTHORIZED",
+              "message": "Токен не предоставлен или истек"
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/auth/refresh",
+      "method": "POST",
+      "description": "Обновить access токен",
+      "request": {
+        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        },
+        "error": {
+          "status": 401,
+          "body": {
+            "success": false,
+            "error": {
+              "code": "TOKEN_EXPIRED",
+              "message": "Refresh токен истек, необходимо войти заново"
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/venues",
+      "method": "POST",
+      "description": "Создать новую площадку",
+      "request": {
+        "title": "Центральный пункт помощи",
+        "description": "Основной пункт сбора и раздачи гуманитарной помощи в Лимассоле",
+        "type": "distribution_hub",
+        "location": {
+          "lat": 34.6756,
+          "lng": 33.0431,
+          "address": "ул. Ленина 123, Лимассол, Кипр",
+          "city": "Лимассол",
+          "country": "Кипр",
+          "postalCode": "3040"
+        },
+        "operatingHours": [
+          {
+            "dayOfWeek": "monday",
+            "openTime": "09:00",
+            "closeTime": "17:00",
+            "isClosed": false
+          },
+          {
+            "dayOfWeek": "tuesday",
+            "openTime": "09:00",
+            "closeTime": "17:00",
+            "isClosed": false
+          },
+          {
+            "dayOfWeek": "sunday",
+            "openTime": "00:00",
+            "closeTime": "00:00",
+            "isClosed": true
+          }
+        ],
+        "contactInfo": {
+          "phone": "+357 99 123 456",
+          "email": "info@hub.cy",
+          "website": "https://hub.cy"
+        }
+      },
+      "responses": {
+        "success": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "venue": {
+                "id": "venue-123e4567-e89b-12d3-a456-426614174000",
+                "title": "Центральный пункт помощи",
+                "description": "Основной пункт сбора и раздачи гуманитарной помощи в Лимассоле",
+                "type": "distribution_hub",
+                "location": {
+                  "lat": 34.6756,
+                  "lng": 33.0431,
+                  "address": "ул. Ленина 123, Лимассол, Кипр",
+                  "city": "Лимассол",
+                  "country": "Кипр",
+                  "postalCode": "3040"
+                },
+                "operatingHours": [
+                  {
+                    "dayOfWeek": "monday",
+                    "openTime": "09:00",
+                    "closeTime": "17:00",
+                    "isClosed": false
+                  }
+                ],
+                "organizerId": "user-123e4567-e89b-12d3-a456-426614174000",
+                "status": "active",
+                "functionsCount": 0,
+                "contactInfo": {
+                  "phone": "+357 99 123 456",
+                  "email": "info@hub.cy",
+                  "website": "https://hub.cy"
+                },
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        },
+        "error": {
+          "status": 400,
+          "body": {
+            "success": false,
+            "error": {
+              "code": "VALIDATION_ERROR",
+              "message": "Ошибка валидации данных",
+              "details": {
+                "title": "Название должно содержать минимум 3 символа",
+                "location.lat": "Широта должна быть между -90 и 90"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/venues",
+      "method": "GET",
+      "description": "Получить список площадок",
+      "request": null,
+      "queryParams": {
+        "page": 1,
+        "limit": 10,
+        "type": "distribution_hub",
+        "status": "active",
+        "searchQuery": "пункт",
+        "sortBy": "createdAt",
+        "sortOrder": "desc"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "items": [
+                {
+                  "id": "venue-123e4567-e89b-12d3-a456-426614174000",
+                  "title": "Центральный пункт помощи",
+                  "description": "Основной пункт сбора и раздачи",
+                  "type": "distribution_hub",
+                  "location": {
+                    "lat": 34.6756,
+                    "lng": 33.0431,
+                    "address": "ул. Ленина 123, Лимассол, Кипр",
+                    "city": "Лимассол",
+                    "country": "Кипр"
+                  },
+                  "operatingHours": [],
+                  "organizerId": "user-123e4567-e89b-12d3-a456-426614174000",
+                  "status": "active",
+                  "functionsCount": 3,
+                  "createdAt": "2024-11-15T10:30:00.000Z",
+                  "updatedAt": "2024-11-15T10:30:00.000Z"
+                }
+              ],
+              "pagination": {
+                "currentPage": 1,
+                "totalPages": 5,
+                "totalItems": 47,
+                "itemsPerPage": 10,
+                "hasNextPage": true,
+                "hasPreviousPage": false
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/venues/:id",
+      "method": "GET",
+      "description": "Получить площадку по ID",
+      "request": null,
+      "pathParams": {
+        "id": "venue-123e4567-e89b-12d3-a456-426614174000"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "venue": {
+                "id": "venue-123e4567-e89b-12d3-a456-426614174000",
+                "title": "Центральный пункт помощи",
+                "description": "Основной пункт сбора и раздачи гуманитарной помощи в Лимассоле",
+                "type": "distribution_hub",
+                "location": {
+                  "lat": 34.6756,
+                  "lng": 33.0431,
+                  "address": "ул. Ленина 123, Лимассол, Кипр"
+                },
+                "operatingHours": [],
+                "organizerId": "user-123e4567-e89b-12d3-a456-426614174000",
+                "status": "active",
+                "functionsCount": 3,
+                "imageUrls": [
+                  "https://cdn.example.com/venues/venue-123/image1.jpg"
+                ],
+                "contactInfo": {
+                  "phone": "+357 99 123 456",
+                  "email": "info@hub.cy"
+                },
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        },
+        "error": {
+          "status": 404,
+          "body": {
+            "success": false,
+            "error": {
+              "code": "NOT_FOUND",
+              "message": "Площадка не найдена"
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/venues/:id",
+      "method": "PATCH",
+      "description": "Обновить площадку",
+      "pathParams": {
+        "id": "venue-123e4567-e89b-12d3-a456-426614174000"
+      },
+      "request": {
+        "title": "Обновленное название площадки",
+        "description": "Новое описание"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "venue": {
+                "id": "venue-123e4567-e89b-12d3-a456-426614174000",
+                "title": "Обновленное название площадки",
+                "description": "Новое описание",
+                "type": "distribution_hub",
+                "location": {
+                  "lat": 34.6756,
+                  "lng": 33.0431,
+                  "address": "ул. Ленина 123, Лимассол, Кипр"
+                },
+                "operatingHours": [],
+                "organizerId": "user-123e4567-e89b-12d3-a456-426614174000",
+                "status": "active",
+                "functionsCount": 3,
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T11:00:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T11:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/venues/:id",
+      "method": "DELETE",
+      "description": "Удалить площадку",
+      "pathParams": {
+        "id": "venue-123e4567-e89b-12d3-a456-426614174000"
+      },
+      "request": null,
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "message": "Площадка успешно удалена",
+              "deletedAt": "2024-11-15T11:00:00.000Z"
+            },
+            "timestamp": "2024-11-15T11:00:00.000Z"
+          }
+        },
+        "error": {
+          "status": 403,
+          "body": {
+            "success": false,
+            "error": {
+              "code": "OPERATION_NOT_ALLOWED",
+              "message": "Невозможно удалить площадку с активными функциями"
+            },
+            "timestamp": "2024-11-15T11:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/venue-functions",
+      "method": "POST",
+      "description": "Создать функцию площадки (Collection Point)",
+      "request": {
+        "venueId": "venue-123e4567-e89b-12d3-a456-426614174000",
+        "type": "collection_point",
+        "items": [
+          {
+            "categoryId": "cat-medicine-123",
+            "categoryPath": ["Медицина", "Обезболивающие", "Нурофен"],
+            "quantity": "a_lot"
+          },
+          {
+            "categoryId": "cat-food-456",
+            "categoryPath": ["Еда", "Консервы", "Мясные"],
+            "quantity": "some"
+          }
+        ],
+        "openingTimes": [
+          {
+            "dayOfWeek": "monday",
+            "openTime": "10:00",
+            "closeTime": "16:00",
+            "isClosed": false
+          }
+        ],
+        "specialRequests": "Просьба приносить только невскрытые упаковки"
+      },
+      "responses": {
+        "success": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "function": {
+                "id": "func-123e4567-e89b-12d3-a456-426614174000",
+                "venueId": "venue-123e4567-e89b-12d3-a456-426614174000",
+                "type": "collection_point",
+                "items": [
+                  {
+                    "categoryId": "cat-medicine-123",
+                    "categoryPath": ["Медицина", "Обезболивающие", "Нурофен"],
+                    "quantity": "a_lot"
+                  }
+                ],
+                "openingTimes": [
+                  {
+                    "dayOfWeek": "monday",
+                    "openTime": "10:00",
+                    "closeTime": "16:00",
+                    "isClosed": false
+                  }
+                ],
+                "specialRequests": "Просьба приносить только невскрытые упаковки",
+                "status": "active",
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/venue-functions",
+      "method": "POST",
+      "description": "Создать функцию площадки (Services Needed)",
+      "request": {
+        "venueId": "venue-123e4567-e89b-12d3-a456-426614174000",
+        "type": "services_needed",
+        "services": [
+          {
+            "type": "transport_big",
+            "description": "Нужен грузовик для перевозки 2 тонн продуктов",
+            "isRequired": true
+          },
+          {
+            "type": "language",
+            "description": "Нужен переводчик английского языка",
+            "isRequired": false
+          }
+        ],
+        "specialRequests": "Желательно в утренние часы"
+      },
+      "responses": {
+        "success": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "function": {
+                "id": "func-223e4567-e89b-12d3-a456-426614174001",
+                "venueId": "venue-123e4567-e89b-12d3-a456-426614174000",
+                "type": "services_needed",
+                "services": [
+                  {
+                    "type": "transport_big",
+                    "description": "Нужен грузовик для перевозки 2 тонн продуктов",
+                    "isRequired": true
+                  }
+                ],
+                "specialRequests": "Желательно в утренние часы",
+                "status": "active",
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/venue-functions",
+      "method": "GET",
+      "description": "Получить функции площадки",
+      "request": null,
+      "queryParams": {
+        "venueId": "venue-123e4567-e89b-12d3-a456-426614174000",
+        "page": 1,
+        "limit": 10
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "items": [
+                {
+                  "id": "func-123",
+                  "venueId": "venue-123",
+                  "type": "collection_point",
+                  "items": [
+                    {
+                      "categoryId": "cat-medicine-123",
+                      "categoryPath": ["Медицина", "Обезболивающие"],
+                      "quantity": "a_lot"
+                    }
+                  ],
+                  "openingTimes": [],
+                  "status": "active",
+                  "createdAt": "2024-11-15T10:30:00.000Z",
+                  "updatedAt": "2024-11-15T10:30:00.000Z"
+                }
+              ],
+              "pagination": {
+                "currentPage": 1,
+                "totalPages": 1,
+                "totalItems": 3,
+                "itemsPerPage": 10,
+                "hasNextPage": false,
+                "hasPreviousPage": false
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/item-categories",
+      "method": "GET",
+      "description": "Получить список категорий предметов",
+      "request": null,
+      "queryParams": {
+        "parentId": null,
+        "level": 0
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "categories": [
+                {
+                  "id": "cat-medicine",
+                  "name": "Медицина",
+                  "description": "Медицинские препараты и принадлежности",
+                  "parentId": null,
+                  "level": 0,
+                  "isCustom": false,
+                  "status": "active",
+                  "createdAt": "2024-01-01T00:00:00.000Z",
+                  "updatedAt": "2024-01-01T00:00:00.000Z"
+                },
+                {
+                  "id": "cat-food",
+                  "name": "Еда",
+                  "description": "Продукты питания",
+                  "parentId": null,
+                  "level": 0,
+                  "isCustom": false,
+                  "status": "active",
+                  "createdAt": "2024-01-01T00:00:00.000Z",
+                  "updatedAt": "2024-01-01T00:00:00.000Z"
+                }
+              ],
+              "totalCount": 2
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/item-categories/hierarchy",
+      "method": "GET",
+      "description": "Получить иерархию категорий",
+      "request": null,
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "hierarchy": [
+                {
+                  "category": {
+                    "id": "cat-medicine",
+                    "name": "Медицина",
+                    "parentId": null,
+                    "level": 0,
+                    "isCustom": false,
+                    "status": "active",
+                    "createdAt": "2024-01-01T00:00:00.000Z",
+                    "updatedAt": "2024-01-01T00:00:00.000Z"
+                  },
+                  "children": [
+                    {
+                      "category": {
+                        "id": "cat-medicine-painkillers",
+                        "name": "Обезболивающие",
+                        "parentId": "cat-medicine",
+                        "level": 1,
+                        "isCustom": false,
+                        "status": "active",
+                        "createdAt": "2024-01-01T00:00:00.000Z",
+                        "updatedAt": "2024-01-01T00:00:00.000Z"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/volunteer-responses",
+      "method": "POST",
+      "description": "Создать отклик волонтера на предмет",
+      "request": {
+        "venueId": "venue-123",
+        "functionId": "func-456",
+        "responseType": "item",
+        "categoryId": "cat-medicine-painkillers",
+        "quantityOffered": 50,
+        "message": "У меня есть 50 упаковок обезболивающих",
+        "deliveryDate": "2024-11-20T10:00:00.000Z",
+        "notes": "Могу привезти в любое время"
+      },
+      "responses": {
+        "success": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "response": {
+                "id": "resp-123e4567-e89b-12d3-a456-426614174000",
+                "volunteerId": "user-vol-123",
+                "volunteerName": "Алексей Смирнов",
+                "venueId": "venue-123",
+                "venueName": "Центральный пункт помощи",
+                "functionId": "func-456",
+                "responseType": "item",
+                "categoryId": "cat-medicine-painkillers",
+                "categoryPath": ["Медицина", "Обезболивающие"],
+                "quantityOffered": 50,
+                "message": "У меня есть 50 упаковок обезболивающих",
+                "status": "pending",
+                "deliveryDate": "2024-11-20T10:00:00.000Z",
+                "notes": "Могу привезти в любое время",
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/volunteer-responses",
+      "method": "POST",
+      "description": "Создать отклик волонтера на услугу",
+      "request": {
+        "venueId": "venue-123",
+        "functionId": "func-789",
+        "responseType": "service",
+        "serviceType": "transport_big",
+        "message": "Могу предоставить грузовик на целый день",
+        "deliveryDate": "2024-11-20T08:00:00.000Z"
+      },
+      "responses": {
+        "success": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "response": {
+                "id": "resp-223e4567-e89b-12d3-a456-426614174001",
+                "volunteerId": "user-vol-123",
+                "volunteerName": "Алексей Смирнов",
+                "venueId": "venue-123",
+                "venueName": "Центральный пункт помощи",
+                "functionId": "func-789",
+                "responseType": "service",
+                "serviceType": "transport_big",
+                "message": "Могу предоставить грузовик на целый день",
+                "status": "pending",
+                "deliveryDate": "2024-11-20T08:00:00.000Z",
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/volunteer-responses",
+      "method": "GET",
+      "description": "Получить список откликов волонтера",
+      "request": null,
+      "queryParams": {
+        "volunteerId": "user-vol-123",
+        "page": 1,
+        "limit": 10,
+        "status": "confirmed"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "items": [
+                {
+                  "id": "resp-123",
+                  "volunteerId": "user-vol-123",
+                  "volunteerName": "Алексей Смирнов",
+                  "venueId": "venue-123",
+                  "venueName": "Центральный пункт помощи",
+                  "functionId": "func-456",
+                  "responseType": "item",
+                  "categoryId": "cat-medicine-painkillers",
+                  "categoryPath": ["Медицина", "Обезболивающие"],
+                  "quantityOffered": 50,
+                  "message": "У меня есть 50 упаковок",
+                  "status": "confirmed",
+                  "createdAt": "2024-11-15T10:30:00.000Z",
+                  "updatedAt": "2024-11-15T11:00:00.000Z"
+                }
+              ],
+              "pagination": {
+                "currentPage": 1,
+                "totalPages": 1,
+                "totalItems": 5,
+                "itemsPerPage": 10,
+                "hasNextPage": false,
+                "hasPreviousPage": false
+              },
+              "totalByStatus": {
+                "pending": 2,
+                "confirmed": 2,
+                "completed": 1,
+                "cancelled": 0,
+                "rejected": 0
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/volunteer-responses/:id",
+      "method": "PATCH",
+      "description": "Обновить отклик волонтера",
+      "pathParams": {
+        "id": "resp-123e4567-e89b-12d3-a456-426614174000"
+      },
+      "request": {
+        "status": "cancelled",
+        "notes": "Не могу привезти, извините"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "response": {
+                "id": "resp-123",
+                "volunteerId": "user-vol-123",
+                "volunteerName": "Алексей Смирнов",
+                "venueId": "venue-123",
+                "venueName": "Центральный пункт помощи",
+                "functionId": "func-456",
+                "responseType": "item",
+                "categoryId": "cat-medicine-painkillers",
+                "quantityOffered": 50,
+                "status": "cancelled",
+                "notes": "Не могу привезти, извините",
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T12:00:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T12:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/beneficiary-commitments",
+      "method": "POST",
+      "description": "Создать обязательство бенефициара",
+      "request": {
+        "venueId": "venue-123",
+        "functionId": "func-distribution-789",
+        "plannedVisitDate": "2024-11-20T14:00:00.000Z",
+        "numberOfPeople": 4,
+        "specialNeeds": ["wheelchair_access", "baby_supplies"],
+        "notes": "Придем около 14:00 с детьми"
+      },
+      "responses": {
+        "success": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "commitment": {
+                "id": "commit-123e4567-e89b-12d3-a456-426614174000",
+                "beneficiaryId": "user-ben-123",
+                "beneficiaryName": "Елена Петрова",
+                "venueId": "venue-123",
+                "venueName": "Центральный пункт помощи",
+                "functionId": "func-distribution-789",
+                "plannedVisitDate": "2024-11-20T14:00:00.000Z",
+                "numberOfPeople": 4,
+                "specialNeeds": ["wheelchair_access", "baby_supplies"],
+                "notes": "Придем около 14:00 с детьми",
+                "status": "confirmed",
+                "createdAt": "2024-11-15T10:30:00.000Z",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/beneficiary-commitments",
+      "method": "GET",
+      "description": "Получить список обязательств бенефициара",
+      "request": null,
+      "queryParams": {
+        "beneficiaryId": "user-ben-123",
+        "page": 1,
+        "limit": 10
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "items": [
+                {
+                  "id": "commit-123",
+                  "beneficiaryId": "user-ben-123",
+                  "beneficiaryName": "Елена Петрова",
+                  "venueId": "venue-123",
+                  "venueName": "Центральный пункт помощи",
+                  "functionId": "func-distribution-789",
+                  "plannedVisitDate": "2024-11-20T14:00:00.000Z",
+                  "numberOfPeople": 4,
+                  "status": "confirmed",
+                  "createdAt": "2024-11-15T10:30:00.000Z",
+                  "updatedAt": "2024-11-15T10:30:00.000Z"
+                }
+              ],
+              "pagination": {
+                "currentPage": 1,
+                "totalPages": 1,
+                "totalItems": 3,
+                "itemsPerPage": 10,
+                "hasNextPage": false,
+                "hasPreviousPage": false
+              },
+              "totalByStatus": {
+                "confirmed": 2,
+                "cancelled": 0,
+                "completed": 1
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/projections/venue/:venueId",
+      "method": "GET",
+      "description": "Получить проекцию площадки для организатора",
+      "request": null,
+      "pathParams": {
+        "venueId": "venue-123"
+      },
+      "queryParams": {
+        "functionId": "func-456"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "projection": {
+                "venueId": "venue-123",
+                "venueName": "Центральный пункт помощи",
+                "functionId": "func-456",
+                "functionType": "collection_point",
+                "items": [
+                  {
+                    "categoryId": "cat-medicine-painkillers",
+                    "categoryPath": ["Медицина", "Обезболивающие"],
+                    "currentStatus": "need_few_more",
+                    "responseCount": 5,
+                    "totalQuantityOffered": 150,
+                    "pendingResponses": 2,
+                    "confirmedResponses": 3
+                  }
+                ],
+                "services": [
+                  {
+                    "serviceType": "transport_big",
+                    "currentStatus": "dont_need",
+                    "responseCount": 3,
+                    "pendingResponses": 0,
+                    "confirmedResponses": 3,
+                    "respondingVolunteers": [
+                      {
+                        "id": "user-vol-123",
+                        "name": "Алексей Смирнов",
+                        "message": "Могу предоставить грузовик",
+                        "status": "confirmed"
+                      }
+                    ]
+                  }
+                ],
+                "beneficiaryCommitments": 12,
+                "lastUpdated": "2024-11-15T10:30:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/need-status",
+      "method": "POST",
+      "description": "Обновить статус потребности",
+      "request": {
+        "venueId": "venue-123",
+        "functionId": "func-456",
+        "itemCategoryId": "cat-medicine-painkillers",
+        "status": "dont_need"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "needStatus": {
+                "id": "need-status-123",
+                "venueId": "venue-123",
+                "functionId": "func-456",
+                "itemCategoryId": "cat-medicine-painkillers",
+                "status": "dont_need",
+                "updatedBy": "user-org-123",
+                "updatedAt": "2024-11-15T10:30:00.000Z"
+              }
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "path": "/need-status",
+      "method": "GET",
+      "description": "Получить статусы потребностей",
+      "request": null,
+      "queryParams": {
+        "venueId": "venue-123",
+        "functionId": "func-456"
+      },
+      "responses": {
+        "success": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "needStatuses": [
+                {
+                  "id": "need-status-123",
+                  "venueId": "venue-123",
+                  "functionId": "func-456",
+                  "itemCategoryId": "cat-medicine-painkillers",
+                  "status": "dont_need",
+                  "updatedBy": "user-org-123",
+                  "updatedAt": "2024-11-15T10:30:00.000Z"
+                }
+              ]
+            },
+            "timestamp": "2024-11-15T10:30:00.000Z"
+          }
+        }
+      }
+    }
+  ],
+  "errorCodes": [
+    {
+      "code": "INTERNAL_ERROR",
+      "httpStatus": 500,
+      "description": "Внутренняя ошибка сервера",
+      "example": {
+        "success": false,
+        "error": {
+          "code": "INTERNAL_ERROR",
+          "message": "Произошла внутренняя ошибка сервера"
+        },
+        "timestamp": "2024-11-15T10:30:00.000Z"
+      }
+    },
+    {
+      "code": "VALIDATION_ERROR",
+      "httpStatus": 400,
+      "description": "Ошибка валидации данных",
+      "example": {
+        "success": false,
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "Данные не прошли валидацию",
+          "details": {
+            "email": "Неверный формат email",
+            "password": "Пароль должен содержать минимум 8 символов"
+          }
+        },
+        "timestamp": "2024-11-15T10:30:00.000Z"
+      }
+    },
+    {
+      "code": "UNAUTHORIZED",
+      "httpStatus": 401,
+      "description": "Не авторизован",
+      "example": {
+        "success": false,
+        "error": {
+          "code": "UNAUTHORIZED",
+          "message": "Требуется авторизация"
+        },
+        "timestamp": "2024-11-15T10:30:00.000Z"
+      }
+    },
+    {
+      "code": "FORBIDDEN",
+      "httpStatus": 403,
+      "description": "Доступ запрещен",
+      "example": {
+        "success": false,
+        "error": {
+          "code": "FORBIDDEN",
+          "message": "У вас нет прав для выполнения этой операции"
+        },
+        "timestamp": "2024-11-15T10:30:00.000Z"
+      }
+    },
+    {
+      "code": "NOT_FOUND",
+      "httpStatus": 404,
+      "description": "Ресурс не найден",
+      "example": {
+        "success": false,
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "Запрашиваемый ресурс не найден"
+        },
+        "timestamp": "2024-11-15T10:30:00.000Z"
+      }
+    },
+    {
+      "code": "ALREADY_EXISTS",
+      "httpStatus": 409,
+      "description": "Ресурс уже существует",
+      "example": {
+        "success": false,
+        "error": {
+          "code": "ALREADY_EXISTS",
+          "message": "Ресурс с таким идентификатором уже существует"
+        },
+        "timestamp": "2024-11-15T10:30:00.000Z"
+      }
+    },
+    {
+      "code": "RATE_LIMIT_EXCEEDED",
+      "httpStatus": 429,
+      "description": "Превышен лимит запросов",
+      "example": {
+        "success": false,
+        "error": {
+          "code": "RATE_LIMIT_EXCEEDED",
+          "message": "Слишком много запросов, попробуйте позже"
+        },
+        "timestamp": "2024-11-15T10:30:00.000Z"
+      }
+    }
+  ],
+  "httpHeaders": {
+    "request": {
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    "response": {
+      "Content-Type": "application/json",
+      "X-Request-Id": "req-123e4567-e89b-12d3-a456-426614174000",
+      "X-Rate-Limit-Limit": "100",
+      "X-Rate-Limit-Remaining": "95",
+      "X-Rate-Limit-Reset": "1700053200"
+    }
+  }
+}

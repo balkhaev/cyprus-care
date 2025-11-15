@@ -2,7 +2,15 @@
 
 import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
-import { MapPin, Clock, Plus, Building2, Warehouse, Users, Wrench } from "lucide-react"
+import {
+  MapPin,
+  Clock,
+  Plus,
+  Building2,
+  Warehouse,
+  Users,
+  Wrench,
+} from "lucide-react"
 import type { Venue, VenueFunctionType } from "@/types/venue"
 import { fetchVenues } from "@/lib/api/venues"
 import type { User } from "@/lib/mock-data/user-roles"
@@ -197,7 +205,10 @@ export default function VenuesPage() {
                         <div className="flex items-center gap-3">
                           {primaryFunctionType && (
                             <div
-                              className={getIconContainerClasses("primary", "md")}
+                              className={getIconContainerClasses(
+                                "primary",
+                                "md"
+                              )}
                             >
                               {functionTypeIcons[primaryFunctionType]}
                             </div>
@@ -210,7 +221,11 @@ export default function VenuesPage() {
                             </h3>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {functionTypes.map((type) => (
-                                <Badge key={type} variant="secondary" className="text-xs">
+                                <Badge
+                                  key={type}
+                                  variant="secondary"
+                                  className="text-xs"
+                                >
                                   {getFunctionTypeLabel(type)}
                                 </Badge>
                               ))}

@@ -306,7 +306,7 @@ export default function VolunteerProfile({ user, onUserUpdate }: VolunteerProfil
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2">
                           <h4 className="font-semibold text-base truncate">
-                            {(response.venue_name || response.venue?.name || 'Unnamed Venue') as string}
+                            {(response.venue_name || 'Unnamed Venue') as string}
                           </h4>
                           <Badge 
                             variant={getStatusVariant(response.status as string)}
@@ -319,11 +319,11 @@ export default function VolunteerProfile({ user, onUserUpdate }: VolunteerProfil
                           </Badge>
                         </div>
                         
-                        {(response.venue_location || response.venue?.location) && (
+                        {response.venue_location && (
                           <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
                             <MapPin className="h-4 w-4 shrink-0" />
                             <span className="truncate">
-                              {(response.venue_location || response.venue?.location) as string}
+                              {response.venue_location as string}
                             </span>
                           </div>
                         )}
@@ -399,14 +399,14 @@ export default function VolunteerProfile({ user, onUserUpdate }: VolunteerProfil
               <div>
                 <Label className="text-muted-foreground text-sm">Venue</Label>
                 <p className="text-base font-medium mt-1">
-                  {(viewingResponse.venue_name || viewingResponse.venue?.name || 'Unknown') as string}
+                  {(viewingResponse.venue_name || 'Unknown') as string}
                 </p>
               </div>
               
               <div>
                 <Label className="text-muted-foreground text-sm">Location</Label>
                 <p className="text-base font-medium mt-1">
-                  {(viewingResponse.venue_location || viewingResponse.venue?.location || 'No location') as string}
+                  {(viewingResponse.venue_location || 'No location') as string}
                 </p>
               </div>
               

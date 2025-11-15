@@ -461,7 +461,7 @@ function convertOldVenueToNew(oldVenue: OldVenue): Venue {
     id: oldVenue.id,
     title: oldVenue.title,
     description: oldVenue.description,
-    type: oldVenue.type,
+    type: 'collection_point', // Default type - venue functions determine the actual types
     location: {
       lat: oldVenue.location.lat,
       lng: oldVenue.location.lng,
@@ -605,7 +605,7 @@ function mockCreateVenue(data: CreateVenueRequest): CreateVenueResponse {
   const venue: Venue = {
     id: `venue-${Date.now()}`,
     ...data,
-    organizerId: "user-1",
+    organizerId: 1, // TODO: Get from auth context
     status: "active",
     functionsCount: 0,
     createdAt: new Date().toISOString(),

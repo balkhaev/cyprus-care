@@ -32,7 +32,7 @@ export default function CustomFunctionsPage() {
       id: `custom-type-${Date.now()}`,
       name: formData.name,
       description: formData.description,
-      organizerId: 'org-1',
+      organizerId: 1, // TODO: Replace with actual organizer ID from auth
       createdAt: new Date(),
     };
 

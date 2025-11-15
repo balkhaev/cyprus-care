@@ -390,13 +390,13 @@ export default function VenueDetailPage({ params }: PageProps) {
           {/* Role-based view */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
-              {currentUser.role === "organizer" && canEdit
+              {currentUser?.role === "organizer" && canEdit
                 ? "Manage Venue"
-                : currentUser.role === "volunteer"
+                : currentUser?.role === "volunteer"
                 ? "Volunteer Opportunities"
                 : "Available Distribution Points"}
             </h2>
-            {currentUser.role === "organizer" && canEdit ? (
+            {currentUser?.role === "organizer" && canEdit ? (
               <OrganizerVenueView
                 venue={venue}
                 onDeleteFunction={handleDeleteFunction}

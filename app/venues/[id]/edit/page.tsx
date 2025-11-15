@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, Building2, Warehouse, Home, Save } from 'lucide-react';
-import type { VenueType, VenueLocation, OperatingHours, Venue } from '@/types/venue';
+import { ArrowLeft, Save } from 'lucide-react';
+import type { VenueLocation, OperatingHours, Venue } from '@/types/venue';
 import { fetchVenueById, updateVenue } from '@/lib/api/venues';
 import Header from '@/components/Header';
 
@@ -22,28 +22,6 @@ const LocationPickerMap = dynamic(() => import('@/components/LocationPickerMap')
   ),
 });
 
-
-const venueTypes: Array<{ value: VenueType; label: string; icon: React.ReactNode; description: string }> = [
-  {
-    value: 'collection_point',
-    label: 'Collection Point',
-    icon: <Building2 className="h-5 w-5" />,
-    description: 'Place for collecting humanitarian aid',
-  },
-  {
-    value: 'distribution_hub',
-    label: 'Distribution Hub',
-    icon: <Warehouse className="h-5 w-5" />,
-    description: 'Center for distributing aid',
-  },
-  {
-    value: 'shelter',
-    label: 'Shelter',
-    icon: <Home className="h-5 w-5" />,
-    description: 'Temporary shelter for those in need',
-  },
-];
-
 interface PageProps {
   params: Promise<{ id: string }>;
 }
@@ -57,7 +35,6 @@ export default function EditVenuePage({ params }: PageProps) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    type: 'collection_point' as VenueType,
   });
 
   const [location, setLocation] = useState<VenueLocation>({
@@ -81,7 +58,6 @@ export default function EditVenuePage({ params }: PageProps) {
       setFormData({
         title: venueData.title,
         description: venueData.description,
-        type: venueData.type,
       });
       setLocation(venueData.location);
       setOperatingHours(venueData.operatingHours);
@@ -215,39 +191,6 @@ export default function EditVenuePage({ params }: PageProps) {
                 className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all resize-none"
                 required
               />
-            </div>
-
-            {/* Venue type */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Venue Type *
-              </label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {venueTypes.map((type) => (
-                  <button
-                    key={type.value}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, type: type.value })}
-                    className={`p-4 rounded-lg border-2 transition-all text-left ${
-                      formData.type === type.value
-                        ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-100 dark:bg-zinc-800'
-                        : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className={`${formData.type === type.value ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-400'}`}>
-                        {type.icon}
-                      </div>
-                      <span className={`font-medium ${formData.type === type.value ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'}`}>
-                        {type.label}
-                      </span>
-                    </div>
-                    <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                      {type.description}
-                    </p>
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
 

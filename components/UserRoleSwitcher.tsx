@@ -3,17 +3,21 @@
 import { useState } from 'react';
 import { Users, ChevronDown } from 'lucide-react';
 import { getCurrentUser, setCurrentUser, mockUsers, type User } from '@/lib/mock-data/user-roles';
+import { getUserFullName } from '@/contracts/auth';
 
 export default function UserRoleSwitcher() {
   const [currentUser, setCurrentUserState] = useState<User>(getCurrentUser());
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleUserChange = (userId: string) => {
-    setCurrentUser(userId);
-    setCurrentUserState(mockUsers[userId]);
-    setIsOpen(false);
-    // Reload the page to update all components
-    window.location.reload();
+  const handleUserChange = (userId: number) => {
+    const userKey = Object.keys(mockUsers).find(key => mockUsers[key].id === userId);
+    if (userKey) {
+      setCurrentUser(userKey);
+      setCurrentUserState(mockUsers[userKey]);
+      setIsOpen(false);
+      // Reload the page to update all components
+      window.location.reload();
+    }
   };
 
   const getRoleBadgeColor = (role: User['role']) => {
@@ -36,7 +40,7 @@ export default function UserRoleSwitcher() {
         <Users className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-            {currentUser.name}
+            {getUserFullName(currentUser)}
           </span>
           <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${getRoleBadgeColor(currentUser.role)}`}>
             {currentUser.role}
@@ -72,7 +76,7 @@ export default function UserRoleSwitcher() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                        {user.name}
+                        {getUserFullName(user)}
                       </p>
                       <p className="text-xs text-zinc-600 dark:text-zinc-400">
                         {user.email}

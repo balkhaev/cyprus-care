@@ -75,6 +75,9 @@ export const backgroundClasses = {
 
   /** Subtle gradients */
   gradientSubtle: "bg-gradient-to-br from-muted/20 to-background",
+  
+  /** Primary to secondary gradient */
+  gradientPrimarySecondary: "bg-gradient-to-br from-primary/10 to-secondary/10",
 } as const
 
 /**
@@ -121,6 +124,12 @@ export const borderClasses = {
 
   /** Border on hover */
   hoverPrimary: "hover:border-primary/40",
+  
+  /** Secondary border on hover */
+  hoverSecondary: "hover:border-secondary/40",
+  
+  /** Accent border on hover */
+  hoverAccent: "hover:border-accent/40",
 } as const
 
 /**

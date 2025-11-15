@@ -89,13 +89,13 @@ export function getPermissionDeniedMessage(action: 'edit' | 'delete' | 'create' 
 /**
  * Throw error if user cannot perform action
  */
-export function assertCanEditVenue(venue: Venue | null | undefined, user: User | null | undefined): void {
+export function assertCanEditVenue(venue: AnyVenue | null | undefined, user: User | null | undefined): void {
   if (!canEditVenue(venue, user)) {
     throw new Error(getPermissionDeniedMessage('edit'));
   }
 }
 
-export function assertCanDeleteVenue(venue: Venue | null | undefined, user: User | null | undefined): void {
+export function assertCanDeleteVenue(venue: AnyVenue | null | undefined, user: User | null | undefined): void {
   if (!canDeleteVenue(venue, user)) {
     throw new Error(getPermissionDeniedMessage('delete'));
   }

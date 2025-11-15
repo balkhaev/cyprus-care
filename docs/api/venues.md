@@ -1,43 +1,45 @@
-# Площадки (Venues)
+# Venues
 
-API для управления площадками сбора и раздачи помощи.
+API for managing collection and distribution venues.
 
 ## Endpoints
 
-- [POST /venues](#post-venues) - Создать площадку
-- [GET /venues](#get-venues) - Получить список площадок
-- [GET /venues/:id](#get-venuesid) - Получить площадку по ID
-- [PATCH /venues/:id](#patch-venuesid) - Обновить площадку
-- [DELETE /venues/:id](#delete-venuesid) - Удалить площадку
+- [POST /venues](#post-venues) - Create venue
+- [GET /venues](#get-venues) - Get venue list
+- [GET /venues/:id](#get-venuesid) - Get venue by ID
+- [PATCH /venues/:id](#patch-venuesid) - Update venue
+- [DELETE /venues/:id](#delete-venuesid) - Delete venue
 
 ---
 
 ## POST /venues
 
-Создать новую площадку.
+Create a new venue.
 
-**Требуется авторизация:** Да (роль: `organizer`)
+**Authorization Required:** Yes (role: `organizer`)
 
 ### Request
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
 
 **Body:**
+
 ```json
 {
-  "title": "Центральный пункт помощи",
-  "description": "Основной пункт сбора и раздачи гуманитарной помощи в Лимассоле",
+  "title": "Central Aid Hub",
+  "description": "Main collection and distribution point for humanitarian aid in Limassol",
   "type": "distribution_hub",
   "location": {
     "lat": 34.6756,
     "lng": 33.0431,
-    "address": "ул. Ленина 123, Лимассол, Кипр",
-    "city": "Лимассол",
-    "country": "Кипр",
+    "address": "123 Lenin Street, Limassol, Cyprus",
+    "city": "Limassol",
+    "country": "Cyprus",
     "postalCode": "3040"
   },
   "operatingHours": [
@@ -62,45 +64,47 @@ Content-Type: application/json
 }
 ```
 
-**Поля:**
-- `title` (string, required) - Название площадки (3-100 символов)
-- `description` (string, required) - Описание (10-500 символов)
-- `type` (string, required) - Тип: `collection_point`, `distribution_hub`, `shelter`
-- `location` (object, required) - Местоположение
-  - `lat` (number, required) - Широта (-90 до 90)
-  - `lng` (number, required) - Долгота (-180 до 180)
-  - `address` (string, required) - Полный адрес
-  - `city` (string, optional) - Город
-  - `country` (string, optional) - Страна
-  - `postalCode` (string, optional) - Почтовый индекс
-- `operatingHours` (array, required) - Часы работы
-  - `dayOfWeek` (string) - День недели: `monday`, `tuesday`, etc.
-  - `openTime` (string) - Время открытия (HH:MM)
-  - `closeTime` (string) - Время закрытия (HH:MM)
-  - `isClosed` (boolean) - Закрыто в этот день
-- `contactInfo` (object, optional) - Контактная информация
-  - `phone` (string, optional) - Телефон
+**Fields:**
+
+- `title` (string, required) - Venue name (3-100 characters)
+- `description` (string, required) - Description (10-500 characters)
+- `type` (string, required) - Type: `collection_point`, `distribution_hub`, `shelter`
+- `location` (object, required) - Location
+  - `lat` (number, required) - Latitude (-90 to 90)
+  - `lng` (number, required) - Longitude (-180 to 180)
+  - `address` (string, required) - Full address
+  - `city` (string, optional) - City
+  - `country` (string, optional) - Country
+  - `postalCode` (string, optional) - Postal code
+- `operatingHours` (array, required) - Operating hours
+  - `dayOfWeek` (string) - Day of week: `monday`, `tuesday`, etc.
+  - `openTime` (string) - Opening time (HH:MM)
+  - `closeTime` (string) - Closing time (HH:MM)
+  - `isClosed` (boolean) - Closed on this day
+- `contactInfo` (object, optional) - Contact information
+  - `phone` (string, optional) - Phone
   - `email` (string, optional) - Email
-  - `website` (string, optional) - Веб-сайт
+  - `website` (string, optional) - Website
 
 ### Response
 
 **Success (201):**
+
 ```json
 {
   "success": true,
   "data": {
     "venue": {
       "id": "venue-123e4567-e89b-12d3-a456-426614174000",
-      "title": "Центральный пункт помощи",
-      "description": "Основной пункт сбора и раздачи гуманитарной помощи в Лимассоле",
+      "title": "Central Aid Hub",
+      "description": "Main collection and distribution point for humanitarian aid in Limassol",
       "type": "distribution_hub",
       "location": {
         "lat": 34.6756,
         "lng": 33.0431,
-        "address": "ул. Ленина 123, Лимассол, Кипр",
-        "city": "Лимассол",
-        "country": "Кипр",
+        "address": "123 Lenin Street, Limassol, Cyprus",
+        "city": "Limassol",
+        "country": "Cyprus",
         "postalCode": "3040"
       },
       "operatingHours": [...],
@@ -121,37 +125,39 @@ Content-Type: application/json
 ```
 
 **Error (400 - Validation Error):**
+
 ```json
 {
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Ошибка валидации данных",
+    "message": "Data validation error",
     "details": {
-      "title": "Название должно содержать минимум 3 символа",
-      "location.lat": "Широта должна быть между -90 и 90"
+      "title": "Title must be at least 3 characters",
+      "location.lat": "Latitude must be between -90 and 90"
     }
   },
   "timestamp": "2024-11-15T10:30:00.000Z"
 }
 ```
 
-### Примеры
+### Examples
 
 **cURL:**
+
 ```bash
 curl -X POST http://localhost:3000/api/venues \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d @- << EOF
 {
-  "title": "Центральный пункт помощи",
-  "description": "Основной пункт сбора и раздачи",
+  "title": "Central Aid Hub",
+  "description": "Main collection and distribution point",
   "type": "distribution_hub",
   "location": {
     "lat": 34.6756,
     "lng": 33.0431,
-    "address": "ул. Ленина 123, Лимассол, Кипр"
+    "address": "123 Lenin Street, Limassol, Cyprus"
   },
   "operatingHours": [
     {
@@ -169,40 +175,44 @@ EOF
 
 ## GET /venues
 
-Получить список площадок с пагинацией и фильтрацией.
+Get a list of venues with pagination and filtering.
 
-**Требуется авторизация:** Нет
+**Authorization Required:** No
 
 ### Request
 
 **Headers:**
+
 ```http
 Content-Type: application/json
 ```
 
 **Query Parameters:**
+
 ```
 ?page=1
 &limit=10
 &type=distribution_hub
 &status=active
-&searchQuery=пункт
+&searchQuery=aid
 &sortBy=createdAt
 &sortOrder=desc
 ```
 
-**Параметры:**
-- `page` (number, optional) - Номер страницы (по умолчанию: 1)
-- `limit` (number, optional) - Элементов на странице (по умолчанию: 10, макс: 100)
-- `type` (string, optional) - Фильтр по типу
-- `status` (string, optional) - Фильтр по статусу: `active`, `inactive`, `archived`
-- `searchQuery` (string, optional) - Поиск по названию/описанию/адресу
-- `sortBy` (string, optional) - Поле для сортировки: `createdAt`, `title`
-- `sortOrder` (string, optional) - Направление: `asc`, `desc`
+**Parameters:**
+
+- `page` (number, optional) - Page number (default: 1)
+- `limit` (number, optional) - Items per page (default: 10, max: 100)
+- `type` (string, optional) - Filter by type
+- `status` (string, optional) - Filter by status: `active`, `inactive`, `archived`
+- `searchQuery` (string, optional) - Search by title/description/address
+- `sortBy` (string, optional) - Sort field: `createdAt`, `title`
+- `sortOrder` (string, optional) - Sort direction: `asc`, `desc`
 
 ### Response
 
 **Success (200):**
+
 ```json
 {
   "success": true,
@@ -210,15 +220,15 @@ Content-Type: application/json
     "items": [
       {
         "id": "venue-123e4567-e89b-12d3-a456-426614174000",
-        "title": "Центральный пункт помощи",
-        "description": "Основной пункт сбора и раздачи",
+        "title": "Central Aid Hub",
+        "description": "Main collection and distribution point",
         "type": "distribution_hub",
         "location": {
           "lat": 34.6756,
           "lng": 33.0431,
-          "address": "ул. Ленина 123, Лимассол, Кипр",
-          "city": "Лимассол",
-          "country": "Кипр"
+          "address": "123 Lenin Street, Limassol, Cyprus",
+          "city": "Limassol",
+          "country": "Cyprus"
         },
         "operatingHours": [],
         "organizerId": "user-123e4567-e89b-12d3-a456-426614174000",
@@ -241,28 +251,30 @@ Content-Type: application/json
 }
 ```
 
-### Примеры
+### Examples
 
 **cURL:**
+
 ```bash
 curl -X GET "http://localhost:3000/api/venues?page=1&limit=10&type=distribution_hub"
 ```
 
 **JavaScript:**
+
 ```javascript
 const params = new URLSearchParams({
-  page: '1',
-  limit: '10',
-  type: 'distribution_hub',
-  status: 'active'
-});
+  page: "1",
+  limit: "10",
+  type: "distribution_hub",
+  status: "active",
+})
 
-const response = await fetch(`/api/venues?${params}`);
-const data = await response.json();
+const response = await fetch(`/api/venues?${params}`)
+const data = await response.json()
 
 if (data.success) {
-  console.log('Площадки:', data.data.items);
-  console.log('Всего:', data.data.pagination.totalItems);
+  console.log("Venues:", data.data.items)
+  console.log("Total:", data.data.pagination.totalItems)
 }
 ```
 
@@ -270,44 +282,45 @@ if (data.success) {
 
 ## GET /venues/:id
 
-Получить подробную информацию о площадке.
+Get detailed information about a venue.
 
-**Требуется авторизация:** Нет
+**Authorization Required:** No
 
 ### Request
 
 **Headers:**
+
 ```http
 Content-Type: application/json
 ```
 
 **Path Parameters:**
-- `id` (string, required) - UUID площадки
+
+- `id` (string, required) - Venue UUID
 
 ### Response
 
 **Success (200):**
+
 ```json
 {
   "success": true,
   "data": {
     "venue": {
       "id": "venue-123e4567-e89b-12d3-a456-426614174000",
-      "title": "Центральный пункт помощи",
-      "description": "Основной пункт сбора и раздачи гуманитарной помощи в Лимассоле",
+      "title": "Central Aid Hub",
+      "description": "Main collection and distribution point for humanitarian aid in Limassol",
       "type": "distribution_hub",
       "location": {
         "lat": 34.6756,
         "lng": 33.0431,
-        "address": "ул. Ленина 123, Лимассол, Кипр"
+        "address": "123 Lenin Street, Limassol, Cyprus"
       },
       "operatingHours": [],
       "organizerId": "user-123e4567-e89b-12d3-a456-426614174000",
       "status": "active",
       "functionsCount": 3,
-      "imageUrls": [
-        "https://cdn.example.com/venues/venue-123/image1.jpg"
-      ],
+      "imageUrls": ["https://cdn.example.com/venues/venue-123/image1.jpg"],
       "contactInfo": {
         "phone": "+357 99 123 456",
         "email": "info@hub.cy"
@@ -321,20 +334,22 @@ Content-Type: application/json
 ```
 
 **Error (404 - Not Found):**
+
 ```json
 {
   "success": false,
   "error": {
     "code": "NOT_FOUND",
-    "message": "Площадка не найдена"
+    "message": "Venue not found"
   },
   "timestamp": "2024-11-15T10:30:00.000Z"
 }
 ```
 
-### Примеры
+### Examples
 
 **cURL:**
+
 ```bash
 curl -X GET http://localhost:3000/api/venues/venue-123e4567-e89b-12d3-a456-426614174000
 ```
@@ -343,42 +358,46 @@ curl -X GET http://localhost:3000/api/venues/venue-123e4567-e89b-12d3-a456-42661
 
 ## PATCH /venues/:id
 
-Обновить информацию о площадке.
+Update venue information.
 
-**Требуется авторизация:** Да (роль: `organizer`, владелец площадки)
+**Authorization Required:** Yes (role: `organizer`, venue owner)
 
 ### Request
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
 
 **Path Parameters:**
-- `id` (string, required) - UUID площадки
+
+- `id` (string, required) - Venue UUID
 
 **Body:**
+
 ```json
 {
-  "title": "Обновленное название площадки",
-  "description": "Новое описание"
+  "title": "Updated Venue Name",
+  "description": "New description"
 }
 ```
 
-**Поля:** Все поля опциональные, отправляйте только те, что хотите обновить.
+**Fields:** All fields are optional, send only those you want to update.
 
 ### Response
 
 **Success (200):**
+
 ```json
 {
   "success": true,
   "data": {
     "venue": {
       "id": "venue-123e4567-e89b-12d3-a456-426614174000",
-      "title": "Обновленное название площадки",
-      "description": "Новое описание",
+      "title": "Updated Venue Name",
+      "description": "New description",
       "type": "distribution_hub",
       "location": {...},
       "operatingHours": [],
@@ -397,28 +416,31 @@ Content-Type: application/json
 
 ## DELETE /venues/:id
 
-Удалить площадку.
+Delete a venue.
 
-**Требуется авторизация:** Да (роль: `organizer`, владелец площадки)
+**Authorization Required:** Yes (role: `organizer`, venue owner)
 
 ### Request
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 ```
 
 **Path Parameters:**
-- `id` (string, required) - UUID площадки
+
+- `id` (string, required) - Venue UUID
 
 ### Response
 
 **Success (200):**
+
 ```json
 {
   "success": true,
   "data": {
-    "message": "Площадка успешно удалена",
+    "message": "Venue successfully deleted",
     "deletedAt": "2024-11-15T11:00:00.000Z"
   },
   "timestamp": "2024-11-15T11:00:00.000Z"
@@ -426,12 +448,13 @@ Authorization: Bearer <access_token>
 ```
 
 **Error (403 - Operation Not Allowed):**
+
 ```json
 {
   "success": false,
   "error": {
     "code": "OPERATION_NOT_ALLOWED",
-    "message": "Невозможно удалить площадку с активными функциями"
+    "message": "Cannot delete venue with active functions"
   },
   "timestamp": "2024-11-15T11:00:00.000Z"
 }
@@ -439,15 +462,15 @@ Authorization: Bearer <access_token>
 
 ---
 
-## Типы данных
+## Data Types
 
 ### VenueType
 
 ```typescript
-type VenueType = 
-  | 'collection_point'   // Точка сбора помощи
-  | 'distribution_hub'   // Центр раздачи помощи
-  | 'shelter';           // Приют/укрытие
+type VenueType =
+  | "collection_point" // Collection point
+  | "distribution_hub" // Distribution hub
+  | "shelter" // Shelter
 ```
 
 ### Venue
@@ -472,9 +495,9 @@ type VenueType =
     closeTime: string;
     isClosed: boolean;
   }>;
-  organizerId: string;           // UUID владельца
+  organizerId: string;           // Owner UUID
   status: 'active' | 'inactive' | 'archived';
-  functionsCount: number;        // Количество функций
+  functionsCount: number;        // Number of functions
   imageUrls?: string[];
   contactInfo?: {
     phone?: string;
@@ -488,11 +511,10 @@ type VenueType =
 
 ---
 
-## Ошибки
+## Errors
 
-- `VALIDATION_ERROR` (400) - Ошибка валидации данных
-- `UNAUTHORIZED` (401) - Не авторизован
-- `FORBIDDEN` (403) - Нет прав на эту операцию
-- `NOT_FOUND` (404) - Площадка не найдена
-- `OPERATION_NOT_ALLOWED` (403) - Операция не разрешена
-
+- `VALIDATION_ERROR` (400) - Data validation error
+- `UNAUTHORIZED` (401) - Not authorized
+- `FORBIDDEN` (403) - No permission for this operation
+- `NOT_FOUND` (404) - Venue not found
+- `OPERATION_NOT_ALLOWED` (403) - Operation not allowed

@@ -1,53 +1,53 @@
-# API Документация
+# API Documentation
 
-Полная документация всех API эндпоинтов проекта Care Hub.
+Complete documentation for all Care Hub API endpoints.
 
-## 📚 Содержание
+## 📚 Table of Contents
 
-### Аутентификация
+### Authentication
 
-- [Аутентификация и пользователи](./auth.md) - Регистрация, вход, управление профилем
+- [Authentication and Users](./auth.md) - Registration, login, profile management
 
-### Площадки
+### Venues
 
-- [Площадки (Venues)](./venues.md) - CRUD операции с площадками
-- [Функции площадок](./venue-functions.md) - Управление функциями площадок
+- [Venues](./venues.md) - CRUD operations for venues
+- [Venue Functions](./venue-functions.md) - Venue function management
 
-### Категории и данные
+### Categories and Data
 
-- [Категории предметов](./item-categories.md) - Иерархия категорий
+- [Item Categories](./item-categories.md) - Category hierarchy
 
-### Отклики и обязательства
+### Responses and Commitments
 
-- [Отклики волонтеров](./volunteer-responses.md) - Управление откликами волонтеров
-- [Обязательства бенефициаров](./beneficiary-commitments.md) - Управление обязательствами
+- [Volunteer Responses](./volunteer-responses.md) - Volunteer response management
+- [Beneficiary Commitments](./beneficiary-commitments.md) - Commitment management
 
-### Аналитика
+### Analytics
 
-- [Проекции и статусы](./projections.md) - Аналитика и статусы потребностей
+- [Projections and Statuses](./projections.md) - Analytics and need statuses
 
-## 🔑 Общая информация
+## 🔑 General Information
 
-### Базовый URL
+### Base URL
 
 ```
 Production: https://api.carehub.cy
 Development: http://localhost:3000/api
 ```
 
-### Аутентификация
+### Authentication
 
-Все защищенные эндпоинты требуют JWT токен в заголовке:
+All protected endpoints require a JWT token in the header:
 
 ```http
 Authorization: Bearer <access_token>
 ```
 
-### Формат ответов
+### Response Format
 
-Все эндпоинты возвращают JSON в едином формате:
+All endpoints return JSON in a unified format:
 
-**Успешный ответ:**
+**Success Response:**
 
 ```json
 {
@@ -57,56 +57,56 @@ Authorization: Bearer <access_token>
 }
 ```
 
-**Ответ с ошибкой:**
+**Error Response:**
 
 ```json
 {
   "success": false,
   "error": {
     "code": "ERROR_CODE",
-    "message": "Описание ошибки",
+    "message": "Error description",
     "details": { ... }
   },
   "timestamp": "2024-11-15T10:30:00.000Z"
 }
 ```
 
-### HTTP статус коды
+### HTTP Status Codes
 
-| Код | Описание                               |
+| Code | Description                            |
 | --- | -------------------------------------- |
-| 200 | OK - Успешный запрос                   |
-| 201 | Created - Ресурс создан                |
-| 400 | Bad Request - Ошибка валидации         |
-| 401 | Unauthorized - Не авторизован          |
-| 403 | Forbidden - Доступ запрещен            |
-| 404 | Not Found - Ресурс не найден           |
-| 409 | Conflict - Конфликт данных             |
-| 429 | Too Many Requests - Превышен лимит     |
-| 500 | Internal Server Error - Ошибка сервера |
+| 200 | OK - Successful request                |
+| 201 | Created - Resource created             |
+| 400 | Bad Request - Validation error         |
+| 401 | Unauthorized - Not authorized          |
+| 403 | Forbidden - Access denied              |
+| 404 | Not Found - Resource not found         |
+| 409 | Conflict - Data conflict               |
+| 429 | Too Many Requests - Rate limit exceeded |
+| 500 | Internal Server Error - Server error   |
 
-### Коды ошибок
+### Error Codes
 
-| Код                   | HTTP | Описание                  |
+| Code                   | HTTP | Description           |
 | --------------------- | ---- | ------------------------- |
-| `INTERNAL_ERROR`      | 500  | Внутренняя ошибка сервера |
-| `VALIDATION_ERROR`    | 400  | Ошибка валидации          |
-| `UNAUTHORIZED`        | 401  | Не авторизован            |
-| `FORBIDDEN`           | 403  | Доступ запрещен           |
-| `NOT_FOUND`           | 404  | Ресурс не найден          |
-| `ALREADY_EXISTS`      | 409  | Ресурс уже существует     |
-| `RATE_LIMIT_EXCEEDED` | 429  | Превышен лимит запросов   |
+| `INTERNAL_ERROR`      | 500  | Internal server error     |
+| `VALIDATION_ERROR`    | 400  | Validation error          |
+| `UNAUTHORIZED`        | 401  | Not authorized            |
+| `FORBIDDEN`           | 403  | Access denied             |
+| `NOT_FOUND`           | 404  | Resource not found        |
+| `ALREADY_EXISTS`      | 409  | Resource already exists   |
+| `RATE_LIMIT_EXCEEDED` | 429  | Rate limit exceeded       |
 
-### Пагинация
+### Pagination
 
-Для списков используется пагинация:
+Lists use pagination:
 
-**Query параметры:**
+**Query Parameters:**
 
-- `page` - номер страницы (начиная с 1)
-- `limit` - количество элементов на странице
+- `page` - page number (starting from 1)
+- `limit` - items per page
 
-**Ответ:**
+**Response:**
 
 ```json
 {
@@ -122,9 +122,9 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## 🚀 Быстрый старт
+## 🚀 Quick Start
 
-### 1. Регистрация
+### 1. Register
 
 ```bash
 curl -X POST https://api.carehub.cy/auth/register \
@@ -132,12 +132,12 @@ curl -X POST https://api.carehub.cy/auth/register \
   -d '{
     "email": "user@example.com",
     "password": "password123",
-    "name": "Иван Петров",
+    "name": "John Doe",
     "role": "organizer"
   }'
 ```
 
-### 2. Вход
+### 2. Login
 
 ```bash
 curl -X POST https://api.carehub.cy/auth/login \
@@ -148,26 +148,26 @@ curl -X POST https://api.carehub.cy/auth/login \
   }'
 ```
 
-### 3. Использование токена
+### 3. Use Token
 
 ```bash
 curl -X GET https://api.carehub.cy/auth/me \
   -H "Authorization: Bearer <access_token>"
 ```
 
-## 📝 Примечания
+## 📝 Notes
 
-- Все даты в формате ISO 8601: `2024-11-15T10:30:00.000Z`
-- Все ID в формате UUID: `123e4567-e89b-12d3-a456-426614174000`
-- Координаты: `lat` (широта -90 до 90), `lng` (долгота -180 до 180)
+- All dates in ISO 8601 format: `2024-11-15T10:30:00.000Z`
+- All IDs in UUID format: `123e4567-e89b-12d3-a456-426614174000`
+- Coordinates: `lat` (latitude -90 to 90), `lng` (longitude -180 to 180)
 
-## 🔗 Дополнительные ресурсы
+## 🔗 Additional Resources
 
-- [TypeScript контракты](../../contracts/) - Типы для TypeScript
-- [Примеры JSON](../../contracts/api-responses.json) - Полные примеры ответов
-- [Postman коллекция](#) - Импорт в Postman (TODO)
+- [TypeScript Contracts](../../contracts/) - Types for TypeScript
+- [JSON Examples](../../contracts/api-responses.json) - Complete response examples
+- [Postman Collection](#) - Import into Postman (TODO)
 
 ---
 
-**Версия API:** 1.0.0  
-**Последнее обновление:** 2024-11-15
+**API Version:** 1.0.0  
+**Last Updated:** 2024-11-15

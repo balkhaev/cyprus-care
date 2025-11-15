@@ -1,20 +1,20 @@
-# Аутентификация и пользователи
+# Authentication and Users
 
-API для регистрации, входа и управления профилем пользователя.
+API for user registration, login, and profile management.
 
 ## Endpoints
 
-- [POST /auth/register](#post-authregister) - Регистрация
-- [POST /auth/login](#post-authlogin) - Вход
-- [POST /auth/logout](#post-authlogout) - Выход
-- [GET /auth/me](#get-authme) - Получить текущего пользователя
-- [POST /auth/refresh](#post-authrefresh) - Обновить токен
+- [POST /auth/register](#post-authregister) - Register
+- [POST /auth/login](#post-authlogin) - Login
+- [POST /auth/logout](#post-authlogout) - Logout
+- [GET /auth/me](#get-authme) - Get current user
+- [POST /auth/refresh](#post-authrefresh) - Refresh token
 
 ---
 
 ## POST /auth/register
 
-Регистрация нового пользователя в системе.
+Register a new user in the system.
 
 ### Request
 
@@ -30,19 +30,31 @@ Content-Type: application/json
 {
   "email": "organizer@example.com",
   "password": "securePassword123",
-  "name": "Иван Петров",
+  "first_name": "John",
+  "last_name": "Doe",
   "role": "organizer",
-  "phone": "+357 99 123 456"
+  "phone": "+357 99 123 456",
+  "municipality": "Limassol",
+  "is_organization": false,
+  "organization_name": ""
 }
 ```
 
-**Поля:**
+**Fields:**
 
-- `email` (string, required) - Email пользователя
-- `password` (string, required) - Пароль (минимум 8 символов)
-- `name` (string, required) - Полное имя пользователя
-- `role` (string, required) - Роль: `organizer`, `volunteer`, `beneficiary`
-- `phone` (string, optional) - Телефон в международном формате
+- `email` (string, required) - User email
+- `password` (string, required) - Password (minimum 8 characters)
+- `first_name` (string, required) - First name
+- `last_name` (string, required) - Last name
+- `role` (string, required) - Role: `organizer`, `volunteer`, `beneficiary`
+- `phone` (string, required) - Phone number in international format
+- `municipality` (string, required) - Municipality/city
+- `is_organization` (boolean, optional) - Whether user represents an organization
+- `organization_name` (string, optional) - Organization name if applicable
+- `volunteer_areas_of_interest` (string, optional) - Areas of interest (for volunteers)
+- `volunteer_services` (string, optional) - Services offered (for volunteers)
+- `interested_in_donations` (boolean, optional) - Interest in donations (for beneficiaries)
+- `association_name` (string, optional) - Association name (for beneficiaries)
 
 ### Response
 
@@ -53,15 +65,19 @@ Content-Type: application/json
   "success": true,
   "data": {
     "user": {
-      "id": "user-123e4567-e89b-12d3-a456-426614174000",
+      "id": 1,
+      "first_name": "John",
+      "last_name": "Doe",
       "email": "organizer@example.com",
-      "name": "Иван Петров",
       "role": "organizer",
       "phone": "+357 99 123 456",
-      "isActive": true,
-      "isEmailVerified": false,
-      "createdAt": "2024-11-15T10:30:00.000Z",
-      "updatedAt": "2024-11-15T10:30:00.000Z"
+      "municipality": "Limassol",
+      "is_organization": false,
+      "organization_name": "",
+      "volunteer_areas_of_interest": "",
+      "volunteer_services": "",
+      "interested_in_donations": false,
+      "association_name": ""
     },
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -77,7 +93,7 @@ Content-Type: application/json
   "success": false,
   "error": {
     "code": "ALREADY_EXISTS",
-    "message": "Пользователь с таким email уже существует",
+    "message": "User with this email already exists",
     "details": {
       "field": "email",
       "value": "organizer@example.com"
@@ -87,7 +103,7 @@ Content-Type: application/json
 }
 ```
 
-### Примеры
+### Examples
 
 **cURL:**
 
@@ -97,9 +113,12 @@ curl -X POST http://localhost:3000/api/auth/register \
   -d '{
     "email": "organizer@example.com",
     "password": "securePassword123",
-    "name": "Иван Петров",
+    "first_name": "John",
+    "last_name": "Doe",
     "role": "organizer",
-    "phone": "+357 99 123 456"
+    "phone": "+357 99 123 456",
+    "municipality": "Limassol",
+    "is_organization": false
   }'
 ```
 
@@ -112,16 +131,20 @@ const response = await fetch("/api/auth/register", {
   body: JSON.stringify({
     email: "organizer@example.com",
     password: "securePassword123",
-    name: "Иван Петров",
+    first_name: "John",
+    last_name: "Doe",
     role: "organizer",
     phone: "+357 99 123 456",
+    municipality: "Limassol",
+    is_organization: false,
+    organization_name: "",
   }),
 })
 
 const data = await response.json()
 if (data.success) {
   localStorage.setItem("accessToken", data.data.accessToken)
-  console.log("Зарегистрирован:", data.data.user)
+  console.log("Registered:", data.data.user)
 }
 ```
 
@@ -129,7 +152,7 @@ if (data.success) {
 
 ## POST /auth/login
 
-Вход в систему с получением JWT токенов.
+Login to the system and receive JWT tokens.
 
 ### Request
 
@@ -148,10 +171,10 @@ Content-Type: application/json
 }
 ```
 
-**Поля:**
+**Fields:**
 
-- `email` (string, required) - Email пользователя
-- `password` (string, required) - Пароль
+- `email` (string, required) - User email
+- `password` (string, required) - Password
 
 ### Response
 
@@ -162,15 +185,19 @@ Content-Type: application/json
   "success": true,
   "data": {
     "user": {
-      "id": "user-123e4567-e89b-12d3-a456-426614174000",
+      "id": 2,
+      "first_name": "Jane",
+      "last_name": "Smith",
       "email": "volunteer@example.com",
-      "name": "Мария Иванова",
       "role": "volunteer",
       "phone": "+357 99 234 567",
-      "isActive": true,
-      "isEmailVerified": true,
-      "createdAt": "2024-10-01T08:00:00.000Z",
-      "updatedAt": "2024-11-15T10:30:00.000Z"
+      "municipality": "Nicosia",
+      "is_organization": false,
+      "organization_name": "",
+      "volunteer_areas_of_interest": "Education,Healthcare",
+      "volunteer_services": "Teaching,Medical assistance",
+      "interested_in_donations": false,
+      "association_name": ""
     },
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -186,13 +213,13 @@ Content-Type: application/json
   "success": false,
   "error": {
     "code": "UNAUTHORIZED",
-    "message": "Неверный email или пароль"
+    "message": "Invalid email or password"
   },
   "timestamp": "2024-11-15T10:30:00.000Z"
 }
 ```
 
-### Примеры
+### Examples
 
 **cURL:**
 
@@ -228,7 +255,7 @@ if (data.success) {
 
 ## POST /auth/logout
 
-Выход из системы. Делает refresh токен недействительным.
+Logout from the system. Invalidates the refresh token.
 
 ### Request
 
@@ -253,13 +280,13 @@ Content-Type: application/json
 {
   "success": true,
   "data": {
-    "message": "Вы успешно вышли из системы"
+    "message": "Successfully logged out"
   },
   "timestamp": "2024-11-15T10:30:00.000Z"
 }
 ```
 
-### Примеры
+### Examples
 
 **cURL:**
 
@@ -288,7 +315,7 @@ localStorage.removeItem("refreshToken")
 
 ## GET /auth/me
 
-Получить информацию о текущем авторизованном пользователе.
+Get information about the currently authenticated user.
 
 ### Request
 
@@ -306,16 +333,19 @@ Authorization: Bearer <access_token>
 {
   "success": true,
   "data": {
-    "id": "user-123e4567-e89b-12d3-a456-426614174000",
+    "id": 1,
+    "first_name": "John",
+    "last_name": "Doe",
     "email": "organizer@example.com",
-    "name": "Иван Петров",
     "role": "organizer",
     "phone": "+357 99 123 456",
-    "organizerId": "org-123e4567-e89b-12d3-a456-426614174000",
-    "isActive": true,
-    "isEmailVerified": true,
-    "createdAt": "2024-10-01T08:00:00.000Z",
-    "updatedAt": "2024-11-15T10:30:00.000Z"
+    "municipality": "Limassol",
+    "is_organization": false,
+    "organization_name": "",
+    "volunteer_areas_of_interest": "",
+    "volunteer_services": "",
+    "interested_in_donations": false,
+    "association_name": ""
   },
   "timestamp": "2024-11-15T10:30:00.000Z"
 }
@@ -328,13 +358,13 @@ Authorization: Bearer <access_token>
   "success": false,
   "error": {
     "code": "UNAUTHORIZED",
-    "message": "Токен не предоставлен или истек"
+    "message": "Token not provided or expired"
   },
   "timestamp": "2024-11-15T10:30:00.000Z"
 }
 ```
 
-### Примеры
+### Examples
 
 **cURL:**
 
@@ -354,7 +384,7 @@ const response = await fetch("/api/auth/me", {
 
 const data = await response.json()
 if (data.success) {
-  console.log("Текущий пользователь:", data.data)
+  console.log("Current user:", data.data)
 }
 ```
 
@@ -362,7 +392,7 @@ if (data.success) {
 
 ## POST /auth/refresh
 
-Обновить access токен используя refresh токен.
+Refresh the access token using a refresh token.
 
 ### Request
 
@@ -380,9 +410,9 @@ Content-Type: application/json
 }
 ```
 
-**Поля:**
+**Fields:**
 
-- `refreshToken` (string, required) - Refresh токен
+- `refreshToken` (string, required) - Refresh token
 
 ### Response
 
@@ -406,13 +436,13 @@ Content-Type: application/json
   "success": false,
   "error": {
     "code": "TOKEN_EXPIRED",
-    "message": "Refresh токен истек, необходимо войти заново"
+    "message": "Refresh token expired, please login again"
   },
   "timestamp": "2024-11-15T10:30:00.000Z"
 }
 ```
 
-### Примеры
+### Examples
 
 **cURL:**
 
@@ -444,54 +474,63 @@ if (data.success) {
 
 ---
 
-## Типы данных
+## Data Types
 
 ### User
 
 ```typescript
 {
-  id: string;              // UUID
-  email: string;
-  name: string;
-  role: 'organizer' | 'volunteer' | 'beneficiary' | 'admin';
-  phone?: string;
-  organizerId?: string;    // Только для организаторов
-  isActive: boolean;
-  isEmailVerified: boolean;
-  createdAt: string;       // ISO 8601
-  updatedAt: string;       // ISO 8601
+  id: number // Numeric ID
+  first_name: string
+  last_name: string
+  email: string
+  role: "organizer" | "volunteer" | "beneficiary" | "admin"
+  phone: string
+  municipality: string // City/municipality
+
+  // Organization fields
+  is_organization: boolean
+  organization_name: string
+
+  // Volunteer-specific fields
+  volunteer_areas_of_interest: string // Comma-separated or JSON
+  volunteer_services: string // Comma-separated or JSON
+
+  // Beneficiary-specific fields
+  interested_in_donations: boolean
+  association_name: string
 }
 ```
 
-### Роли пользователей
+### User Roles
 
-- **organizer** - Организатор, создает и управляет площадками
-- **volunteer** - Волонтер, откликается на потребности
-- **beneficiary** - Бенефициар, получает помощь
-- **admin** - Администратор системы
+- **organizer** - Organizer, creates and manages venues
+- **volunteer** - Volunteer, responds to needs
+- **beneficiary** - Beneficiary, receives assistance
+- **admin** - System administrator
 
 ---
 
-## Ошибки
+## Errors
 
-### Общие ошибки
+### Common Errors
 
-- `VALIDATION_ERROR` (400) - Ошибка валидации данных
-- `UNAUTHORIZED` (401) - Не авторизован или токен истек
-- `ALREADY_EXISTS` (409) - Пользователь уже существует
-- `INTERNAL_ERROR` (500) - Внутренняя ошибка сервера
+- `VALIDATION_ERROR` (400) - Data validation error
+- `UNAUTHORIZED` (401) - Not authorized or token expired
+- `ALREADY_EXISTS` (409) - User already exists
+- `INTERNAL_ERROR` (500) - Internal server error
 
-### Примеры ошибок валидации
+### Validation Error Examples
 
 ```json
 {
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Ошибка валидации данных",
+    "message": "Data validation error",
     "details": {
-      "email": "Неверный формат email",
-      "password": "Пароль должен содержать минимум 8 символов"
+      "email": "Invalid email format",
+      "password": "Password must be at least 8 characters"
     }
   },
   "timestamp": "2024-11-15T10:30:00.000Z"

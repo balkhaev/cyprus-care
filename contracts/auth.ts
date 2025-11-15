@@ -8,16 +8,53 @@ export type UserRole = 'organizer' | 'volunteer' | 'beneficiary' | 'admin';
 
 // === User === 
 
+/**
+ * User entity as returned from the backend API
+ * Based on the actual database schema
+ */
 export interface User {
-  id: UUID;
+  id: number; // Database uses numeric IDs, not UUIDs
+  first_name: string;
+  last_name: string;
   email: string;
-  name: string;
+  role: UserRole;
+  phone: string;
+  municipality: string;
+  
+  // Organization fields
+  is_organization: boolean;
+  organization_name: string;
+  
+  // Volunteer-specific fields
+  volunteer_areas_of_interest: string; // Comma-separated or JSON string
+  volunteer_services: string; // Comma-separated or JSON string
+  
+  // Beneficiary-specific fields
+  interested_in_donations: boolean;
+  association_name: string;
+}
+
+/**
+ * Computed helper to get full name
+ */
+export interface UserWithHelpers extends User {
+  fullName: string; // computed: first_name + last_name
+}
+
+/**
+ * Legacy User interface for backward compatibility
+ * Maps new structure to old field names
+ */
+export interface UserLegacy {
+  id: string; // Convert number to string
+  email: string;
+  name: string; // Maps to first_name + last_name
   role: UserRole;
   phone?: string;
   avatar?: string;
-  organizerId?: UUID; // For organizers
-  isActive: boolean;
-  isEmailVerified: boolean;
+  organizerId?: UUID; // Deprecated
+  isActive: boolean; // Always true if user exists
+  isEmailVerified: boolean; // Assume true
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -38,10 +75,23 @@ export interface UserProfile extends User {
 export interface RegisterRequest {
   email: string;
   password: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   role: UserRole;
-  phone?: string;
-  organizerId?: UUID;
+  phone: string;
+  municipality: string;
+  
+  // Organization fields (optional)
+  is_organization?: boolean;
+  organization_name?: string;
+  
+  // Volunteer fields (optional)
+  volunteer_areas_of_interest?: string;
+  volunteer_services?: string;
+  
+  // Beneficiary fields (optional)
+  interested_in_donations?: boolean;
+  association_name?: string;
 }
 
 export interface RegisterResponse {
@@ -135,11 +185,26 @@ export interface ChangePasswordResponse {
 // === Profile Update ===
 
 export interface UpdateProfileRequest {
-  name?: string;
+  first_name?: string;
+  last_name?: string;
   phone?: string;
-  avatar?: string;
+  municipality?: string;
+  
+  // Organization fields
+  is_organization?: boolean;
+  organization_name?: string;
+  
+  // Volunteer fields
+  volunteer_areas_of_interest?: string;
+  volunteer_services?: string;
+  
+  // Beneficiary fields
+  interested_in_donations?: boolean;
+  association_name?: string;
+  
+  // Extended profile (if supported)
   bio?: string;
-  location?: string;
+  avatar?: string;
   languages?: string[];
   skills?: string[];
   availability?: {
@@ -211,3 +276,54 @@ export type AuthEndpoints = {
     response: ApiResponse<CheckSessionResponse>;
   };
 };
+
+// === Helper functions ===
+
+/**
+ * Convert User to legacy format for backward compatibility
+ */
+export function userToLegacy(user: User): UserLegacy {
+  return {
+    id: user.id.toString(),
+    email: user.email,
+    name: `${user.first_name} ${user.last_name}`.trim(),
+    role: user.role,
+    phone: user.phone || undefined,
+    isActive: true,
+    isEmailVerified: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+/**
+ * Get full name from user
+ */
+export function getUserFullName(user: User): string {
+  return `${user.first_name} ${user.last_name}`.trim();
+}
+
+/**
+ * Parse volunteer areas of interest
+ */
+export function parseVolunteerAreas(areasString: string): string[] {
+  if (!areasString) return [];
+  try {
+    return JSON.parse(areasString);
+  } catch {
+    return areasString.split(',').map(s => s.trim()).filter(Boolean);
+  }
+}
+
+/**
+ * Parse volunteer services
+ */
+export function parseVolunteerServices(servicesString: string): string[] {
+  if (!servicesString) return [];
+  try {
+    return JSON.parse(servicesString);
+  } catch {
+    return servicesString.split(',').map(s => s.trim()).filter(Boolean);
+  }
+}
+

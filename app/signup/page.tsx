@@ -64,13 +64,87 @@ export default function SignupPage() {
       });
 
       if (res.ok) {
-        router.push('/login');
+        const data = await res.json();
+        
+        // Django REST Framework may return token on registration
+        if (data.token) {
+          localStorage.setItem('authToken', data.token);
+          
+          // Fetch user profile if available
+          if (data.user) {
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+          } else {
+            // Try to fetch user profile
+            try {
+              const userRes = await fetch(`${API_BASE_URL}/api/me/`, {
+                headers: {
+                  'Authorization': `Token ${data.token}`,
+                  'Content-Type': 'application/json',
+                },
+              });
+              
+              if (userRes.ok) {
+                const user = await userRes.json();
+                localStorage.setItem('currentUser', JSON.stringify(user));
+              }
+            } catch (userErr) {
+              console.error('Error fetching user profile:', userErr);
+            }
+          }
+          
+          // Redirect to map if token received, otherwise to login
+          if (data.token) {
+            router.push('/map');
+          } else {
+            router.push('/login');
+          }
+        } else {
+          // No token returned, redirect to login
+          router.push('/login');
+        }
       } else {
-        const data = await res.json().catch(() => ({}));
-        setError(data.message || data.error || 'Registration failed. Please try again.');
+        // Handle Django REST Framework validation errors
+        const errorData = await res.json().catch(() => ({}));
+        
+        // Django returns field-specific errors
+        const errorMessages: string[] = [];
+        
+        if (errorData.non_field_errors) {
+          const nonFieldErrors = Array.isArray(errorData.non_field_errors) 
+            ? errorData.non_field_errors 
+            : [errorData.non_field_errors];
+          errorMessages.push(...nonFieldErrors);
+        }
+        
+        // Collect field-specific errors
+        Object.keys(errorData).forEach((field) => {
+          if (field !== 'non_field_errors' && errorData[field]) {
+            const fieldErrors = Array.isArray(errorData[field]) 
+              ? errorData[field] 
+              : [errorData[field]];
+            fieldErrors.forEach((err: string) => {
+              errorMessages.push(`${field.replace(/_/g, ' ')}: ${err}`);
+            });
+          }
+        });
+        
+        if (errorMessages.length > 0) {
+          setError(errorMessages.join('. '));
+        } else if (errorData.error) {
+          setError(typeof errorData.error === 'string' 
+            ? errorData.error 
+            : errorData.error.message || 'Registration failed. Please check your information.');
+        } else if (errorData.message) {
+          setError(errorData.message);
+        } else if (errorData.detail) {
+          setError(errorData.detail);
+        } else {
+          setError('Registration failed. Please check your information and try again.');
+        }
       }
     } catch (err) {
-      setError('Network error. Please check your connection.');
+      console.error('Registration error:', err);
+      setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }

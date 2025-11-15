@@ -1,5 +1,6 @@
 // API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://example.com';
+// Set NEXT_PUBLIC_API_URL in .env.local (e.g., http://localhost:8000 for local Django backend)
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // Import mock mode flag
 import { USE_MOCK_API } from './mockData';

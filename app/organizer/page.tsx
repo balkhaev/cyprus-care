@@ -208,6 +208,23 @@ export default function OrganizerPage() {
                   </p>
                 </div>
               </Link>
+
+              <Link
+                href="/organizer/custom-functions"
+                className="flex items-start gap-4 p-4 rounded-lg border-2 border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
+              >
+                <div className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+                  <Plus className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
+                    Custom Functions
+                  </h4>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                    Manage custom function types
+                  </p>
+                </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -215,3 +232,4 @@ export default function OrganizerPage() {
     </div>
   );
 }
+

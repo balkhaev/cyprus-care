@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Clock, Edit, Trash2, Building2, Warehouse, Home, Phone, Mail } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Edit, Trash2, Building2, Warehouse, Home, Plus } from 'lucide-react';
 import type { Venue, VenueType } from '@/types/venue';
+import { fetchVenueById, deleteVenue } from '@/lib/api/venues';
+import { removeVenueFunction } from '@/lib/api/venue-functions';
+import FunctionCard from '@/components/venue-functions/FunctionCard';
 
 // Dynamic map import
 const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
@@ -19,32 +22,6 @@ const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
   ),
 });
 
-// Temporary test data
-const mockVenues: Record<string, Venue> = {
-  '1': {
-    id: '1',
-    title: 'Central Collection Point',
-    description: 'Main collection point for humanitarian aid in the city center. Items, food, medicine and other necessary aid for those in need are accepted here.',
-    type: 'collection_point',
-    location: {
-      lat: 55.7558,
-      lng: 37.6173,
-      address: 'Red Square, 1, Moscow',
-    },
-    operatingHours: [
-      { dayOfWeek: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Tuesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Wednesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Thursday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Friday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Saturday', openTime: '10:00', closeTime: '16:00', isClosed: false },
-      { dayOfWeek: 'Sunday', openTime: '00:00', closeTime: '00:00', isClosed: true },
-    ],
-    organizerId: 'org-1',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15'),
-  },
-};
 
 const venueTypeIcons: Record<VenueType, React.ReactNode> = {
   collection_point: <Building2 className="h-6 w-6" />,
@@ -72,24 +49,45 @@ export default function VenueDetailPage({ params }: PageProps) {
   const [venue, setVenue] = useState<Venue | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingFunctionId, setDeletingFunctionId] = useState<string | null>(null);
 
   useEffect(() => {
-    params.then((resolvedParams) => {
-      // Simulate data loading
-      setTimeout(() => {
-        const venueData = mockVenues[resolvedParams.id];
-        setVenue(venueData || null);
-        setIsLoading(false);
-      }, 500);
-    });
-  }, [params]);
+    loadVenue();
+  }, []);
+
+  const loadVenue = async () => {
+    const resolvedParams = await params;
+    const venueData = await fetchVenueById(resolvedParams.id);
+    setVenue(venueData);
+    setIsLoading(false);
+  };
 
   const handleDelete = async () => {
-    // Venue deletion logic
-    console.log('Deleting venue:', venue?.id);
-    setShowDeleteModal(false);
-    // Redirect to list
-    window.location.href = '/venues';
+    if (!venue) return;
+    
+    const success = await deleteVenue(venue.id);
+    if (success) {
+      window.location.href = '/venues';
+    } else {
+      alert('Failed to delete venue');
+      setShowDeleteModal(false);
+    }
+  };
+
+  const handleDeleteFunction = async (functionId: string) => {
+    if (!venue || !confirm('Are you sure you want to delete this function?')) return;
+    
+    setDeletingFunctionId(functionId);
+    const success = await removeVenueFunction(venue.id, functionId);
+    
+    if (success) {
+      // Reload venue data
+      await loadVenue();
+    } else {
+      alert('Failed to delete function');
+    }
+    
+    setDeletingFunctionId(null);
   };
 
   if (isLoading) {
@@ -280,6 +278,49 @@ export default function VenueDetailPage({ params }: PageProps) {
                 );
               })}
             </div>
+          </div>
+
+          {/* Venue Functions */}
+          <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                Functions ({venue.functions?.length || 0})
+              </h2>
+              <Link
+                href={`/venues/${venue.id}/functions/new`}
+                className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Function
+              </Link>
+            </div>
+
+            {venue.functions && venue.functions.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {venue.functions.map((func) => (
+                  <FunctionCard
+                    key={func.id}
+                    venueFunction={func}
+                    venueId={venue.id}
+                    onDelete={() => handleDeleteFunction(func.id)}
+                    showActions={true}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-zinc-600 dark:text-zinc-400 mb-4">
+                  No functions added yet. Add functions to specify what this venue collects, distributes, or what services are needed.
+                </p>
+                <Link
+                  href={`/venues/${venue.id}/functions/new`}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+                >
+                  <Plus className="h-5 w-5" />
+                  Add First Function
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Creation info */}

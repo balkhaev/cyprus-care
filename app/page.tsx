@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { MapPin, LogIn, Building2, User } from "lucide-react";
 
 export default function Home() {
   return (
+<<<<<<< Updated upstream
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900 font-sans">
       <main className="flex min-h-screen w-full max-w-4xl flex-col items-center justify-between py-20 px-8 sm:px-16">
         <Image
@@ -20,11 +20,22 @@ export default function Home() {
           </h1>
           <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
             Platform for coordinating humanitarian aid, managing collection points and shelter maps.
+=======
+    <div className="flex min-h-screen items-center justify-center bg-bgsoft text-slate-900 font-sans">
+      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-8 sm:px-16">
+        <div className="flex flex-col items-center gap-6 text-center">
+          <h1 className="text-2xl md:text-3xl font-bold leading-tight tracking-tight text-slate-900">
+            Welcome to Care
+          </h1>
+          <p className="max-w-md text-sm md:text-base leading-8 text-slate-600">
+            Modern application with authentication system and interactive maps.
+>>>>>>> Stashed changes
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base font-medium w-full max-w-2xl">
           <Link
             href="/login"
+<<<<<<< Updated upstream
             className="flex h-14 items-center justify-center gap-3 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-6 text-white dark:text-zinc-900 transition-all hover:bg-zinc-800 dark:hover:bg-zinc-200 hover:shadow-lg"
           >
             <LogIn className="h-5 w-5" />
@@ -50,6 +61,19 @@ export default function Home() {
           >
             <MapPin className="h-5 w-5" />
             Map
+=======
+            className="flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-primary px-8 text-white transition-all hover:bg-primary/80 hover:shadow-lg sm:w-auto"
+          >
+            <LogIn className="h-5 w-5" />
+            Sign In
+          </Link>
+          <Link
+            href="/map"
+            className="flex h-14 w-full items-center justify-center gap-3 rounded-xl border-2 border-primary/30 px-8 text-slate-900 transition-all hover:border-primary hover:bg-white sm:w-auto"
+          >
+            <MapPin className="h-5 w-5" />
+            Open Map
+>>>>>>> Stashed changes
           </Link>
         </div>
       </main>

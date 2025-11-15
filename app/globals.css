@@ -26,13 +26,13 @@
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
+  --color-accent: #4CAF50;
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
+  --color-secondary: #1E88E5;
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
+  --color-primary: #E36414;
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -41,6 +41,10 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Mediterranean Relief UI Colors */
+  --color-bgsoft: #F9F5F1;
+  --color-danger: #D32F2F;
 }
 
 :root {
@@ -65,6 +69,7 @@
   
   /* Popover */
   --popover: oklch(1 0 0);
+<<<<<<< Updated upstream
   --popover-foreground: oklch(0.2 0.01 60);
   
   /* Muted: Light warm gray */
@@ -99,6 +104,34 @@
   --sidebar-accent-foreground: oklch(0.2 0.01 60);
   --sidebar-border: oklch(0.88 0.01 60);
   --sidebar-ring: oklch(0.62 0.16 45);
+=======
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: #E36414;
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: #1E88E5;
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: #4CAF50;
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: #D32F2F;
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.705 0.015 286.067);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-primary: #E36414;
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.967 0.001 286.375);
+  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-ring: oklch(0.705 0.015 286.067);
+>>>>>>> Stashed changes
 }
 
 .dark {

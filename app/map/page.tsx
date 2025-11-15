@@ -9,11 +9,18 @@ import dynamic from 'next/dynamic';
 const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
   ssr: false,
   loading: () => (
+<<<<<<< Updated upstream
     <div className="flex h-full items-center justify-center bg-zinc-100 dark:bg-zinc-900">
       <div className="text-center p-8">
         <div className="animate-spin rounded-full h-16 w-16 border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100 mx-auto mb-4"></div>
         <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Loading map...</p>
         <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2">Please wait</p>
+=======
+    <div className="flex h-full items-center justify-center bg-bgsoft">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <p className="text-slate-600">Загрузка карты...</p>
+>>>>>>> Stashed changes
       </div>
     </div>
   ),
@@ -126,14 +133,20 @@ export default function MapPage() {
   };
 
   return (
+<<<<<<< Updated upstream
     <div className="relative h-screen w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 z-[1000] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
+=======
+    <div className="relative h-screen w-full overflow-hidden bg-bgsoft">
+      {/* Шапка */}
+      <header className="absolute top-0 left-0 right-0 z-[1000] bg-white/95 backdrop-blur-sm border-b border-primary/10 shadow-sm">
+>>>>>>> Stashed changes
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <MapPin className="h-6 w-6 text-zinc-900 dark:text-zinc-100" />
-            <span className="font-bold text-xl text-zinc-900 dark:text-zinc-100">
+            <MapPin className="h-6 w-6 text-primary" />
+            <span className="font-bold text-xl text-slate-900">
               Care Map
             </span>
           </Link>
@@ -141,13 +154,13 @@ export default function MapPage() {
           {/* Search (desktop) */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search on map..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-primary/20 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               />
             </div>
           </div>
@@ -156,7 +169,7 @@ export default function MapPage() {
           <div className="hidden md:flex items-center gap-4">
             <Link 
               href="/login"
-              className="flex items-center gap-2 px-4 py-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 transition-colors"
             >
               <User className="h-5 w-5" />
               <span>Sign In</span>
@@ -166,8 +179,13 @@ export default function MapPage() {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+<<<<<<< Updated upstream
             className="md:hidden p-2 text-zinc-900 dark:text-zinc-100"
             aria-label="Menu"
+=======
+            className="md:hidden p-2 text-slate-900"
+            aria-label="Меню"
+>>>>>>> Stashed changes
           >
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -175,23 +193,28 @@ export default function MapPage() {
 
         {/* Mobile menu */}
         {isMenuOpen && (
+<<<<<<< Updated upstream
           <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-4">
             {/* Search (mobile) */}
+=======
+          <div className="md:hidden border-t border-primary/10 bg-white p-4 space-y-4">
+            {/* Поиск (мобильный) */}
+>>>>>>> Stashed changes
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search on map..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-primary/20 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* Links */}
             <Link 
               href="/login"
-              className="flex items-center gap-2 px-4 py-2 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-slate-900 hover:bg-bgsoft rounded-lg transition-colors"
             >
               <User className="h-5 w-5" />
               <span>Sign In</span>
@@ -214,20 +237,29 @@ export default function MapPage() {
 
         {/* Selected marker info */}
         {selectedMarker && (
+<<<<<<< Updated upstream
           <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-80 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 p-4 z-[1000] animate-slide-up">
+=======
+          <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-80 bg-white rounded-2xl shadow-xl border border-primary/10 p-4 z-[1000]">
+>>>>>>> Stashed changes
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1">
+                <h3 className="text-lg font-bold text-slate-900 mb-1">
                   {selectedMarker.title}
                 </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="text-sm text-slate-600">
                   {selectedMarker.description}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedMarker(null)}
+<<<<<<< Updated upstream
                 className="p-1 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
                 aria-label="Close"
+=======
+                className="p-1 text-slate-500 hover:text-slate-700 transition-colors"
+                aria-label="Закрыть"
+>>>>>>> Stashed changes
               >
                 <X className="h-5 w-5" />
               </button>
@@ -235,12 +267,17 @@ export default function MapPage() {
             <div className="flex gap-2">
               <button 
                 onClick={handleBuildRoute}
-                className="flex-1 px-3 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+                className="flex-1 px-3 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/80 transition-colors"
               >
                 Build Route
               </button>
+<<<<<<< Updated upstream
               <button className="px-3 py-2 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-lg text-sm font-medium hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
                 Details
+=======
+              <button className="px-3 py-2 bg-secondary text-white rounded-lg text-sm font-semibold hover:bg-secondary/80 transition-colors">
+                Подробнее
+>>>>>>> Stashed changes
               </button>
             </div>
           </div>
@@ -249,6 +286,7 @@ export default function MapPage() {
         {/* "My Location" button */}
         <button
           onClick={handleLocateMe}
+<<<<<<< Updated upstream
           className="absolute right-6 p-3 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all z-[999] hover:scale-110"
           style={{ 
             bottom: selectedMarker ? 'calc(24px + 160px)' : '24px',
@@ -256,14 +294,25 @@ export default function MapPage() {
           }}
           title="My Location"
           aria-label="My Location"
+=======
+          className="absolute bottom-6 right-6 p-3 bg-white text-slate-900 rounded-full shadow-lg border border-primary/10 hover:bg-bgsoft transition-all z-[999] hover:scale-110"
+          style={{ marginBottom: selectedMarker ? '160px' : '0' }}
+          title="Моё местоположение"
+          aria-label="Моё местоположение"
+>>>>>>> Stashed changes
         >
           <Navigation className="h-6 w-6" />
         </button>
 
         {/* Location indicator */}
         {userLocation && (
+<<<<<<< Updated upstream
           <div className="absolute top-20 left-1/2 -translate-x-1/2 px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-full shadow-lg z-[999]">
             Location detected
+=======
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 px-4 py-2 bg-accent text-white text-sm font-semibold rounded-full shadow-lg z-[999] animate-fade-in">
+            Местоположение определено
+>>>>>>> Stashed changes
           </div>
         )}
       </div>

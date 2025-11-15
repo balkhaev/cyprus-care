@@ -9,7 +9,7 @@ interface LocationPickerMapProps {
 }
 
 export default function LocationPickerMap({
-  initialLocation = { lat: 55.7558, lng: 37.6173 },
+  initialLocation = { lat: 35.1264, lng: 33.4299 },
   onLocationSelect,
 }: LocationPickerMapProps) {
   const mapRef = useRef<L.Map | null>(null);

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { ArrowLeft, Building2, Warehouse, Home, Save } from 'lucide-react';
 import type { VenueType, VenueLocation, OperatingHours, Venue } from '@/types/venue';
+import { fetchVenueById, updateVenue } from '@/lib/api/venues';
 
 // Dynamic map import
 const LocationPickerMap = dynamic(() => import('@/components/LocationPickerMap'), {
@@ -20,32 +21,6 @@ const LocationPickerMap = dynamic(() => import('@/components/LocationPickerMap')
   ),
 });
 
-// Temporary test data
-const mockVenues: Record<string, Venue> = {
-  '1': {
-    id: '1',
-    title: 'Central Collection Point',
-    description: 'Main collection point for humanitarian aid in the city center. Items, food, medicine and other necessary aid for those in need are accepted here.',
-    type: 'collection_point',
-    location: {
-      lat: 55.7558,
-      lng: 37.6173,
-      address: 'Red Square, 1, Moscow',
-    },
-    operatingHours: [
-      { dayOfWeek: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Tuesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Wednesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Thursday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Friday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Saturday', openTime: '10:00', closeTime: '16:00', isClosed: false },
-      { dayOfWeek: 'Sunday', openTime: '00:00', closeTime: '00:00', isClosed: true },
-    ],
-    organizerId: 'org-1',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15'),
-  },
-};
 
 const venueTypes: Array<{ value: VenueType; label: string; icon: React.ReactNode; description: string }> = [
   {
@@ -85,32 +60,34 @@ export default function EditVenuePage({ params }: PageProps) {
   });
 
   const [location, setLocation] = useState<VenueLocation>({
-    lat: 55.7558,
-    lng: 37.6173,
+    lat: 35.1264,
+    lng: 33.4299,
     address: '',
   });
 
   const [operatingHours, setOperatingHours] = useState<OperatingHours[]>([]);
 
   useEffect(() => {
-    params.then((resolvedParams) => {
-      // Simulate data loading
-      setTimeout(() => {
-        const venueData = mockVenues[resolvedParams.id];
-        if (venueData) {
-          setVenue(venueData);
-          setFormData({
-            title: venueData.title,
-            description: venueData.description,
-            type: venueData.type,
-          });
-          setLocation(venueData.location);
-          setOperatingHours(venueData.operatingHours);
-        }
-        setIsLoading(false);
-      }, 500);
-    });
-  }, [params]);
+    loadVenue();
+  }, []);
+
+  const loadVenue = async () => {
+    const resolvedParams = await params;
+    const venueData = await fetchVenueById(resolvedParams.id);
+    
+    if (venueData) {
+      setVenue(venueData);
+      setFormData({
+        title: venueData.title,
+        description: venueData.description,
+        type: venueData.type,
+      });
+      setLocation(venueData.location);
+      setOperatingHours(venueData.operatingHours);
+    }
+    
+    setIsLoading(false);
+  };
 
   const handleLocationSelect = (newLocation: VenueLocation) => {
     setLocation(newLocation);
@@ -124,23 +101,25 @@ export default function EditVenuePage({ params }: PageProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!venue) return;
+    
     setIsSubmitting(true);
 
-    // Simulate data submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      await updateVenue(venue.id, {
+        ...formData,
+        location,
+        operatingHours,
+      });
 
-    const updatedVenue = {
-      ...venue,
-      ...formData,
-      location,
-      operatingHours,
-      updatedAt: new Date(),
-    };
-
-    console.log('Updated venue:', updatedVenue);
-
-    // Redirect to detail view
-    router.push(`/venues/${venue?.id}`);
+      // Redirect to detail view
+      router.push(`/venues/${venue.id}`);
+    } catch (error) {
+      console.error('Failed to update venue:', error);
+      alert('Failed to update venue');
+      setIsSubmitting(false);
+    }
   };
 
   if (isLoading) {

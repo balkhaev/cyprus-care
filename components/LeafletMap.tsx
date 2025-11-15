@@ -86,10 +86,15 @@ export default function LeafletMap({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!mapContainerRef.current) return;
-    if (isInitialized.current) return;
+    if (isInitialized.current) {
+      console.log('Map already initialized, skipping...')
+      return;
+    }
 
     // Fix icons
     fixLeafletIcons();
+
+    console.log('Initializing map...')
 
     try {
       // Create map
@@ -115,6 +120,31 @@ export default function LeafletMap({
 
       console.log('Map initialized successfully');
 
+      // Add zoom listener for debugging
+      map.on('zoomend', () => {
+        const currentZoom = map.getZoom();
+        const bounds = map.getBounds();
+        console.log('Zoom changed to:', currentZoom, 'Bounds:', bounds);
+        
+        // Check markers count after zoom
+        if (markersLayerRef.current) {
+          const layerCount = markersLayerRef.current.getLayers().length;
+          console.log(`Markers in layer after zoom: ${layerCount}`);
+          
+          // Check if markers are actually on the map
+          let visibleCount = 0;
+          markersLayerRef.current.eachLayer((layer) => {
+            if (layer instanceof L.Marker) {
+              const pos = layer.getLatLng();
+              const isInBounds = bounds.contains(pos);
+              if (isInBounds) visibleCount++;
+              console.log(`Marker at: ${pos.lat}, ${pos.lng}, in bounds: ${isInBounds}`);
+            }
+          });
+          console.log(`Markers in viewport: ${visibleCount} / ${layerCount}`);
+        }
+      });
+
       // Handle size change
       setTimeout(() => {
         if (map) {
@@ -127,13 +157,15 @@ export default function LeafletMap({
 
     // Cleanup
     return () => {
-      if (mapRef.current) {
+      if (mapRef.current && isInitialized.current) {
+        console.log('Cleaning up map...')
         try {
           mapRef.current.remove();
         } catch (error) {
           console.error('Error removing map:', error);
         }
         mapRef.current = null;
+        markersLayerRef.current = null;
         isInitialized.current = false;
       }
     };
@@ -141,11 +173,25 @@ export default function LeafletMap({
 
   // Update markers
   useEffect(() => {
-    if (!mapRef.current || !markersLayerRef.current) return;
+    if (!mapRef.current || !markersLayerRef.current) {
+      console.log('LeafletMap: Map or markers layer not ready, skipping update')
+      return;
+    }
+
+    console.log('LeafletMap: Updating markers, received:', markers.length, 'Triggered by dependency change')
+    console.log('Dependencies:', {
+      markersCount: markers.length,
+      highlightDistributionPoints,
+      showETA,
+      hasUserLocation: !!userLocation,
+      hasOnMarkerClick: !!onMarkerClick
+    })
 
     try {
       // Clear previous markers
       markersLayerRef.current.clearLayers();
+
+      let addedCount = 0;
 
       // Add new markers
       markers.forEach((markerData) => {
@@ -254,10 +300,17 @@ export default function LeafletMap({
 
         if (markersLayerRef.current) {
           marker.addTo(markersLayerRef.current);
+          addedCount++;
         }
       });
 
-      console.log(`Added markers: ${markers.length}`);
+      console.log(`Added markers: ${addedCount} / ${markers.length}`);
+      
+      // Verify markers in layer
+      if (markersLayerRef.current) {
+        const layerCount = markersLayerRef.current.getLayers().length;
+        console.log(`Markers in layer after update: ${layerCount}`);
+      }
     } catch (error) {
       console.error('Error updating markers:', error);
     }
@@ -318,14 +371,47 @@ export default function LeafletMap({
     <>
       <div 
         ref={mapContainerRef} 
-        className="w-full h-full z-0"
-        style={{ minHeight: '400px' }}
+        className="w-full h-full absolute inset-0"
+        style={{ minHeight: '400px', zIndex: 0 }}
       />
       <style jsx global>{`
         .leaflet-container {
           height: 100%;
           width: 100%;
-          z-index: 0;
+          z-index: 0 !important;
+        }
+        
+        .leaflet-map-pane {
+          z-index: 1 !important;
+        }
+        
+        .leaflet-tile-pane {
+          z-index: 1 !important;
+        }
+        
+        .leaflet-overlay-pane {
+          z-index: 2 !important;
+        }
+        
+        .leaflet-shadow-pane {
+          z-index: 3 !important;
+        }
+        
+        .leaflet-marker-pane {
+          z-index: 4 !important;
+        }
+        
+        .leaflet-tooltip-pane {
+          z-index: 5 !important;
+        }
+        
+        .leaflet-popup-pane {
+          z-index: 6 !important;
+        }
+        
+        .leaflet-top,
+        .leaflet-bottom {
+          z-index: 100 !important;
         }
         
         .leaflet-popup-content-wrapper {
@@ -336,9 +422,15 @@ export default function LeafletMap({
           display: none;
         }
         
-        .user-location-marker {
-          background: transparent;
-          border: none;
+        .user-location-marker,
+        .distribution-point-marker {
+          background: transparent !important;
+          border: none !important;
+        }
+        
+        /* Ensure markers are always visible */
+        .leaflet-marker-icon {
+          z-index: 1000 !important;
         }
       `}</style>
     </>

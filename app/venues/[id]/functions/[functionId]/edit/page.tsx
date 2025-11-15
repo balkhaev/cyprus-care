@@ -18,7 +18,7 @@ import {
   updateVenueFunction,
 } from "@/lib/api/venue-functions"
 import { getCategoryPath } from "@/lib/api/item-categories"
-import ItemCategoryPicker from "@/components/venue-functions/ItemCategoryPicker"
+import ItemCategoryTreePicker from "@/components/venue-functions/ItemCategoryTreePicker"
 import ServiceSelector from "@/components/venue-functions/ServiceSelector"
 
 const defaultOperatingHours: OperatingHours[] = [
@@ -339,7 +339,7 @@ export default function EditFunctionPage({ params }: PageProps) {
                 <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
                   Add More Items
                 </h2>
-                <ItemCategoryPicker
+                <ItemCategoryTreePicker
                   selectedItems={selectedItems}
                   onItemsChange={setSelectedItems}
                 />

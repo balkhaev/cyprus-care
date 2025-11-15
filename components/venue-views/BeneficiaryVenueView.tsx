@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Users, Package, MapPin, CheckCircle } from 'lucide-react';
+import { Users, Package, CheckCircle } from 'lucide-react';
 import type { Venue, DistributionPointFunction } from '@/types/venue';
 import { getCommitmentsForFunction } from '@/lib/mock-data/responses';
 import { Card } from '@/components/ui/card';
@@ -156,20 +156,6 @@ export default function BeneficiaryVenueView({ venue, onCommit }: BeneficiaryVen
 
   return (
     <div className="space-y-4">
-      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <MapPin className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
-          <div>
-            <h3 className="font-semibold text-green-900 dark:text-green-100 mb-1">
-              Distribution Point
-            </h3>
-            <p className="text-sm text-green-800 dark:text-green-300">
-              This venue has items available for distribution. Click &quot;I will be there&quot; to help organizers plan ahead.
-            </p>
-          </div>
-        </div>
-      </div>
-      
       {distributionFunctions.length > 0 ? (
         <div className="space-y-4">
           {distributionFunctions.map(renderFunction)}

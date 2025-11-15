@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { ArrowLeft, Building2, Warehouse, Home, Save } from 'lucide-react';
 import type { VenueType, VenueLocation, OperatingHours, Venue } from '@/types/venue';
 import { fetchVenueById, updateVenue } from '@/lib/api/venues';
+import Header from '@/components/Header';
 
 // Dynamic map import
 const LocationPickerMap = dynamic(() => import('@/components/LocationPickerMap'), {
@@ -158,29 +159,25 @@ export default function EditVenuePage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       {/* Header */}
-      <header className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Link
-              href={`/venues/${venue.id}`}
-              className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />
-            </Link>
-            <div>
-              <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                Edit Venue
-              </h1>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
-                {venue.title}
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Form */}
       <main className="container mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto mb-6">
+          <Link
+            href={`/venues/${venue.id}`}
+            className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to {venue.title}
+          </Link>
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mt-4 mb-2">
+            Edit Venue
+          </h1>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Update the details for this venue
+          </p>
+        </div>
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8">
           {/* Basic information */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">

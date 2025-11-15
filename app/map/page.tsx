@@ -1,15 +1,17 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { MapPin, Navigation, Search, Menu, X, User } from "lucide-react"
+import { useState, useEffect, useMemo } from "react"
+import { Navigation, Search, Menu, X } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 import type { Venue } from "@/types/venue"
 import { fetchVenues } from "@/lib/api/venues"
 import { getCurrentUser } from "@/lib/mock-data/user-roles"
 import CategoryTreeFilter from "@/components/venue-functions/CategoryTreeFilter"
-import NavigationTabs from "@/components/Navigation"
+import Header from "@/components/Header"
 import type { MapMarker } from "@/components/LeafletMap"
+import { fetchCategoryHierarchy } from "@/lib/api/item-categories"
+import type { CategoryHierarchy } from "@/types/item-category"
 
 // Dynamic import of map component to avoid SSR issues
 const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
@@ -29,6 +31,29 @@ const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
   ),
 })
 
+// Helper function to get all descendant category IDs
+function getAllDescendantIds(categoryId: string, hierarchy: CategoryHierarchy[]): string[] {
+  const result: string[] = [categoryId]
+  
+  const findChildren = (id: string, nodes: CategoryHierarchy[]) => {
+    for (const node of nodes) {
+      if (node.category.id === id) {
+        node.children.forEach(child => {
+          result.push(child.category.id)
+          findChildren(child.category.id, [child])
+        })
+        return
+      }
+      if (node.children.length > 0) {
+        findChildren(id, node.children)
+      }
+    }
+  }
+  
+  findChildren(categoryId, hierarchy)
+  return result
+}
+
 export default function MapPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -42,66 +67,103 @@ export default function MapPage() {
   const [venues, setVenues] = useState<Venue[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [currentUser] = useState(() => getCurrentUser())
+  const [categoryHierarchy, setCategoryHierarchy] = useState<CategoryHierarchy[]>([])
 
   const loadVenues = async () => {
     const data = await fetchVenues()
+    console.log('Loaded venues from API:', data.length, data)
     setVenues(data)
+  }
+
+  const loadCategoryHierarchy = async () => {
+    const data = await fetchCategoryHierarchy()
+    setCategoryHierarchy(data)
   }
 
   // Load venues from API
   useEffect(() => {
     loadVenues()
+    loadCategoryHierarchy()
   }, [])
 
-  // Filter venues by categories
-  const filteredVenues = venues.filter((venue) => {
-    // Filter by selected categories
-    if (selectedCategories.length > 0) {
-      const hasSelectedCategory = venue.functions.some((func) => {
-        if (
-          func.type === "collection_point" ||
-          func.type === "distribution_point"
-        ) {
-          return func.items.some((item) =>
-            selectedCategories.includes(item.categoryId)
-          )
-        }
-        if (func.type === "custom" && func.items) {
-          return func.items.some((item) =>
-            selectedCategories.includes(item.categoryId)
-          )
-        }
-        return false
-      })
-      if (!hasSelectedCategory) return false
-    }
+  // Filter venues by categories (memoized to prevent recalculation on every render)
+  const filteredVenues = useMemo(() => {
+    return venues.filter((venue) => {
+      // Filter by selected categories
+      if (selectedCategories.length > 0 && categoryHierarchy.length > 0) {
+        // Get all descendant IDs for selected categories (including parent and all children)
+        const allSelectedIds = new Set<string>()
+        selectedCategories.forEach(catId => {
+          const descendants = getAllDescendantIds(catId, categoryHierarchy)
+          descendants.forEach(id => allSelectedIds.add(id))
+        })
 
-    return true
-  })
+        // Check if venue has any functions with items
+        const hasFunctionsWithItems = venue.functions.some((func) => 
+          func.type === "collection_point" || 
+          func.type === "distribution_point" || 
+          (func.type === "custom" && func.items)
+        )
 
-  // Convert venues to markers
-  const markers: MapMarker[] = filteredVenues.map((venue) => {
-    // Check if venue has distribution point function
-    const hasDistributionPoint = venue.functions.some(
-      (func) => func.type === 'distribution_point'
-    )
-    
-    return {
-      id: venue.id,
-      lat: venue.location.lat,
-      lng: venue.location.lng,
-      title: venue.title,
-      description: venue.description,
-      venue: venue, // Include full venue object for rich popups
-      isDistributionPoint: hasDistributionPoint,
-    }
-  })
+        // If venue has no functions with items (e.g., only services_needed), always show it
+        if (!hasFunctionsWithItems) {
+          return true
+        }
+
+        // If venue has functions with items, check if any match selected categories (including descendants)
+        const hasSelectedCategory = venue.functions.some((func) => {
+          if (
+            func.type === "collection_point" ||
+            func.type === "distribution_point"
+          ) {
+            return func.items.some((item) =>
+              allSelectedIds.has(item.categoryId)
+            )
+          }
+          if (func.type === "custom" && func.items) {
+            return func.items.some((item) =>
+              allSelectedIds.has(item.categoryId)
+            )
+          }
+          return false
+        })
+        if (!hasSelectedCategory) return false
+      }
+
+      return true
+    })
+  }, [venues, selectedCategories, categoryHierarchy])
+
+  console.log('Venues:', venues.length, 'Filtered:', filteredVenues.length, 'Selected categories:', selectedCategories.length, 'Hierarchy loaded:', categoryHierarchy.length > 0)
+
+  // Convert venues to markers (memoized to prevent recreation on every render)
+  const markers: MapMarker[] = useMemo(() => {
+    console.log('Recalculating markers from', filteredVenues.length, 'venues')
+    return filteredVenues.map((venue) => {
+      // Check if venue has distribution point function
+      const hasDistributionPoint = venue.functions.some(
+        (func) => func.type === "distribution_point"
+      )
+
+      return {
+        id: venue.id,
+        lat: venue.location.lat,
+        lng: venue.location.lng,
+        title: venue.title,
+        description: venue.description,
+        venue: venue, // Include full venue object for rich popups
+        isDistributionPoint: hasDistributionPoint,
+      }
+    })
+  }, [filteredVenues])
 
   // Determine if we should highlight distribution points (for beneficiaries)
-  const highlightDistributionPoints = currentUser.role === 'beneficiary'
-  
+  const highlightDistributionPoints = currentUser.role === "beneficiary"
+
   // Determine if we should show ETA (for volunteers and beneficiaries with location)
-  const showETA = (currentUser.role === 'volunteer' || currentUser.role === 'beneficiary') && userLocation !== null
+  const showETA =
+    (currentUser.role === "volunteer" || currentUser.role === "beneficiary") &&
+    userLocation !== null
 
   // Get function summary for a venue
   const getVenueFunctions = (venue: Venue): string[] => {
@@ -199,113 +261,51 @@ export default function MapPage() {
   }
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-bgsoft">
+    <div className="relative h-screen w-full overflow-hidden bg-bgsoft flex flex-col">
       {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-1000 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          {/* Logo and Navigation */}
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <MapPin className="h-6 w-6 text-zinc-900 dark:text-zinc-100" />
-              <span className="font-bold text-xl text-zinc-900 dark:text-zinc-100">
-                Care Hub
-              </span>
-            </Link>
-            <NavigationTabs />
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-3">
-            {/* Search (desktop) */}
-            <div className="hidden md:flex">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-                <input
-                  type="text"
-                  placeholder="Search venues..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-64 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 dark:placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
-                />
-              </div>
-            </div>
-
-            {/* User menu */}
-            <Link
-              href="/organizer"
-              className="p-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
-              aria-label="User profile"
-            >
-              <User className="h-5 w-5" />
-            </Link>
-
-            {/* Mobile menu toggle */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className="md:hidden border-t border-primary/10 bg-white p-4 space-y-4">
-            {/* Search (mobile) */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search on map..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-primary/20 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-
-            {/* Links */}
-            <Link
-              href="/login"
-              className="flex items-center gap-2 px-4 py-2 text-slate-900 hover:bg-bgsoft rounded-lg transition-colors"
-            >
-              <User className="h-5 w-5" />
-              <span>Sign In</span>
-            </Link>
-          </div>
-        )}
-      </header>
+      <div className="relative z-[1000]">
+        <Header />
+      </div>
 
       {/* Main map area */}
-      <div className="h-full w-full pt-[60px]">
+      <div className="flex-1 relative w-full">
         {/* Category Tree Filter - Always visible */}
-        <div className="absolute top-20 left-12 z-999 w-80 max-w-[calc(100vw-3rem)]">
+        <div className="absolute top-6 left-12 z-[500] w-80 max-w-[calc(100vw-3rem)]">
           <CategoryTreeFilter
             selectedCategories={selectedCategories}
             onCategoriesChange={setSelectedCategories}
           />
         </div>
 
-        {isMapLoaded && (
-          <LeafletMap
-            markers={markers}
-            center={[35.1264, 33.4299]}
-            zoom={13}
-            onMarkerClick={handleMarkerClick}
-            userLocation={userLocation}
-            highlightDistributionPoints={highlightDistributionPoints}
-            showETA={showETA}
-          />
+        {/* Map - always rendered */}
+        <LeafletMap
+          markers={markers}
+          center={[35.1264, 33.4299]}
+          zoom={13}
+          onMarkerClick={handleMarkerClick}
+          userLocation={userLocation}
+          highlightDistributionPoints={highlightDistributionPoints}
+          showETA={showETA}
+        />
+
+        {/* Loading overlay */}
+        {!isMapLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 z-[100]">
+            <div className="text-center p-8">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100 mx-auto mb-4"></div>
+              <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+                Loading map...
+              </p>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2">
+                Please wait
+              </p>
+            </div>
+          </div>
         )}
 
         {/* Selected marker info */}
         {selectedMarker && selectedVenue && (
-          <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 p-4 z-1000 animate-slide-up max-h-[70vh] overflow-y-auto">
+          <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 p-4 z-[400] animate-slide-up max-h-[70vh] overflow-y-auto">
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-slate-900 mb-1">
@@ -367,7 +367,7 @@ export default function MapPage() {
         {/* "My Location" button */}
         <button
           onClick={handleLocateMe}
-          className="absolute right-6 p-3 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all z-999 hover:scale-110"
+          className="absolute right-6 p-3 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all z-[300] hover:scale-110"
           style={{
             bottom: selectedMarker ? "calc(24px + 160px)" : "24px",
             transition: "bottom 0.3s ease",

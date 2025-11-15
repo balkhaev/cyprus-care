@@ -343,20 +343,6 @@ export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueV
 
   return (
     <div className="space-y-4">
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <Hand className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
-          <div>
-            <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-              Volunteer View
-            </h3>
-            <p className="text-sm text-blue-800 dark:text-blue-300">
-              Review the needs below and click &quot;Respond&quot; to volunteer your help with items or services.
-            </p>
-          </div>
-        </div>
-      </div>
-      
       {venue.functions && venue.functions.length > 0 ? (
         <div className="space-y-4">
           {venue.functions.map(renderFunction)}

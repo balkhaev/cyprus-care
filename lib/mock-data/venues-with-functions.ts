@@ -32,14 +32,64 @@ export const mockVenues: Venue[] = [
             quantity: 'some',
           },
           {
+            categoryId: 'cat-1-1-2',
+            categoryPath: ['Medicine', 'Painkillers', 'Paracetamol'],
+            quantity: 'a_lot',
+          },
+          {
+            categoryId: 'cat-1-2-1',
+            categoryPath: ['Medicine', 'Antibiotics', 'Amoxicillin'],
+            quantity: 'few',
+          },
+          {
             categoryId: 'cat-1-3-1',
             categoryPath: ['Medicine', 'First Aid', 'Bandages'],
             quantity: 'a_lot',
           },
           {
+            categoryId: 'cat-1-3-2',
+            categoryPath: ['Medicine', 'First Aid', 'Antiseptics'],
+            quantity: 'some',
+          },
+          {
             categoryId: 'cat-2-1-1',
             categoryPath: ['Food', 'Canned Food', 'Canned Vegetables'],
             quantity: 'few',
+          },
+          {
+            categoryId: 'cat-2-1-2',
+            categoryPath: ['Food', 'Canned Food', 'Canned Meat'],
+            quantity: 'a_lot',
+          },
+          {
+            categoryId: 'cat-2-2-1',
+            categoryPath: ['Food', 'Dry Food', 'Rice'],
+            quantity: 'a_lot',
+          },
+          {
+            categoryId: 'cat-2-2-2',
+            categoryPath: ['Food', 'Dry Food', 'Pasta'],
+            quantity: 'some',
+          },
+          {
+            categoryId: 'cat-3-1-1',
+            categoryPath: ['Clothing', 'Adult Clothing', 'Jackets'],
+            quantity: 'few',
+          },
+          {
+            categoryId: 'cat-3-2-1',
+            categoryPath: ['Clothing', 'Children Clothing', 'Winter Clothes'],
+            quantity: 'a_lot',
+          },
+          {
+            categoryId: 'cat-4-1',
+            categoryPath: ['Hygiene', 'Soap'],
+            quantity: 'some',
+          },
+          {
+            categoryId: 'cat-4-2',
+            categoryPath: ['Hygiene', 'Diapers'],
+            quantity: 'a_lot',
           },
         ],
         openingTimes: [

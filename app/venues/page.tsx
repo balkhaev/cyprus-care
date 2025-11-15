@@ -2,18 +2,10 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import {
-  MapPin,
-  Clock,
-  Plus,
-  Building2,
-  Warehouse,
-  Home,
-  User,
-} from "lucide-react"
+import { MapPin, Clock, Plus, Building2, Warehouse, Home } from "lucide-react"
 import type { Venue, VenueType } from "@/types/venue"
 import { fetchVenues } from "@/lib/api/venues"
-import Navigation from "@/components/Navigation"
+import Header from "@/components/Header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -66,41 +58,16 @@ export default function VenuesPage() {
   return (
     <div className={`min-h-screen ${backgroundClasses.page}`}>
       {/* Header */}
-      <header className={headerClasses.container}>
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            {/* Logo and Navigation */}
-            <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-2">
-                <Building2 className={`h-6 w-6 ${textClasses.accent}`} />
-                <span className={`font-bold text-xl ${textClasses.heading}`}>
-                  Care Hub
-                </span>
-              </Link>
-              <Navigation />
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center gap-3">
-              {/* User menu */}
-              <Link
-                href="/organizer"
-                className={`p-2 rounded-lg ${interactiveClasses.hoverPrimary}`}
-                aria-label="User profile"
-              >
-                <User className="h-5 w-5" />
-              </Link>
-
-              <Button asChild size="default">
-                <Link href="/venues/new" className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  <span className="hidden sm:inline">Add Venue</span>
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header
+        actions={
+          <Button asChild size="default">
+            <Link href="/venues/new" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Add Venue</span>
+            </Link>
+          </Button>
+        }
+      />
 
       {/* Content */}
       <main className="container mx-auto px-4 py-8">

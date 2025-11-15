@@ -9,7 +9,7 @@ import type { Venue } from '@/types/venue';
 import { fetchVenueById } from '@/lib/api/venues';
 import { addFunctionToVenue } from '@/lib/api/venue-functions';
 import FunctionSelector from '@/components/venue-functions/FunctionSelector';
-import ItemCategoryPicker from '@/components/venue-functions/ItemCategoryPicker';
+import ItemCategoryTreePicker from '@/components/venue-functions/ItemCategoryTreePicker';
 import ServiceSelector from '@/components/venue-functions/ServiceSelector';
 
 const defaultOperatingHours: OperatingHours[] = [
@@ -177,7 +177,7 @@ export default function NewFunctionPage({ params }: PageProps) {
                   <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
                     {selectedType === 'collection_point' ? 'Items to Collect' : 'Items to Distribute'}
                   </h2>
-                  <ItemCategoryPicker
+                  <ItemCategoryTreePicker
                     selectedItems={selectedItems}
                     onItemsChange={setSelectedItems}
                   />

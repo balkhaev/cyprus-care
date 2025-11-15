@@ -88,93 +88,101 @@ export const beneficiaryWithAssociationExample: User = {
 
 /**
  * Get full name from user
+ * Example usage:
+ * 
+ * const fullName = getUserFullName(beneficiaryExample);
+ * // Output: "Anna Papadopoulou"
  */
-console.log(getUserFullName(beneficiaryExample)); 
-// Output: "Anna Papadopoulou"
 
 /**
  * Parse volunteer areas
+ * Example usage:
+ * 
+ * const volunteerAreas = parseVolunteerAreas(volunteerExample.volunteer_areas_of_interest);
+ * // Output: ["Education", "Healthcare", "Food Distribution"]
  */
-const volunteerAreas = parseVolunteerAreas(volunteerExample.volunteer_areas_of_interest);
-console.log(volunteerAreas);
-// Output: ["Education", "Healthcare", "Food Distribution"]
 
 /**
  * Parse volunteer services
+ * Example usage:
+ * 
+ * const volunteerServices = parseVolunteerServices(volunteerExample.volunteer_services);
+ * // Output: ["Teaching", "Medical assistance", "Driving"]
  */
-const volunteerServices = parseVolunteerServices(volunteerExample.volunteer_services);
-console.log(volunteerServices);
-// Output: ["Teaching", "Medical assistance", "Driving"]
 
 /**
  * Convert to legacy format for backward compatibility
+ * Example usage:
+ * 
+ * const legacyUser = userToLegacy(beneficiaryExample);
+ * // Output: {
+ * //   id: "1",
+ * //   email: "anna@example.com",
+ * //   name: "Anna Papadopoulou",
+ * //   role: "beneficiary",
+ * //   phone: "+357000000",
+ * //   isActive: true,
+ * //   isEmailVerified: true,
+ * //   createdAt: "2024-11-15T...",
+ * //   updatedAt: "2024-11-15T..."
+ * // }
  */
-const legacyUser = userToLegacy(beneficiaryExample);
-console.log(legacyUser);
-// Output: {
-//   id: "1",
-//   email: "anna@example.com",
-//   name: "Anna Papadopoulou",
-//   role: "beneficiary",
-//   phone: "+357000000",
-//   isActive: true,
-//   isEmailVerified: true,
-//   createdAt: "2024-11-15T...",
-//   updatedAt: "2024-11-15T..."
-// }
 
 // ===== REACT COMPONENT EXAMPLES =====
+// Note: These are commented out because this is a .ts file, not .tsx
+// To use React components, create a .tsx file in your components folder
 
 /**
  * Example: Display user profile in React
+ * 
+ * export function UserProfileCard({ user }: { user: User }) {
+ *   return (
+ *     <div className="user-profile">
+ *       <h2>{getUserFullName(user)}</h2>
+ *       <p>Email: {user.email}</p>
+ *       <p>Phone: {user.phone}</p>
+ *       <p>Municipality: {user.municipality}</p>
+ *       <p>Role: {user.role}</p>
+ *       
+ *       {user.is_organization && (
+ *         <p>Organization: {user.organization_name}</p>
+ *       )}
+ *       
+ *       {user.role === 'volunteer' && (
+ *         <>
+ *           <div>
+ *             <h3>Areas of Interest</h3>
+ *             <ul>
+ *               {parseVolunteerAreas(user.volunteer_areas_of_interest).map(area => (
+ *                 <li key={area}>{area}</li>
+ *               ))}
+ *             </ul>
+ *           </div>
+ *           <div>
+ *             <h3>Services</h3>
+ *             <ul>
+ *               {parseVolunteerServices(user.volunteer_services).map(service => (
+ *                 <li key={service}>{service}</li>
+ *               ))}
+ *             </ul>
+ *           </div>
+ *         </>
+ *       )}
+ *       
+ *       {user.role === 'beneficiary' && (
+ *         <>
+ *           {user.interested_in_donations && (
+ *             <p>✓ Interested in donations</p>
+ *           )}
+ *           {user.association_name && (
+ *             <p>Association: {user.association_name}</p>
+ *           )}
+ *         </>
+ *       )}
+ *     </div>
+ *   );
+ * }
  */
-export function UserProfileCard({ user }: { user: User }) {
-  return (
-    <div className="user-profile">
-      <h2>{getUserFullName(user)}</h2>
-      <p>Email: {user.email}</p>
-      <p>Phone: {user.phone}</p>
-      <p>Municipality: {user.municipality}</p>
-      <p>Role: {user.role}</p>
-      
-      {user.is_organization && (
-        <p>Organization: {user.organization_name}</p>
-      )}
-      
-      {user.role === 'volunteer' && (
-        <>
-          <div>
-            <h3>Areas of Interest</h3>
-            <ul>
-              {parseVolunteerAreas(user.volunteer_areas_of_interest).map(area => (
-                <li key={area}>{area}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3>Services</h3>
-            <ul>
-              {parseVolunteerServices(user.volunteer_services).map(service => (
-                <li key={service}>{service}</li>
-              ))}
-            </ul>
-          </div>
-        </>
-      )}
-      
-      {user.role === 'beneficiary' && (
-        <>
-          {user.interested_in_donations && (
-            <p>✓ Interested in donations</p>
-          )}
-          {user.association_name && (
-            <p>Association: {user.association_name}</p>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
 
 /**
  * Example: Registration form data

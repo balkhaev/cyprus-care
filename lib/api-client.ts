@@ -32,40 +32,43 @@ import {
   type GetBeneficiaryCommitmentsResponse,
   type GetVenueProjectionRequest,
   type GetVenueProjectionResponse,
-} from '@/contracts';
+} from "@/contracts"
 
 // Mock режим для разработки
-const USE_MOCK_API = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
+const USE_MOCK_API = process.env.NEXT_PUBLIC_USE_MOCK === "true"
 
 // Базовый URL API
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api"
 
 // Создаем singleton instance ApiClient
 export const apiClient = new ApiClient({
   baseUrl: API_BASE_URL,
   getToken: () => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('accessToken');
+    if (typeof window === "undefined") return null
+    return localStorage.getItem("accessToken")
   },
   onError: (error) => {
-    console.error('API Error:', error.error.code, error.error.message);
-    
+    console.error("API Error:", error.error.code, error.error.message)
+
     // Обработка специфичных ошибок
-    if (error.error.code === 'UNAUTHORIZED' || error.error.code === 'TOKEN_EXPIRED') {
+    if (
+      error.error.code === "UNAUTHORIZED" ||
+      error.error.code === "TOKEN_EXPIRED"
+    ) {
       // Очищаем токены
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('currentUser');
-        
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("refreshToken")
+        localStorage.removeItem("currentUser")
+
         // Редирект на страницу входа
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login"
         }
       }
     }
   },
-});
+})
 
 // ============================================================================
 // AUTHENTICATION
@@ -77,15 +80,15 @@ export class AuthAPI {
    */
   static async register(data: RegisterRequest): Promise<RegisterResponse> {
     if (USE_MOCK_API) {
-      return mockRegister(data);
+      return mockRegister(data)
     }
-    
+
     const response = await apiClient.post<RegisterRequest, RegisterResponse>(
-      '/auth/register',
+      "/auth/register",
       data
-    );
-    
-    return unwrapResponse(response);
+    )
+
+    return unwrapResponse(response)
   }
 
   /**
@@ -93,24 +96,24 @@ export class AuthAPI {
    */
   static async login(data: LoginRequest): Promise<LoginResponse> {
     if (USE_MOCK_API) {
-      return mockLogin(data);
+      return mockLogin(data)
     }
-    
+
     const response = await apiClient.post<LoginRequest, LoginResponse>(
-      '/auth/login',
+      "/auth/login",
       data
-    );
-    
-    const result = unwrapResponse(response);
-    
+    )
+
+    const result = unwrapResponse(response)
+
     // Сохраняем токены
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('accessToken', result.accessToken);
-      localStorage.setItem('refreshToken', result.refreshToken);
-      localStorage.setItem('currentUser', JSON.stringify(result.user));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("accessToken", result.accessToken)
+      localStorage.setItem("refreshToken", result.refreshToken)
+      localStorage.setItem("currentUser", JSON.stringify(result.user))
     }
-    
-    return result;
+
+    return result
   }
 
   /**
@@ -118,18 +121,18 @@ export class AuthAPI {
    */
   static async logout(): Promise<void> {
     if (USE_MOCK_API) {
-      mockLogout();
-      return;
+      mockLogout()
+      return
     }
-    
+
     try {
-      await apiClient.post('/auth/logout', {});
+      await apiClient.post("/auth/logout", {})
     } finally {
       // Очищаем локальное хранилище в любом случае
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('currentUser');
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("refreshToken")
+        localStorage.removeItem("currentUser")
       }
     }
   }
@@ -139,23 +142,23 @@ export class AuthAPI {
    */
   static async getCurrentUser(): Promise<User | null> {
     if (USE_MOCK_API) {
-      return mockGetCurrentUser();
+      return mockGetCurrentUser()
     }
-    
+
     try {
-      const response = await apiClient.get<User>('/auth/me');
-      
+      const response = await apiClient.get<User>("/auth/me")
+
       if (isSuccessResponse(response)) {
         // Обновляем кеш пользователя
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('currentUser', JSON.stringify(response.data));
+        if (typeof window !== "undefined") {
+          localStorage.setItem("currentUser", JSON.stringify(response.data))
         }
-        return response.data;
+        return response.data
       }
-      
-      return null;
+
+      return null
     } catch (error) {
-      return null;
+      return null
     }
   }
 
@@ -163,15 +166,15 @@ export class AuthAPI {
    * Получить закешированного пользователя
    */
   static getCachedUser(): User | null {
-    if (typeof window === 'undefined') return null;
-    
-    const userStr = localStorage.getItem('currentUser');
-    if (!userStr) return null;
-    
+    if (typeof window === "undefined") return null
+
+    const userStr = localStorage.getItem("currentUser")
+    if (!userStr) return null
+
     try {
-      return JSON.parse(userStr);
+      return JSON.parse(userStr)
     } catch {
-      return null;
+      return null
     }
   }
 
@@ -179,8 +182,8 @@ export class AuthAPI {
    * Проверить, авторизован ли пользователь
    */
   static isAuthenticated(): boolean {
-    if (typeof window === 'undefined') return false;
-    return !!localStorage.getItem('accessToken');
+    if (typeof window === "undefined") return false
+    return !!localStorage.getItem("accessToken")
   }
 }
 
@@ -192,13 +195,18 @@ export class VenuesAPI {
   /**
    * Получить список площадок
    */
-  static async getVenues(params?: GetVenuesRequest): Promise<GetVenuesResponse> {
+  static async getVenues(
+    params?: GetVenuesRequest
+  ): Promise<GetVenuesResponse> {
     if (USE_MOCK_API) {
-      return mockGetVenues(params);
+      return mockGetVenues(params)
     }
-    
-    const response = await apiClient.get<GetVenuesResponse>('/venues', params as Record<string, unknown> | undefined);
-    return unwrapResponse(response);
+
+    const response = await apiClient.get<GetVenuesResponse>(
+      "/venues",
+      params as Record<string, unknown> | undefined
+    )
+    return unwrapResponse(response)
   }
 
   /**
@@ -206,43 +214,48 @@ export class VenuesAPI {
    */
   static async getVenue(venueId: string): Promise<Venue> {
     if (USE_MOCK_API) {
-      return mockGetVenue(venueId);
+      return mockGetVenue(venueId)
     }
-    
-    const response = await apiClient.get<{ venue: Venue }>(`/venues/${venueId}`);
-    return unwrapResponse(response).venue;
+
+    const response = await apiClient.get<{ venue: Venue }>(`/venues/${venueId}`)
+    return unwrapResponse(response).venue
   }
 
   /**
    * Создать новую площадку
    */
-  static async createVenue(data: CreateVenueRequest): Promise<CreateVenueResponse> {
+  static async createVenue(
+    data: CreateVenueRequest
+  ): Promise<CreateVenueResponse> {
     if (USE_MOCK_API) {
-      return mockCreateVenue(data);
+      return mockCreateVenue(data)
     }
-    
-    const response = await apiClient.post<CreateVenueRequest, CreateVenueResponse>(
-      '/venues',
-      data
-    );
-    
-    return unwrapResponse(response);
+
+    const response = await apiClient.post<
+      CreateVenueRequest,
+      CreateVenueResponse
+    >("/venues", data)
+
+    return unwrapResponse(response)
   }
 
   /**
    * Обновить площадку
    */
-  static async updateVenue(venueId: string, data: Partial<CreateVenueRequest>): Promise<Venue> {
+  static async updateVenue(
+    venueId: string,
+    data: Partial<CreateVenueRequest>
+  ): Promise<Venue> {
     if (USE_MOCK_API) {
-      return mockUpdateVenue(venueId, data);
+      return mockUpdateVenue(venueId, data)
     }
-    
-    const response = await apiClient.patch<Partial<CreateVenueRequest>, { venue: Venue }>(
-      `/venues/${venueId}`,
-      data
-    );
-    
-    return unwrapResponse(response).venue;
+
+    const response = await apiClient.patch<
+      Partial<CreateVenueRequest>,
+      { venue: Venue }
+    >(`/venues/${venueId}`, data)
+
+    return unwrapResponse(response).venue
   }
 
   /**
@@ -250,10 +263,10 @@ export class VenuesAPI {
    */
   static async deleteVenue(venueId: string): Promise<void> {
     if (USE_MOCK_API) {
-      return mockDeleteVenue(venueId);
+      return mockDeleteVenue(venueId)
     }
-    
-    await apiClient.delete(`/venues/${venueId}`);
+
+    await apiClient.delete(`/venues/${venueId}`)
   }
 }
 
@@ -265,17 +278,19 @@ export class VenueFunctionsAPI {
   /**
    * Создать функцию площадки
    */
-  static async createFunction(data: CreateFunctionRequest): Promise<CreateFunctionResponse> {
+  static async createFunction(
+    data: CreateFunctionRequest
+  ): Promise<CreateFunctionResponse> {
     if (USE_MOCK_API) {
-      return mockCreateFunction(data);
+      return mockCreateFunction(data)
     }
-    
-    const response = await apiClient.post<CreateFunctionRequest, CreateFunctionResponse>(
-      '/venue-functions',
-      data
-    );
-    
-    return unwrapResponse(response);
+
+    const response = await apiClient.post<
+      CreateFunctionRequest,
+      CreateFunctionResponse
+    >("/venue-functions", data)
+
+    return unwrapResponse(response)
   }
 
   /**
@@ -283,11 +298,11 @@ export class VenueFunctionsAPI {
    */
   static async getFunctions(venueId: string) {
     if (USE_MOCK_API) {
-      return mockGetFunctions(venueId);
+      return mockGetFunctions(venueId)
     }
-    
-    const response = await apiClient.get(`/venue-functions`, { venueId });
-    return unwrapResponse(response);
+
+    const response = await apiClient.get(`/venue-functions`, { venueId })
+    return unwrapResponse(response)
   }
 }
 
@@ -299,17 +314,19 @@ export class ItemCategoriesAPI {
   /**
    * Получить список категорий
    */
-  static async getCategories(params?: GetItemCategoriesRequest): Promise<GetItemCategoriesResponse> {
+  static async getCategories(
+    params?: GetItemCategoriesRequest
+  ): Promise<GetItemCategoriesResponse> {
     if (USE_MOCK_API) {
-      return mockGetCategories(params);
+      return mockGetCategories(params)
     }
-    
+
     const response = await apiClient.get<GetItemCategoriesResponse>(
-      '/item-categories',
+      "/item-categories",
       params as Record<string, unknown>
-    );
-    
-    return unwrapResponse(response);
+    )
+
+    return unwrapResponse(response)
   }
 
   /**
@@ -317,11 +334,13 @@ export class ItemCategoriesAPI {
    */
   static async getHierarchy(): Promise<GetCategoryHierarchyResponse> {
     if (USE_MOCK_API) {
-      return mockGetCategoryHierarchy();
+      return mockGetCategoryHierarchy()
     }
-    
-    const response = await apiClient.get<GetCategoryHierarchyResponse>('/item-categories/hierarchy');
-    return unwrapResponse(response);
+
+    const response = await apiClient.get<GetCategoryHierarchyResponse>(
+      "/item-categories/hierarchy"
+    )
+    return unwrapResponse(response)
   }
 }
 
@@ -333,17 +352,19 @@ export class ResponsesAPI {
   /**
    * Создать отклик волонтера
    */
-  static async createResponse(data: CreateVolunteerResponseRequest): Promise<CreateVolunteerResponseResponse> {
+  static async createResponse(
+    data: CreateVolunteerResponseRequest
+  ): Promise<CreateVolunteerResponseResponse> {
     if (USE_MOCK_API) {
-      return mockCreateResponse(data);
+      return mockCreateResponse(data)
     }
-    
-    const response = await apiClient.post<CreateVolunteerResponseRequest, CreateVolunteerResponseResponse>(
-      '/volunteer-responses',
-      data
-    );
-    
-    return unwrapResponse(response);
+
+    const response = await apiClient.post<
+      CreateVolunteerResponseRequest,
+      CreateVolunteerResponseResponse
+    >("/volunteer-responses", data)
+
+    return unwrapResponse(response)
   }
 
   /**
@@ -351,11 +372,13 @@ export class ResponsesAPI {
    */
   static async getMyResponses(): Promise<GetVolunteerResponsesResponse> {
     if (USE_MOCK_API) {
-      return mockGetMyResponses();
+      return mockGetMyResponses()
     }
-    
-    const response = await apiClient.get<GetVolunteerResponsesResponse>('/volunteer-responses');
-    return unwrapResponse(response);
+
+    const response = await apiClient.get<GetVolunteerResponsesResponse>(
+      "/volunteer-responses"
+    )
+    return unwrapResponse(response)
   }
 }
 
@@ -367,17 +390,19 @@ export class CommitmentsAPI {
   /**
    * Создать обязательство бенефициара
    */
-  static async createCommitment(data: CreateBeneficiaryCommitmentRequest): Promise<CreateBeneficiaryCommitmentResponse> {
+  static async createCommitment(
+    data: CreateBeneficiaryCommitmentRequest
+  ): Promise<CreateBeneficiaryCommitmentResponse> {
     if (USE_MOCK_API) {
-      return mockCreateCommitment(data);
+      return mockCreateCommitment(data)
     }
-    
-    const response = await apiClient.post<CreateBeneficiaryCommitmentRequest, CreateBeneficiaryCommitmentResponse>(
-      '/beneficiary-commitments',
-      data
-    );
-    
-    return unwrapResponse(response);
+
+    const response = await apiClient.post<
+      CreateBeneficiaryCommitmentRequest,
+      CreateBeneficiaryCommitmentResponse
+    >("/beneficiary-commitments", data)
+
+    return unwrapResponse(response)
   }
 
   /**
@@ -385,11 +410,13 @@ export class CommitmentsAPI {
    */
   static async getMyCommitments(): Promise<GetBeneficiaryCommitmentsResponse> {
     if (USE_MOCK_API) {
-      return mockGetMyCommitments();
+      return mockGetMyCommitments()
     }
-    
-    const response = await apiClient.get<GetBeneficiaryCommitmentsResponse>('/beneficiary-commitments');
-    return unwrapResponse(response);
+
+    const response = await apiClient.get<GetBeneficiaryCommitmentsResponse>(
+      "/beneficiary-commitments"
+    )
+    return unwrapResponse(response)
   }
 }
 
@@ -401,17 +428,19 @@ export class ProjectionsAPI {
   /**
    * Получить проекцию площадки
    */
-  static async getVenueProjection(params: GetVenueProjectionRequest): Promise<GetVenueProjectionResponse> {
+  static async getVenueProjection(
+    params: GetVenueProjectionRequest
+  ): Promise<GetVenueProjectionResponse> {
     if (USE_MOCK_API) {
-      return mockGetVenueProjection(params);
+      return mockGetVenueProjection(params)
     }
-    
+
     const response = await apiClient.get<GetVenueProjectionResponse>(
       `/projections/venue/${params.venueId}`,
       params.functionId ? { functionId: params.functionId } : undefined
-    );
-    
-    return unwrapResponse(response);
+    )
+
+    return unwrapResponse(response)
   }
 }
 
@@ -420,8 +449,8 @@ export class ProjectionsAPI {
 // ============================================================================
 
 // Импортируем моковые данные
-import { mockVenues } from '@/lib/mock-data/venues-with-functions';
-import type { Venue as OldVenue } from '@/types/venue';
+import { mockVenues } from "@/lib/mock-data/venues-with-functions"
+import type { Venue as OldVenue } from "@/types/venue"
 
 // Преобразуем старый тип Venue в новый
 function convertOldVenueToNew(oldVenue: OldVenue): Venue {
@@ -435,106 +464,116 @@ function convertOldVenueToNew(oldVenue: OldVenue): Venue {
       lng: oldVenue.location.lng,
       address: oldVenue.location.address,
     },
-    operatingHours: oldVenue.operatingHours.map(oh => ({
+    operatingHours: oldVenue.operatingHours.map((oh) => ({
       dayOfWeek: oh.dayOfWeek,
       openTime: oh.openTime,
       closeTime: oh.closeTime,
       isClosed: oh.isClosed ?? false,
     })),
     organizerId: oldVenue.organizerId,
-    status: 'active', // Предполагаем, что все моковые площадки активны
+    status: "active", // Предполагаем, что все моковые площадки активны
     functionsCount: oldVenue.functions?.length || 0,
     createdAt: oldVenue.createdAt.toISOString(),
     updatedAt: oldVenue.updatedAt.toISOString(),
-  };
+  }
 }
 
 function mockLogin(data: LoginRequest): LoginResponse {
   // Простая мок-авторизация
   const user: User = {
-    id: 'user-1',
+    id: 1,
     email: data.email,
-    name: 'Test User',
-    role: 'organizer',
-    isActive: true,
-    isEmailVerified: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  
+    first_name: "Test",
+    last_name: "User",
+    role: "organizer",
+    phone: "+357 99 000 000",
+    municipality: "Limassol",
+    is_organization: false,
+    organization_name: "",
+    volunteer_areas_of_interest: "",
+    volunteer_services: "",
+    interested_in_donations: false,
+    association_name: "",
+  }
+
   return {
     user,
-    accessToken: 'mock-access-token',
-    refreshToken: 'mock-refresh-token',
-  };
+    accessToken: "mock-access-token",
+    refreshToken: "mock-refresh-token",
+  }
 }
 
 function mockRegister(data: RegisterRequest): RegisterResponse {
   const user: User = {
-    id: 'user-new',
+    id: 2,
     email: data.email,
-    name: data.name,
+    first_name: data.first_name,
+    last_name: data.last_name,
     role: data.role,
     phone: data.phone,
-    isActive: true,
-    isEmailVerified: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  
+    municipality: data.municipality,
+    is_organization: data.is_organization || false,
+    organization_name: data.organization_name || "",
+    volunteer_areas_of_interest: data.volunteer_areas_of_interest || "",
+    volunteer_services: data.volunteer_services || "",
+    interested_in_donations: data.interested_in_donations || false,
+    association_name: data.association_name || "",
+  }
+
   return {
     user,
-    accessToken: 'mock-access-token',
-    refreshToken: 'mock-refresh-token',
-  };
+    accessToken: "mock-access-token",
+    refreshToken: "mock-refresh-token",
+  }
 }
 
 function mockLogout(): void {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('currentUser');
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("accessToken")
+    localStorage.removeItem("refreshToken")
+    localStorage.removeItem("currentUser")
   }
 }
 
 function mockGetCurrentUser(): User | null {
-  if (typeof window === 'undefined') return null;
-  
-  const cached = localStorage.getItem('currentUser');
+  if (typeof window === "undefined") return null
+
+  const cached = localStorage.getItem("currentUser")
   if (cached) {
     try {
-      return JSON.parse(cached);
+      return JSON.parse(cached)
     } catch {
-      return null;
+      return null
     }
   }
-  
-  return null;
+
+  return null
 }
 
 function mockGetVenues(params?: GetVenuesRequest): GetVenuesResponse {
-  const allVenues = mockVenues.map(convertOldVenueToNew);
-  
+  const allVenues = mockVenues.map(convertOldVenueToNew)
+
   // Простая фильтрация
-  let filtered = allVenues;
-  
+  let filtered = allVenues
+
   if (params?.type) {
-    filtered = filtered.filter(v => v.type === params.type);
+    filtered = filtered.filter((v) => v.type === params.type)
   }
-  
+
   if (params?.searchQuery) {
-    const query = params.searchQuery.toLowerCase();
-    filtered = filtered.filter(v => 
-      v.title.toLowerCase().includes(query) ||
-      v.description.toLowerCase().includes(query)
-    );
+    const query = params.searchQuery.toLowerCase()
+    filtered = filtered.filter(
+      (v) =>
+        v.title.toLowerCase().includes(query) ||
+        v.description.toLowerCase().includes(query)
+    )
   }
-  
-  const page = params?.page || 1;
-  const limit = params?.limit || 10;
-  const start = (page - 1) * limit;
-  const end = start + limit;
-  
+
+  const page = params?.page || 1
+  const limit = params?.limit || 10
+  const start = (page - 1) * limit
+  const end = start + limit
+
   return {
     items: filtered.slice(start, end),
     pagination: {
@@ -545,106 +584,115 @@ function mockGetVenues(params?: GetVenuesRequest): GetVenuesResponse {
       hasNextPage: end < filtered.length,
       hasPreviousPage: page > 1,
     },
-  };
+  }
 }
 
 function mockGetVenue(venueId: string): Venue {
-  const venues = mockVenues.map(convertOldVenueToNew);
-  const venue = venues.find(v => v.id === venueId);
-  
+  const venues = mockVenues.map(convertOldVenueToNew)
+  const venue = venues.find((v) => v.id === venueId)
+
   if (!venue) {
-    throw new ApiError('NOT_FOUND', `Venue ${venueId} not found`);
+    throw new ApiError("NOT_FOUND", `Venue ${venueId} not found`)
   }
-  
-  return venue;
+
+  return venue
 }
 
 function mockCreateVenue(data: CreateVenueRequest): CreateVenueResponse {
   const venue: Venue = {
     id: `venue-${Date.now()}`,
     ...data,
-    organizerId: 'user-1',
-    status: 'active',
+    organizerId: "user-1",
+    status: "active",
     functionsCount: 0,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-  };
-  
-  return { venue };
+  }
+
+  return { venue }
 }
 
-function mockUpdateVenue(venueId: string, data: Partial<CreateVenueRequest>): Venue {
-  const venue = mockGetVenue(venueId);
-  
+function mockUpdateVenue(
+  venueId: string,
+  data: Partial<CreateVenueRequest>
+): Venue {
+  const venue = mockGetVenue(venueId)
+
   return {
     ...venue,
     ...data,
     updatedAt: new Date().toISOString(),
-  };
+  }
 }
 
 function mockDeleteVenue(venueId: string): void {
   // В моке просто ничего не делаем
-  console.log('Mock: deleted venue', venueId);
+  console.log("Mock: deleted venue", venueId)
 }
 
-function mockCreateFunction(data: CreateFunctionRequest): CreateFunctionResponse {
+function mockCreateFunction(
+  data: CreateFunctionRequest
+): CreateFunctionResponse {
   // Создаем базовую функцию
   const baseFunction = {
     id: `function-${Date.now()}`,
     venueId: data.venueId,
-    status: 'active' as const,
+    status: "active" as const,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-  };
-  
+  }
+
   return {
     function: {
       ...baseFunction,
       ...data,
     } as any,
-  };
+  }
 }
 
 function mockGetFunctions(venueId: string) {
-  const oldVenue = mockVenues.find(v => v.id === venueId);
+  const oldVenue = mockVenues.find((v) => v.id === venueId)
   if (!oldVenue) {
-    throw new ApiError('NOT_FOUND', `Venue ${venueId} not found`);
+    throw new ApiError("NOT_FOUND", `Venue ${venueId} not found`)
   }
-  return { functions: oldVenue.functions || [] };
+  return { functions: oldVenue.functions || [] }
 }
 
-function mockGetCategories(params?: GetItemCategoriesRequest): GetItemCategoriesResponse {
+function mockGetCategories(
+  params?: GetItemCategoriesRequest
+): GetItemCategoriesResponse {
   // Моковые категории
   return {
     categories: [],
     totalCount: 0,
-  };
+  }
 }
 
 function mockGetCategoryHierarchy() {
-  return { hierarchy: [] };
+  return { hierarchy: [] }
 }
 
-function mockCreateResponse(data: CreateVolunteerResponseRequest): CreateVolunteerResponseResponse {
+function mockCreateResponse(
+  data: CreateVolunteerResponseRequest
+): CreateVolunteerResponseResponse {
   return {
     response: {
       id: `response-${Date.now()}`,
-      volunteerId: 'user-1',
-      volunteerName: 'Test Volunteer',
+      volunteerId: "user-1",
+      volunteerName: "Test Volunteer",
       venueId: data.venueId,
-      venueName: 'Test Venue',
+      venueName: "Test Venue",
       functionId: data.functionId,
       responseType: data.responseType,
       categoryId: data.categoryId,
       quantityOffered: data.quantityOffered,
       serviceType: data.serviceType,
       message: data.message,
-      status: 'pending',
+      status: "pending",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
-  };
+  }
 }
 
 function mockGetMyResponses() {
@@ -665,27 +713,29 @@ function mockGetMyResponses() {
       cancelled: 0,
       rejected: 0,
     },
-  };
+  }
 }
 
-function mockCreateCommitment(data: CreateBeneficiaryCommitmentRequest): CreateBeneficiaryCommitmentResponse {
+function mockCreateCommitment(
+  data: CreateBeneficiaryCommitmentRequest
+): CreateBeneficiaryCommitmentResponse {
   return {
     commitment: {
       id: `commitment-${Date.now()}`,
-      beneficiaryId: 'user-1',
-      beneficiaryName: 'Test Beneficiary',
+      beneficiaryId: "user-1",
+      beneficiaryName: "Test Beneficiary",
       venueId: data.venueId,
-      venueName: 'Test Venue',
+      venueName: "Test Venue",
       functionId: data.functionId,
       plannedVisitDate: data.plannedVisitDate,
       numberOfPeople: data.numberOfPeople,
       specialNeeds: data.specialNeeds,
       notes: data.notes,
-      status: 'confirmed',
+      status: "confirmed",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
-  };
+  }
 }
 
 function mockGetMyCommitments() {
@@ -704,29 +754,25 @@ function mockGetMyCommitments() {
       cancelled: 0,
       completed: 0,
     },
-  };
+  }
 }
 
-function mockGetVenueProjection(params: GetVenueProjectionRequest): GetVenueProjectionResponse {
+function mockGetVenueProjection(
+  params: GetVenueProjectionRequest
+): GetVenueProjectionResponse {
   return {
     projection: {
       venueId: params.venueId,
-      venueName: 'Test Venue',
-      functionId: params.functionId || 'function-1',
-      functionType: 'collection_point',
+      venueName: "Test Venue",
+      functionId: params.functionId || "function-1",
+      functionType: "collection_point",
       items: [],
       services: [],
       beneficiaryCommitments: 0,
       lastUpdated: new Date().toISOString(),
     },
-  };
+  }
 }
 
 // Экспортируем для удобства
-export {
-  isSuccessResponse,
-  unwrapResponse,
-  ApiError,
-  type ApiResponse,
-};
-
+export { isSuccessResponse, unwrapResponse, ApiError, type ApiResponse }

@@ -365,13 +365,6 @@ export default function MapPage() {
         >
           <Navigation className="h-6 w-6" />
         </button>
-
-        {/* Location indicator */}
-        {userLocation && (
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-full shadow-lg z-[999]">
-            Location detected
-          </div>
-        )}
       </div>
 
       <style jsx global>{`

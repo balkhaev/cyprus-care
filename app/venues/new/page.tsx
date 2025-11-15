@@ -1,106 +1,182 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import { ArrowLeft, Building2, Warehouse, Home, Plus, Trash2 } from 'lucide-react';
-import type { VenueType, VenueLocation, OperatingHours } from '@/types/venue';
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import dynamic from "next/dynamic"
+import {
+  ArrowLeft,
+  Building2,
+  Warehouse,
+  Home,
+  Plus,
+  Trash2,
+} from "lucide-react"
+import type { VenueType, VenueLocation, OperatingHours } from "@/types/venue"
+import { createVenue } from "@/lib/api/venues"
 
 // Dynamic map import
-const LocationPickerMap = dynamic(() => import('@/components/LocationPickerMap'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[400px] rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100 mx-auto mb-4"></div>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">Loading map...</p>
+const LocationPickerMap = dynamic(
+  () => import("@/components/LocationPickerMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[400px] rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100 mx-auto mb-4"></div>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Loading map...
+          </p>
+        </div>
       </div>
-    </div>
-  ),
-});
+    ),
+  }
+)
 
 const defaultOperatingHours: OperatingHours[] = [
-  { dayOfWeek: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-  { dayOfWeek: 'Tuesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-  { dayOfWeek: 'Wednesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-  { dayOfWeek: 'Thursday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-  { dayOfWeek: 'Friday', openTime: '09:00', closeTime: '18:00', isClosed: false },
-  { dayOfWeek: 'Saturday', openTime: '10:00', closeTime: '16:00', isClosed: false },
-  { dayOfWeek: 'Sunday', openTime: '00:00', closeTime: '00:00', isClosed: true },
-];
+  {
+    dayOfWeek: "Monday",
+    openTime: "09:00",
+    closeTime: "18:00",
+    isClosed: false,
+  },
+  {
+    dayOfWeek: "Tuesday",
+    openTime: "09:00",
+    closeTime: "18:00",
+    isClosed: false,
+  },
+  {
+    dayOfWeek: "Wednesday",
+    openTime: "09:00",
+    closeTime: "18:00",
+    isClosed: false,
+  },
+  {
+    dayOfWeek: "Thursday",
+    openTime: "09:00",
+    closeTime: "18:00",
+    isClosed: false,
+  },
+  {
+    dayOfWeek: "Friday",
+    openTime: "09:00",
+    closeTime: "18:00",
+    isClosed: false,
+  },
+  {
+    dayOfWeek: "Saturday",
+    openTime: "10:00",
+    closeTime: "16:00",
+    isClosed: false,
+  },
+  {
+    dayOfWeek: "Sunday",
+    openTime: "00:00",
+    closeTime: "00:00",
+    isClosed: true,
+  },
+]
 
 export default function NewVenuePage() {
-  const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const router = useRouter()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    type: 'collection_point' as VenueType,
-  });
+    title: "",
+    description: "",
+    type: "collection_point" as VenueType,
+  })
 
   const [location, setLocation] = useState<VenueLocation>({
     lat: 55.7558,
     lng: 37.6173,
-    address: '',
-  });
+    address: "",
+  })
 
-  const [operatingHours, setOperatingHours] = useState<OperatingHours[]>(defaultOperatingHours);
+  // Автоматически получить геолокацию пользователя при загрузке страницы
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            address: "",
+          })
+        },
+        (error) => {
+          console.error("Ошибка получения геолокации:", error)
+          // Оставляем координаты по умолчанию (Москва)
+        }
+      )
+    }
+  }, [])
 
-  const venueTypes: Array<{ value: VenueType; label: string; icon: React.ReactNode; description: string }> = [
+  const [operatingHours, setOperatingHours] = useState<OperatingHours[]>(
+    defaultOperatingHours
+  )
+
+  const venueTypes: Array<{
+    value: VenueType
+    label: string
+    icon: React.ReactNode
+    description: string
+  }> = [
     {
-      value: 'collection_point',
-      label: 'Collection Point',
+      value: "collection_point",
+      label: "Collection Point",
       icon: <Building2 className="h-5 w-5" />,
-      description: 'Place for collecting humanitarian aid',
+      description: "Place for collecting humanitarian aid",
     },
     {
-      value: 'distribution_hub',
-      label: 'Distribution Hub',
+      value: "distribution_hub",
+      label: "Distribution Hub",
       icon: <Warehouse className="h-5 w-5" />,
-      description: 'Center for distributing aid',
+      description: "Center for distributing aid",
     },
     {
-      value: 'shelter',
-      label: 'Shelter',
+      value: "shelter",
+      label: "Shelter",
       icon: <Home className="h-5 w-5" />,
-      description: 'Temporary shelter for those in need',
+      description: "Temporary shelter for those in need",
     },
-  ];
+  ]
 
   const handleLocationSelect = (newLocation: VenueLocation) => {
-    setLocation(newLocation);
-  };
+    setLocation(newLocation)
+  }
 
-  const handleOperatingHoursChange = (index: number, field: keyof OperatingHours, value: string | boolean) => {
-    const newHours = [...operatingHours];
-    newHours[index] = { ...newHours[index], [field]: value };
-    setOperatingHours(newHours);
-  };
+  const handleOperatingHoursChange = (
+    index: number,
+    field: keyof OperatingHours,
+    value: string | boolean
+  ) => {
+    const newHours = [...operatingHours]
+    newHours[index] = { ...newHours[index], [field]: value }
+    setOperatingHours(newHours)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault()
+    setIsSubmitting(true)
 
-    // Simulate data submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const newVenue = await createVenue({
+        ...formData,
+        location,
+        operatingHours,
+        organizerId: "org-1", // TODO: Get from auth
+      })
 
-    const venue = {
-      ...formData,
-      location,
-      operatingHours,
-      id: Date.now().toString(),
-      organizerId: 'org-1',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    console.log('Created new venue:', venue);
-
-    // Redirect to venues list
-    router.push('/venues');
-  };
+      // Redirect to the new venue detail page
+      router.push(`/venues/${newVenue.id}`)
+    } catch (error) {
+      console.error("Failed to create venue:", error)
+      alert("Failed to create venue")
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -137,14 +213,19 @@ export default function NewVenuePage() {
 
             {/* Title */}
             <div className="space-y-2">
-              <label htmlFor="title" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              >
                 Venue Name *
               </label>
               <input
                 id="title"
                 type="text"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 placeholder="E.g.: Central Collection Point"
                 className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all"
                 required
@@ -153,13 +234,18 @@ export default function NewVenuePage() {
 
             {/* Description */}
             <div className="space-y-2">
-              <label htmlFor="description" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              >
                 Description *
               </label>
               <textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Describe the purpose and functions of the venue..."
                 rows={4}
                 className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all resize-none"
@@ -177,18 +263,32 @@ export default function NewVenuePage() {
                   <button
                     key={type.value}
                     type="button"
-                    onClick={() => setFormData({ ...formData, type: type.value })}
+                    onClick={() =>
+                      setFormData({ ...formData, type: type.value })
+                    }
                     className={`p-4 rounded-lg border-2 transition-all text-left ${
                       formData.type === type.value
-                        ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-100 dark:bg-zinc-800'
-                        : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
+                        ? "border-zinc-900 dark:border-zinc-100 bg-zinc-100 dark:bg-zinc-800"
+                        : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <div className={`${formData.type === type.value ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                      <div
+                        className={`${
+                          formData.type === type.value
+                            ? "text-zinc-900 dark:text-zinc-100"
+                            : "text-zinc-600 dark:text-zinc-400"
+                        }`}
+                      >
                         {type.icon}
                       </div>
-                      <span className={`font-medium ${formData.type === type.value ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'}`}>
+                      <span
+                        className={`font-medium ${
+                          formData.type === type.value
+                            ? "text-zinc-900 dark:text-zinc-100"
+                            : "text-zinc-700 dark:text-zinc-300"
+                        }`}
+                      >
                         {type.label}
                       </span>
                     </div>
@@ -214,14 +314,19 @@ export default function NewVenuePage() {
 
             {/* Address */}
             <div className="space-y-2">
-              <label htmlFor="address" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              >
                 Address
               </label>
               <input
                 id="address"
                 type="text"
                 value={location.address}
-                onChange={(e) => setLocation({ ...location, address: e.target.value })}
+                onChange={(e) =>
+                  setLocation({ ...location, address: e.target.value })
+                }
                 placeholder="Address will be determined automatically"
                 className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all"
               />
@@ -245,24 +350,38 @@ export default function NewVenuePage() {
                       {hours.dayOfWeek}
                     </span>
                   </div>
-                  
+
                   {hours.isClosed ? (
                     <div className="flex-1">
-                      <span className="text-sm text-zinc-500 dark:text-zinc-500">Closed</span>
+                      <span className="text-sm text-zinc-500 dark:text-zinc-500">
+                        Closed
+                      </span>
                     </div>
                   ) : (
                     <div className="flex-1 flex items-center gap-3">
                       <input
                         type="time"
                         value={hours.openTime}
-                        onChange={(e) => handleOperatingHoursChange(index, 'openTime', e.target.value)}
+                        onChange={(e) =>
+                          handleOperatingHoursChange(
+                            index,
+                            "openTime",
+                            e.target.value
+                          )
+                        }
                         className="px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
                       />
                       <span className="text-zinc-500">—</span>
                       <input
                         type="time"
                         value={hours.closeTime}
-                        onChange={(e) => handleOperatingHoursChange(index, 'closeTime', e.target.value)}
+                        onChange={(e) =>
+                          handleOperatingHoursChange(
+                            index,
+                            "closeTime",
+                            e.target.value
+                          )
+                        }
                         className="px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
                       />
                     </div>
@@ -272,10 +391,18 @@ export default function NewVenuePage() {
                     <input
                       type="checkbox"
                       checked={hours.isClosed}
-                      onChange={(e) => handleOperatingHoursChange(index, 'isClosed', e.target.checked)}
+                      onChange={(e) =>
+                        handleOperatingHoursChange(
+                          index,
+                          "isClosed",
+                          e.target.checked
+                        )
+                      }
                       className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
                     />
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Closed</span>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Closed
+                    </span>
                   </label>
                 </div>
               ))}
@@ -311,5 +438,5 @@ export default function NewVenuePage() {
         </form>
       </main>
     </div>
-  );
+  )
 }

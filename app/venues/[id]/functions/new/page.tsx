@@ -61,40 +61,32 @@ export default function NewFunctionPage({ params }: PageProps) {
     setIsSubmitting(true);
 
     try {
-      let functionData: Partial<Parameters<typeof addFunctionToVenue>[1]> = {
-        type: selectedType,
-      };
-
       switch (selectedType) {
         case 'collection_point':
-          functionData = {
-            ...functionData,
+          await addFunctionToVenue(venueId, {
             type: 'collection_point',
             items: selectedItems,
             openingTimes,
             specialRequests: specialRequests || undefined,
-          };
+          });
           break;
         case 'distribution_point':
-          functionData = {
-            ...functionData,
+          await addFunctionToVenue(venueId, {
             type: 'distribution_point',
             items: selectedItems,
             openingTimes,
             specialRequests: specialRequests || undefined,
-          };
+          });
           break;
         case 'services_needed':
-          functionData = {
-            ...functionData,
+          await addFunctionToVenue(venueId, {
             type: 'services_needed',
             services: selectedServices,
             specialRequests: specialRequests || undefined,
-          };
+          });
           break;
       }
 
-      await addFunctionToVenue(venueId, functionData as Parameters<typeof addFunctionToVenue>[1]);
       router.push(`/venues/${venueId}`);
     } catch (error) {
       console.error('Error adding function:', error);

@@ -7,7 +7,11 @@ import { ArrowLeft, MapPin, Clock, Edit, Trash2, Building2, Warehouse, Home, Plu
 import type { Venue, VenueType } from '@/types/venue';
 import { fetchVenueById, deleteVenue } from '@/lib/api/venues';
 import { removeVenueFunction } from '@/lib/api/venue-functions';
+import { getCurrentUser } from '@/lib/mock-data/user-roles';
 import FunctionCard from '@/components/venue-functions/FunctionCard';
+import VolunteerVenueView from '@/components/venue-views/VolunteerVenueView';
+import OrganizerVenueView from '@/components/venue-views/OrganizerVenueView';
+import BeneficiaryVenueView from '@/components/venue-views/BeneficiaryVenueView';
 
 // Dynamic map import
 const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
@@ -50,6 +54,7 @@ export default function VenueDetailPage({ params }: PageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingFunctionId, setDeletingFunctionId] = useState<string | null>(null);
+  const [currentUser] = useState(() => getCurrentUser());
 
   useEffect(() => {
     loadVenue();
@@ -139,6 +144,29 @@ export default function VenueDetailPage({ params }: PageProps) {
 
   const todayHours = getTodayHours();
 
+  // Determine which view to show based on user role
+  const renderRoleBasedView = () => {
+    if (!venue) return null;
+
+    if (currentUser.role === 'volunteer') {
+      return <VolunteerVenueView venue={venue} />;
+    } else if (currentUser.role === 'organizer') {
+      // Only show organizer view if they own this venue
+      if (currentUser.organizerId === venue.organizerId) {
+        return <OrganizerVenueView venue={venue} />;
+      }
+      // Otherwise show volunteer view
+      return <VolunteerVenueView venue={venue} />;
+    } else if (currentUser.role === 'beneficiary') {
+      return <BeneficiaryVenueView venue={venue} />;
+    }
+
+    return null;
+  };
+
+  // Check if user can edit this venue
+  const canEdit = currentUser.role === 'organizer' && currentUser.organizerId === venue?.organizerId;
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       {/* Header */}
@@ -168,19 +196,23 @@ export default function VenueDetailPage({ params }: PageProps) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Link
-                href={`/venues/${venue.id}/edit`}
-                className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
-              >
-                <Edit className="h-4 w-4" />
-                Edit
-              </Link>
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+              {canEdit && (
+                <>
+                  <Link
+                    href={`/venues/${venue.id}/edit`}
+                    className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => setShowDeleteModal(true)}
+                    className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -280,48 +312,62 @@ export default function VenueDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Venue Functions */}
+          {/* Role-based view */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                Functions ({venue.functions?.length || 0})
-              </h2>
-              <Link
-                href={`/venues/${venue.id}/functions/new`}
-                className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-                Add Function
-              </Link>
-            </div>
+            <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+              {currentUser.role === 'organizer' && canEdit
+                ? 'Manage Functions & Responses'
+                : currentUser.role === 'volunteer'
+                ? 'Volunteer Opportunities'
+                : 'Available Distribution Points'}
+            </h2>
+            {renderRoleBasedView()}
+          </div>
 
-            {venue.functions && venue.functions.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {venue.functions.map((func) => (
-                  <FunctionCard
-                    key={func.id}
-                    venueFunction={func}
-                    venueId={venue.id}
-                    onDelete={() => handleDeleteFunction(func.id)}
-                    showActions={true}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-zinc-600 dark:text-zinc-400 mb-4">
-                  No functions added yet. Add functions to specify what this venue collects, distributes, or what services are needed.
-                </p>
+          {/* Venue Functions - Only show for organizers who own the venue */}
+          {canEdit && (
+            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                  Functions ({venue.functions?.length || 0})
+                </h2>
                 <Link
                   href={`/venues/${venue.id}/functions/new`}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
                 >
-                  <Plus className="h-5 w-5" />
-                  Add First Function
+                  <Plus className="h-4 w-4" />
+                  Add Function
                 </Link>
               </div>
-            )}
-          </div>
+
+              {venue.functions && venue.functions.length > 0 ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {venue.functions.map((func) => (
+                    <FunctionCard
+                      key={func.id}
+                      venueFunction={func}
+                      venueId={venue.id}
+                      onDelete={() => handleDeleteFunction(func.id)}
+                      showActions={true}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-zinc-600 dark:text-zinc-400 mb-4">
+                    No functions added yet. Add functions to specify what this venue collects, distributes, or what services are needed.
+                  </p>
+                  <Link
+                    href={`/venues/${venue.id}/functions/new`}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+                  >
+                    <Plus className="h-5 w-5" />
+                    Add First Function
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Creation info */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">

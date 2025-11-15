@@ -60,15 +60,39 @@ export const mockUsers: Record<string, User> = {
 };
 
 // Current user simulation (can be changed for testing)
-let currentUserId = 'user-org-1'; // Default to organizer
+const STORAGE_KEY = 'care_hub_current_user';
+
+// Get initial user ID from localStorage or use default
+function getInitialUserId(): string {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored && mockUsers[stored]) {
+      return stored;
+    }
+  }
+  return 'user-org-1'; // Default to organizer
+}
+
+let currentUserId = getInitialUserId();
 
 export function getCurrentUser(): User {
+  // Always check localStorage in case it was updated
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored && mockUsers[stored]) {
+      currentUserId = stored;
+    }
+  }
   return mockUsers[currentUserId];
 }
 
 export function setCurrentUser(userId: string): void {
   if (mockUsers[userId]) {
     currentUserId = userId;
+    // Save to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, userId);
+    }
   }
 }
 

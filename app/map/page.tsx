@@ -6,8 +6,10 @@ import Link from "next/link"
 import dynamic from "next/dynamic"
 import type { Venue } from "@/types/venue"
 import { fetchVenues } from "@/lib/api/venues"
+import { getCurrentUser } from "@/lib/mock-data/user-roles"
 import CategoryTreeFilter from "@/components/venue-functions/CategoryTreeFilter"
 import NavigationTabs from "@/components/Navigation"
+import type { MapMarker } from "@/components/LeafletMap"
 
 // Dynamic import of map component to avoid SSR issues
 const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
@@ -27,14 +29,6 @@ const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
   ),
 })
 
-interface MapMarker {
-  id: string
-  lat: number
-  lng: number
-  title: string
-  description: string
-}
-
 export default function MapPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -47,6 +41,7 @@ export default function MapPage() {
   const [isMapLoaded, setIsMapLoaded] = useState(false)
   const [venues, setVenues] = useState<Venue[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [currentUser] = useState(() => getCurrentUser())
 
   const loadVenues = async () => {
     const data = await fetchVenues()
@@ -85,13 +80,28 @@ export default function MapPage() {
   })
 
   // Convert venues to markers
-  const markers: MapMarker[] = filteredVenues.map((venue) => ({
-    id: venue.id,
-    lat: venue.location.lat,
-    lng: venue.location.lng,
-    title: venue.title,
-    description: venue.description,
-  }))
+  const markers: MapMarker[] = filteredVenues.map((venue) => {
+    // Check if venue has distribution point function
+    const hasDistributionPoint = venue.functions.some(
+      (func) => func.type === 'distribution_point'
+    )
+    
+    return {
+      id: venue.id,
+      lat: venue.location.lat,
+      lng: venue.location.lng,
+      title: venue.title,
+      description: venue.description,
+      venue: venue, // Include full venue object for rich popups
+      isDistributionPoint: hasDistributionPoint,
+    }
+  })
+
+  // Determine if we should highlight distribution points (for beneficiaries)
+  const highlightDistributionPoints = currentUser.role === 'beneficiary'
+  
+  // Determine if we should show ETA (for volunteers and beneficiaries with location)
+  const showETA = (currentUser.role === 'volunteer' || currentUser.role === 'beneficiary') && userLocation !== null
 
   // Get function summary for a venue
   const getVenueFunctions = (venue: Venue): string[] => {
@@ -191,7 +201,7 @@ export default function MapPage() {
   return (
     <div className="relative h-screen w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
       {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-[1000] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
+      <header className="absolute top-0 left-0 right-0 z-1000 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo and Navigation */}
           <div className="flex items-center gap-4">
@@ -274,7 +284,7 @@ export default function MapPage() {
       {/* Main map area */}
       <div className="h-full w-full pt-[60px]">
         {/* Category Tree Filter - Always visible */}
-        <div className="absolute top-20 left-12 z-[999] w-80 max-w-[calc(100vw-3rem)]">
+        <div className="absolute top-20 left-12 z-999 w-80 max-w-[calc(100vw-3rem)]">
           <CategoryTreeFilter
             selectedCategories={selectedCategories}
             onCategoriesChange={setSelectedCategories}
@@ -288,12 +298,14 @@ export default function MapPage() {
             zoom={13}
             onMarkerClick={handleMarkerClick}
             userLocation={userLocation}
+            highlightDistributionPoints={highlightDistributionPoints}
+            showETA={showETA}
           />
         )}
 
         {/* Selected marker info */}
         {selectedMarker && selectedVenue && (
-          <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 p-4 z-[1000] animate-slide-up max-h-[70vh] overflow-y-auto">
+          <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 p-4 z-1000 animate-slide-up max-h-[70vh] overflow-y-auto">
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1">
@@ -329,7 +341,7 @@ export default function MapPage() {
                   setSelectedMarker(null)
                   setSelectedVenue(null)
                 }}
-                className="p-1 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors flex-shrink-0"
+                className="p-1 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors shrink-0"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />
@@ -355,7 +367,7 @@ export default function MapPage() {
         {/* "My Location" button */}
         <button
           onClick={handleLocateMe}
-          className="absolute right-6 p-3 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all z-[999] hover:scale-110"
+          className="absolute right-6 p-3 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all z-999 hover:scale-110"
           style={{
             bottom: selectedMarker ? "calc(24px + 160px)" : "24px",
             transition: "bottom 0.3s ease",

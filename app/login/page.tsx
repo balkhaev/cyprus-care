@@ -31,17 +31,57 @@ export default function LoginPage() {
 
       if (res.ok) {
         const data = await res.json();
-        localStorage.setItem('authToken', data.token);
-        if (data.user) {
-          localStorage.setItem('currentUser', JSON.stringify(data.user));
+        
+        // Django REST Framework returns token in response
+        if (data.token) {
+          localStorage.setItem('authToken', data.token);
+          
+          // Fetch user profile after login
+          try {
+            const userRes = await fetch(`${API_BASE_URL}/api/me/`, {
+              headers: {
+                'Authorization': `Token ${data.token}`,
+                'Content-Type': 'application/json',
+              },
+            });
+            
+            if (userRes.ok) {
+              const user = await userRes.json();
+              localStorage.setItem('currentUser', JSON.stringify(user));
+            }
+          } catch (userErr) {
+            console.error('Error fetching user profile:', userErr);
+            // Continue anyway - user can be fetched later
+          }
+          
+          router.push('/map');
+        } else {
+          setError('Login successful but no token received. Please try again.');
         }
-        router.push('/map');
       } else {
-        const data = await res.json().catch(() => ({}));
-        setError(data.message || data.error || 'Invalid email or password.');
+        // Handle Django REST Framework error responses
+        const errorData = await res.json().catch(() => ({}));
+        
+        // Django may return errors in different formats
+        if (errorData.non_field_errors) {
+          setError(Array.isArray(errorData.non_field_errors) 
+            ? errorData.non_field_errors[0] 
+            : errorData.non_field_errors);
+        } else if (errorData.error) {
+          setError(typeof errorData.error === 'string' 
+            ? errorData.error 
+            : errorData.error.message || 'Invalid email or password.');
+        } else if (errorData.message) {
+          setError(errorData.message);
+        } else if (errorData.detail) {
+          setError(errorData.detail);
+        } else {
+          setError('Invalid email or password. Please check your credentials.');
+        }
       }
     } catch (err) {
-      setError('Network error. Please check your connection.');
+      console.error('Login error:', err);
+      setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }

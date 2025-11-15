@@ -39,11 +39,15 @@ npm install
 Create a `.env.local` file in the project root:
 
 ```bash
+# Backend API URL - set to your Django backend URL
+# Default: http://localhost:8000 (for local Django development)
+NEXT_PUBLIC_API_URL=http://localhost:8000
+
 # Debug Panel - set to 'true' to enable debug menu (for development)
-NEXT_PUBLIC_SHOW_DEBUG_PANEL=true
+NEXT_PUBLIC_SHOW_DEBUG_PANEL=false
 ```
 
-See `.env.example` for all available environment variables.
+**Note**: If `NEXT_PUBLIC_API_URL` is not set, it defaults to `http://localhost:8000`. Make sure your Django backend is running on this port, or update the URL accordingly.
 
 ### Run in Development Mode
 

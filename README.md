@@ -1,179 +1,182 @@
 # Cyprus Care 🇨🇾
 
-**Платформа для координации помощи в кризисных ситуациях**
+**Crisis Relief Coordination Platform**
 
-Веб-приложение для координации волонтеров и помощи во время чрезвычайных ситуаций на Кипре (пожары, стихийные бедствия, помощь пожилым людям).
+A web application for coordinating volunteers and assistance during emergencies in Cyprus (fires, natural disasters, elderly care).
 
 ## 🎨 Mediterranean Relief UI
 
-Проект использует специально разработанную дизайн-систему **Mediterranean Relief UI** - теплую, доверительную и доступную тему, вдохновленную кипрским средиземноморьем.
+The project uses a specially designed **Mediterranean Relief UI** design system - a warm, trustworthy, and accessible theme inspired by the Cypriot Mediterranean.
 
-### Цветовая палитра
-- 🧡 **Deep Orange** (#E36414) - срочность, огонь, кипрские закаты
-- 💙 **Safe Blue** (#1E88E5) - доверие, спокойствие, море
-- 💚 **Olive Green** (#4CAF50) - надежда, природа, восстановление
-- ❤️ **Fire Red** (#D32F2F) - срочные оповещения
+### Color Palette
 
-### Особенности UI
-- ✅ Большие кнопки и инпуты (удобно для пожилых)
-- ✅ Высокий контраст (WCAG AA compliant)
-- ✅ Шрифт Inter (отличная читаемость)
-- ✅ Увеличенные touch targets (44x44px+)
-- ✅ Четкие focus states для accessibility
+- 🧡 **Deep Orange** (#E36414) - urgency, fire, Cypriot sunsets
+- 💙 **Safe Blue** (#1E88E5) - trust, calm, sea
+- 💚 **Olive Green** (#4CAF50) - hope, nature, recovery
+- ❤️ **Fire Red** (#D32F2F) - urgent alerts
 
-**📖 Полное руководство**: см. [THEME.md](./THEME.md)  
-**🎨 Демо темы**: запустите проект и откройте `/theme-demo`
+### UI Features
 
-## 🚀 Быстрый старт
+- ✅ Large buttons and inputs (convenient for elderly users)
+- ✅ High contrast (WCAG AA compliant)
+- ✅ Inter font (excellent readability)
+- ✅ Increased touch targets (44x44px+)
+- ✅ Clear focus states for accessibility
 
-### Установка зависимостей
+**📖 Complete Guide**: see [THEME.md](./THEME.md)  
+**🎨 Theme Demo**: run the project and open `/theme-demo`
+
+## 🚀 Quick Start
+
+### Install Dependencies
 
 ```bash
 npm install
 ```
 
-### Запуск в режиме разработки
+### Run in Development Mode
 
 ```bash
 npm run dev
 ```
 
-Откройте [http://localhost:3000](http://localhost:3000) в браузере.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Демонстрация темы
+### Theme Demo
 
-После запуска посетите:
-- [http://localhost:3000/theme-demo](http://localhost:3000/theme-demo) - демонстрация всех компонентов UI
+After starting, visit:
 
-## 📁 Структура проекта
+- [http://localhost:3000/theme-demo](http://localhost:3000/theme-demo) - demonstration of all UI components
+
+## 📁 Project Structure
 
 ```
 care/
 ├── app/                    # Next.js App Router
-│   ├── page.tsx           # Главная страница
-│   ├── map/               # Карта помощи
-│   ├── venues/            # Пункты сбора/распределения
-│   ├── organizer/         # Панель организатора
-│   └── theme-demo/        # Демо темы UI
+│   ├── page.tsx           # Home page
+│   ├── map/               # Relief map
+│   ├── venues/            # Collection/distribution points
+│   ├── organizer/         # Organizer panel
+│   └── theme-demo/        # UI theme demo
 ├── components/
-│   ├── ui/                # UI компоненты (Button, Card, Input и т.д.)
-│   ├── LeafletMap.tsx     # Компонент карты
+│   ├── ui/                # UI components (Button, Card, Input, etc.)
+│   ├── LeafletMap.tsx     # Map component
 │   └── LocationPickerMap.tsx
 ├── lib/
-│   ├── utils.ts           # Утилиты
-│   ├── theme-guide.ts     # Гайд по теме
-│   └── map-theme.ts       # Настройки карты
+│   ├── utils.ts           # Utilities
+│   ├── theme-guide.ts     # Theme guide
+│   └── map-theme.ts       # Map settings
 └── types/
-    └── venue.ts           # TypeScript типы
+    └── venue.ts           # TypeScript types
 ```
 
-## 🎯 Основные функции
+## 🎯 Key Features
 
-- 🗺️ **Интерактивная карта** с пунктами сбора/распределения
-- 👥 **Координация волонтеров** и распределение задач
-- 📍 **Пункты помощи** с детальной информацией
-- 🔔 **Система оповещений** о чрезвычайных ситуациях
-- ♿ **Доступность** для всех возрастных групп
+- 🗺️ **Interactive map** with collection/distribution points
+- 👥 **Volunteer coordination** and task distribution
+- 📍 **Relief points** with detailed information
+- 🔔 **Alert system** for emergencies
+- ♿ **Accessibility** for all age groups
 
-## 🎨 Использование темы
+## 🎨 Using the Theme
 
-### Импорт компонентов
+### Importing Components
 
 ```tsx
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 ```
 
-### Примеры использования
+### Usage Examples
 
 ```tsx
-// Большая кнопка призыва к действию
-<Button size="lg">Хочу помочь</Button>
+// Large call-to-action button
+<Button size="lg">I Want to Help</Button>
 
-// Карточка с информацией
+// Information card
 <Card>
   <CardHeader>
-    <CardTitle>Пункт сбора</CardTitle>
+    <CardTitle>Collection Point</CardTitle>
   </CardHeader>
   <CardContent>
-    Адрес: ул. Примерная, 1
+    Address: 1 Example Street
   </CardContent>
 </Card>
 
-// Срочное оповещение
+// Urgent alert
 <Alert variant="warning">
-  <AlertTitle>Внимание!</AlertTitle>
+  <AlertTitle>Attention!</AlertTitle>
   <AlertDescription>
-    В регионе объявлена пожарная опасность
+    Fire hazard declared in the region
   </AlertDescription>
 </Alert>
 ```
 
 ## 🐳 Docker
 
-### Сборка и запуск с Docker Compose
+### Build and Run with Docker Compose
 
 ```bash
 docker-compose up --build
 ```
 
-Приложение будет доступно по адресу http://localhost:3000
+The application will be available at http://localhost:3000
 
-### Ручная сборка Docker образа
+### Manual Docker Image Build
 
 ```bash
-# Сборка образа
+# Build image
 docker build -t care-app .
 
-# Запуск контейнера
+# Run container
 docker run -p 3000:3000 care-app
 ```
 
-### Production деплой
+### Production Deployment
 
 ```bash
-# Сборка production образа
+# Build production image
 docker build -t care-app:latest .
 
-# Запуск в фоне
+# Run in background
 docker-compose up -d
 ```
 
-## 🛠️ Технологии
+## 🛠️ Technologies
 
-- **Next.js 16** - React фреймворк
-- **TypeScript** - типизация
-- **Tailwind CSS 4** - стилизация
-- **Leaflet** - интерактивные карты
-- **Lucide React** - иконки
-- **Inter Font** - типографика
+- **Next.js 16** - React framework
+- **TypeScript** - type safety
+- **Tailwind CSS 4** - styling
+- **Leaflet** - interactive maps
+- **Lucide React** - icons
+- **Inter Font** - typography
 
-## 🎓 Для хакатона
+## 🎓 For the Hackathon
 
-### Презентация темы судьям
+### Presenting the Theme to Judges
 
-> "Мы разработали Cyprus Care с фокусом на доступность и пожилых пользователей.
-> Тема **Mediterranean Relief UI** использует:
-> - Большие кнопки и высокий контраст для удобства пожилых людей
-> - Теплые, успокаивающие цвета, которые снижают панику в кризисных ситуациях
-> - Простую и понятную архитектуру информации
-> 
-> **В кризисной ситуации простота спасает жизни.**"
+> "We developed Cyprus Care with a focus on accessibility and elderly users.
+> The **Mediterranean Relief UI** theme features:
+>
+> - Large buttons and high contrast for elderly user convenience
+> - Warm, calming colors that reduce panic in crisis situations
+> - Simple and clear information architecture
+>
+> **In a crisis, simplicity saves lives.**"
 
-### Уникальные преимущества
+### Unique Advantages
 
-1. **Средиземноморская палитра** - выделяется среди конкурентов
-2. **Accessibility first** - показывает заботу о всех пользователях
-3. **Продуманная семантика цветов** - каждый цвет имеет значение
-4. **Готовность к production** - выглядит как законченный продукт
+1. **Mediterranean palette** - stands out among competitors
+2. **Accessibility first** - shows care for all users
+3. **Thoughtful color semantics** - each color has meaning
+4. **Production ready** - looks like a finished product
 
-## 📄 Лицензия
+## 📄 License
 
-Проект для хакатона Cyprus Hackathon 2025
+Project for Cyprus Hackathon 2025
 
 ---
 
-**Сделано с ❤️ для Кипра**
-
+**Made with ❤️ for Cyprus**

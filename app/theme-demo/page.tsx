@@ -21,25 +21,25 @@ export default function ThemeDemoPage() {
               Mediterranean Relief UI
             </Badge>
             <h1 className="mb-6 text-primary">
-              Тема Cyprus Care
+              Cyprus Care Theme
             </h1>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-              Дизайн-система для координации помощи в кризисных ситуациях.
-              Теплая, доверительная, доступная для всех возрастов.
+              Design system for crisis relief coordination.
+              Warm, trustworthy, accessible for all ages.
             </p>
             
             <div className="flex flex-wrap gap-4 justify-center">
               <Button size="lg">
                 <Heart className="mr-2 h-5 w-5" />
-                Хочу помочь
+                I Want to Help
               </Button>
               <Button size="lg" variant="secondary">
                 <MapPin className="mr-2 h-5 w-5" />
-                Посмотреть карту
+                View Map
               </Button>
               <Button size="lg" variant="outline">
                 <Users className="mr-2 h-5 w-5" />
-                О платформе
+                About Platform
               </Button>
             </div>
           </div>
@@ -51,14 +51,14 @@ export default function ThemeDemoPage() {
           
           {/* Color Palette Section */}
           <section>
-            <h2 className="mb-6">Цветовая палитра</h2>
+            <h2 className="mb-6">Color Palette</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardHeader>
                   <div className="w-full h-24 bg-primary rounded-xl mb-4"></div>
                   <CardTitle>Deep Orange</CardTitle>
                   <CardDescription>
-                    Огонь, срочность, кипрские закаты
+                    Fire, urgency, Cypriot sunsets
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -68,7 +68,7 @@ export default function ThemeDemoPage() {
                   <div className="w-full h-24 bg-secondary rounded-xl mb-4"></div>
                   <CardTitle>Safe Blue</CardTitle>
                   <CardDescription>
-                    Доверие, спокойствие, вода
+                    Trust, calm, water
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -78,7 +78,7 @@ export default function ThemeDemoPage() {
                   <div className="w-full h-24 bg-accent rounded-xl mb-4"></div>
                   <CardTitle>Olive Green</CardTitle>
                   <CardDescription>
-                    Надежда, природа, восстановление
+                    Hope, nature, recovery
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -88,7 +88,7 @@ export default function ThemeDemoPage() {
                   <div className="w-full h-24 bg-destructive rounded-xl mb-4"></div>
                   <CardTitle>Fire Red</CardTitle>
                   <CardDescription>
-                    Ошибки, срочные оповещения
+                    Errors, urgent alerts
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -97,12 +97,12 @@ export default function ThemeDemoPage() {
 
           {/* Buttons Section */}
           <section>
-            <h2 className="mb-6">Кнопки</h2>
+            <h2 className="mb-6">Buttons</h2>
             <Card>
               <CardHeader>
-                <CardTitle>Варианты кнопок</CardTitle>
+                <CardTitle>Button Variants</CardTitle>
                 <CardDescription>
-                  Большие, удобные для нажатия, с четкой визуальной обратной связью
+                  Large, easy to tap, with clear visual feedback
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -127,22 +127,22 @@ export default function ThemeDemoPage() {
 
           {/* Forms Section */}
           <section>
-            <h2 className="mb-6">Формы</h2>
+            <h2 className="mb-6">Forms</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Регистрация волонтера</CardTitle>
+                  <CardTitle>Volunteer Registration</CardTitle>
                   <CardDescription>
-                    Большие инпуты, четкие лейблы, удобные для пожилых людей
+                    Large inputs, clear labels, convenient for elderly users
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Имя и фамилия</Label>
-                    <Input id="name" placeholder="Введите ваше имя" />
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input id="name" placeholder="Enter your name" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Телефон</Label>
+                    <Label htmlFor="phone">Phone</Label>
                     <Input id="phone" type="tel" placeholder="+357" />
                   </div>
                   <div className="space-y-2">
@@ -152,7 +152,7 @@ export default function ThemeDemoPage() {
                 </CardContent>
                 <CardFooter>
                   <Button className="w-full" size="lg">
-                    Зарегистрироваться
+                    Register
                   </Button>
                 </CardFooter>
               </Card>
@@ -161,7 +161,7 @@ export default function ThemeDemoPage() {
                 <CardHeader>
                   <CardTitle>Badges & Alerts</CardTitle>
                   <CardDescription>
-                    Статусы и оповещения
+                    Statuses and notifications
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -175,17 +175,17 @@ export default function ThemeDemoPage() {
                   
                   <Alert variant="warning">
                     <AlertCircle className="h-5 w-5" />
-                    <AlertTitle>Внимание</AlertTitle>
+                    <AlertTitle>Warning</AlertTitle>
                     <AlertDescription>
-                      В регионе объявлена повышенная пожарная опасность
+                      Fire hazard declared in the region
                     </AlertDescription>
                   </Alert>
                   
                   <Alert variant="success">
                     <Heart className="h-5 w-5" />
-                    <AlertTitle>Спасибо!</AlertTitle>
+                    <AlertTitle>Thank You!</AlertTitle>
                     <AlertDescription>
-                      Ваша заявка на участие принята
+                      Your participation request has been accepted
                     </AlertDescription>
                   </Alert>
                 </CardContent>
@@ -195,16 +195,16 @@ export default function ThemeDemoPage() {
 
           {/* Info Cards Section */}
           <section>
-            <h2 className="mb-6">Карточки информации</h2>
+            <h2 className="mb-6">Information Cards</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                     <Heart className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle>250+ волонтеров</CardTitle>
+                  <CardTitle>250+ Volunteers</CardTitle>
                   <CardDescription>
-                    Готовы помочь в любой момент
+                    Ready to help at any time
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -214,9 +214,9 @@ export default function ThemeDemoPage() {
                   <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-4">
                     <MapPin className="h-6 w-6 text-secondary" />
                   </div>
-                  <CardTitle>15 пунктов сбора</CardTitle>
+                  <CardTitle>15 Collection Points</CardTitle>
                   <CardDescription>
-                    По всему Кипру
+                    Throughout Cyprus
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -226,9 +226,9 @@ export default function ThemeDemoPage() {
                   <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4">
                     <Users className="h-6 w-6 text-accent" />
                   </div>
-                  <CardTitle>1000+ помогли</CardTitle>
+                  <CardTitle>1000+ Helped</CardTitle>
                   <CardDescription>
-                    Людей получили поддержку
+                    People received support
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -237,32 +237,32 @@ export default function ThemeDemoPage() {
 
           {/* Typography Section */}
           <section>
-            <h2 className="mb-6">Типографика</h2>
+            <h2 className="mb-6">Typography</h2>
             <Card>
               <CardContent className="space-y-6 pt-6">
                 <div>
                   <h1 className="text-primary">Heading 1 - Inter Font</h1>
                   <p className="text-muted-foreground">
-                    Используется для главных заголовков
+                    Used for main headings
                   </p>
                 </div>
                 <div>
-                  <h2>Heading 2 - Чистый и читаемый</h2>
+                  <h2>Heading 2 - Clean and Readable</h2>
                   <p className="text-muted-foreground">
-                    Для заголовков секций
+                    For section headings
                   </p>
                 </div>
                 <div>
-                  <h3>Heading 3 - Удобно для всех возрастов</h3>
+                  <h3>Heading 3 - Convenient for All Ages</h3>
                   <p className="text-muted-foreground">
-                    Для подзаголовков
+                    For subheadings
                   </p>
                 </div>
                 <div>
                   <p className="text-lg">
-                    Параграф текста. Шрифт Inter обеспечивает отличную читаемость на всех устройствах.
-                    Большой размер шрифта и увеличенный межстрочный интервал делают текст доступным
-                    для пожилых людей.
+                    Paragraph text. The Inter font provides excellent readability on all devices.
+                    Large font size and increased line spacing make the text accessible
+                    for elderly users.
                   </p>
                 </div>
               </CardContent>
@@ -273,29 +273,29 @@ export default function ThemeDemoPage() {
           <section>
             <Card className="bg-gradient-to-br from-primary/5 to-secondary/5">
               <CardHeader>
-                <CardTitle>Философия дизайна</CardTitle>
+                <CardTitle>Design Philosophy</CardTitle>
                 <CardDescription>
-                  Mediterranean Relief UI - больше, чем просто тема
+                  Mediterranean Relief UI - more than just a theme
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
-                    <h3 className="text-primary mb-2">🔥 Срочность</h3>
+                    <h3 className="text-primary mb-2">🔥 Urgency</h3>
                     <p className="text-muted-foreground">
-                      Оранжевый цвет символизирует огонь и необходимость действовать
+                      Orange symbolizes fire and the need to act
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-secondary mb-2">💙 Доверие</h3>
+                    <h3 className="text-secondary mb-2">💙 Trust</h3>
                     <p className="text-muted-foreground">
-                      Синий приносит спокойствие и уверенность в критических ситуациях
+                      Blue brings calm and confidence in critical situations
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-accent mb-2">🌿 Надежда</h3>
+                    <h3 className="text-accent mb-2">🌿 Hope</h3>
                     <p className="text-muted-foreground">
-                      Зеленый символизирует природу, восстановление и будущее
+                      Green symbolizes nature, recovery and the future
                     </p>
                   </div>
                 </div>
@@ -307,9 +307,9 @@ export default function ThemeDemoPage() {
           <section>
             <Card>
               <CardHeader>
-                <CardTitle>Навигация по проекту</CardTitle>
+                <CardTitle>Project Navigation</CardTitle>
                 <CardDescription>
-                  Посмотрите тему в действии
+                  See the theme in action
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -317,25 +317,25 @@ export default function ThemeDemoPage() {
                   <Link href="/">
                     <Button variant="outline" className="w-full justify-start" size="lg">
                       <Heart className="mr-2 h-5 w-5" />
-                      Главная страница
+                      Home Page
                     </Button>
                   </Link>
                   <Link href="/map">
                     <Button variant="outline" className="w-full justify-start" size="lg">
                       <MapPin className="mr-2 h-5 w-5" />
-                      Карта помощи
+                      Relief Map
                     </Button>
                   </Link>
                   <Link href="/venues">
                     <Button variant="outline" className="w-full justify-start" size="lg">
                       <MapPin className="mr-2 h-5 w-5" />
-                      Пункты сбора
+                      Collection Points
                     </Button>
                   </Link>
                   <Link href="/organizer">
                     <Button variant="outline" className="w-full justify-start" size="lg">
                       <Users className="mr-2 h-5 w-5" />
-                      Организатор
+                      Organizer
                     </Button>
                   </Link>
                 </div>
@@ -348,4 +348,3 @@ export default function ThemeDemoPage() {
     </div>
   );
 }
-

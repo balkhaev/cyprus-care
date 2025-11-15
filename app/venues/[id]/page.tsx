@@ -6,39 +6,39 @@ import dynamic from 'next/dynamic';
 import { ArrowLeft, MapPin, Clock, Edit, Trash2, Building2, Warehouse, Home, Phone, Mail } from 'lucide-react';
 import type { Venue, VenueType } from '@/types/venue';
 
-// Динамический импорт карты
+// Dynamic map import
 const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-[400px] rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100 mx-auto mb-4"></div>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">Загрузка карты...</p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">Loading map...</p>
       </div>
     </div>
   ),
 });
 
-// Временные тестовые данные
+// Temporary test data
 const mockVenues: Record<string, Venue> = {
   '1': {
     id: '1',
-    title: 'Центральный пункт сбора',
-    description: 'Основной пункт сбора гуманитарной помощи в центре города. Здесь принимаются вещи, продукты питания, медикаменты и другая необходимая помощь для нуждающихся.',
+    title: 'Central Collection Point',
+    description: 'Main collection point for humanitarian aid in the city center. Items, food, medicine and other necessary aid for those in need are accepted here.',
     type: 'collection_point',
     location: {
       lat: 55.7558,
       lng: 37.6173,
-      address: 'Красная площадь, 1, Москва',
+      address: 'Red Square, 1, Moscow',
     },
     operatingHours: [
-      { dayOfWeek: 'Понедельник', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Вторник', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Среда', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Четверг', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Пятница', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Суббота', openTime: '10:00', closeTime: '16:00', isClosed: false },
-      { dayOfWeek: 'Воскресенье', openTime: '00:00', closeTime: '00:00', isClosed: true },
+      { dayOfWeek: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Tuesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Wednesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Thursday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Friday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Saturday', openTime: '10:00', closeTime: '16:00', isClosed: false },
+      { dayOfWeek: 'Sunday', openTime: '00:00', closeTime: '00:00', isClosed: true },
     ],
     organizerId: 'org-1',
     createdAt: new Date('2024-01-15'),
@@ -53,15 +53,15 @@ const venueTypeIcons: Record<VenueType, React.ReactNode> = {
 };
 
 const venueTypeLabels: Record<VenueType, string> = {
-  collection_point: 'Пункт сбора',
-  distribution_hub: 'Распределительный центр',
-  shelter: 'Убежище',
+  collection_point: 'Collection Point',
+  distribution_hub: 'Distribution Hub',
+  shelter: 'Shelter',
 };
 
 const venueTypeDescriptions: Record<VenueType, string> = {
-  collection_point: 'Место для сбора гуманитарной помощи',
-  distribution_hub: 'Центр для распределения помощи',
-  shelter: 'Временное убежище для нуждающихся',
+  collection_point: 'Place for collecting humanitarian aid',
+  distribution_hub: 'Center for distributing aid',
+  shelter: 'Temporary shelter for those in need',
 };
 
 interface PageProps {
@@ -75,7 +75,7 @@ export default function VenueDetailPage({ params }: PageProps) {
 
   useEffect(() => {
     params.then((resolvedParams) => {
-      // Симуляция загрузки данных
+      // Simulate data loading
       setTimeout(() => {
         const venueData = mockVenues[resolvedParams.id];
         setVenue(venueData || null);
@@ -85,10 +85,10 @@ export default function VenueDetailPage({ params }: PageProps) {
   }, [params]);
 
   const handleDelete = async () => {
-    // Логика удаления площадки
-    console.log('Удаление площадки:', venue?.id);
+    // Venue deletion logic
+    console.log('Deleting venue:', venue?.id);
     setShowDeleteModal(false);
-    // Перенаправление на список
+    // Redirect to list
     window.location.href = '/venues';
   };
 
@@ -97,7 +97,7 @@ export default function VenueDetailPage({ params }: PageProps) {
       <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100 mx-auto mb-4"></div>
-          <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Загрузка...</p>
+          <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Loading...</p>
         </div>
       </div>
     );
@@ -111,17 +111,17 @@ export default function VenueDetailPage({ params }: PageProps) {
             <MapPin className="h-8 w-8 text-zinc-400" />
           </div>
           <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-            Площадка не найдена
+            Venue Not Found
           </h2>
           <p className="text-zinc-600 dark:text-zinc-400 mb-6">
-            Запрашиваемая площадка не существует или была удалена
+            The requested venue does not exist or was deleted
           </p>
           <Link
             href="/venues"
             className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
-            Вернуться к списку
+            Back to List
           </Link>
         </div>
       </div>
@@ -129,12 +129,11 @@ export default function VenueDetailPage({ params }: PageProps) {
   }
 
   const getTodayHours = () => {
-    const today = new Date().toLocaleDateString('ru-RU', { weekday: 'long' });
-    const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1);
-    const hours = venue.operatingHours.find(h => h.dayOfWeek === todayCapitalized);
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    const hours = venue.operatingHours.find(h => h.dayOfWeek === today);
     
     if (!hours || hours.isClosed) {
-      return { text: 'Закрыто', isOpen: false };
+      return { text: 'Closed', isOpen: false };
     }
     
     return { text: `${hours.openTime} - ${hours.closeTime}`, isOpen: true };
@@ -144,7 +143,7 @@ export default function VenueDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      {/* Шапка */}
+      {/* Header */}
       <header className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -176,7 +175,7 @@ export default function VenueDetailPage({ params }: PageProps) {
                 className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
               >
                 <Edit className="h-4 w-4" />
-                Редактировать
+                Edit
               </Link>
               <button
                 onClick={() => setShowDeleteModal(true)}
@@ -189,10 +188,10 @@ export default function VenueDetailPage({ params }: PageProps) {
         </div>
       </header>
 
-      {/* Контент */}
+      {/* Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto space-y-6">
-          {/* Тип и описание */}
+          {/* Type and description */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
             <div className="flex items-start gap-4 mb-4">
               <div className="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-zinc-700 dark:text-zinc-300">
@@ -209,7 +208,7 @@ export default function VenueDetailPage({ params }: PageProps) {
             </div>
             <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
               <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                Описание
+                Description
               </h3>
               <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
                 {venue.description}
@@ -217,10 +216,10 @@ export default function VenueDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Карта */}
+          {/* Map */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
-              Местоположение
+              Location
             </h2>
             <div className="mb-4">
               <div className="flex items-start gap-2 text-zinc-600 dark:text-zinc-400">
@@ -243,16 +242,15 @@ export default function VenueDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Часы работы */}
+          {/* Operating hours */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              Часы работы
+              Operating Hours
             </h2>
             <div className="space-y-2">
               {venue.operatingHours.map((hours) => {
-                const isToday = new Date().toLocaleDateString('ru-RU', { weekday: 'long' }).charAt(0).toUpperCase() + 
-                               new Date().toLocaleDateString('ru-RU', { weekday: 'long' }).slice(1) === hours.dayOfWeek;
+                const isToday = new Date().toLocaleDateString('en-US', { weekday: 'long' }) === hours.dayOfWeek;
                 
                 return (
                   <div
@@ -267,12 +265,12 @@ export default function VenueDetailPage({ params }: PageProps) {
                       {hours.dayOfWeek}
                       {isToday && (
                         <span className="ml-2 text-xs font-normal text-zinc-600 dark:text-zinc-400">
-                          (Сегодня)
+                          (Today)
                         </span>
                       )}
                     </span>
                     {hours.isClosed ? (
-                      <span className="text-sm text-zinc-500 dark:text-zinc-500">Закрыто</span>
+                      <span className="text-sm text-zinc-500 dark:text-zinc-500">Closed</span>
                     ) : (
                       <span className="text-sm text-zinc-600 dark:text-zinc-400">
                         {hours.openTime} — {hours.closeTime}
@@ -284,16 +282,16 @@ export default function VenueDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Информация о создании */}
+          {/* Creation info */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
-              Дополнительная информация
+              Additional Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-zinc-600 dark:text-zinc-400">Создано:</span>
+                <span className="text-zinc-600 dark:text-zinc-400">Created:</span>
                 <span className="ml-2 text-zinc-900 dark:text-zinc-100 font-medium">
-                  {venue.createdAt.toLocaleDateString('ru-RU', { 
+                  {venue.createdAt.toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
@@ -301,9 +299,9 @@ export default function VenueDetailPage({ params }: PageProps) {
                 </span>
               </div>
               <div>
-                <span className="text-zinc-600 dark:text-zinc-400">Обновлено:</span>
+                <span className="text-zinc-600 dark:text-zinc-400">Updated:</span>
                 <span className="ml-2 text-zinc-900 dark:text-zinc-100 font-medium">
-                  {venue.updatedAt.toLocaleDateString('ru-RU', { 
+                  {venue.updatedAt.toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
@@ -315,28 +313,28 @@ export default function VenueDetailPage({ params }: PageProps) {
         </div>
       </main>
 
-      {/* Модальное окно удаления */}
+      {/* Delete modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 max-w-md w-full">
             <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-              Удалить площадку?
+              Delete Venue?
             </h3>
             <p className="text-zinc-600 dark:text-zinc-400 mb-6">
-              Вы уверены, что хотите удалить площадку "{venue.title}"? Это действие нельзя отменить.
+              Are you sure you want to delete venue "{venue.title}"? This action cannot be undone.
             </p>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="flex-1 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
               >
-                Отмена
+                Cancel
               </button>
               <button
                 onClick={handleDelete}
                 className="flex-1 px-4 py-2 bg-red-600 dark:bg-red-500 text-white rounded-lg font-medium hover:bg-red-700 dark:hover:bg-red-600 transition-colors"
               >
-                Удалить
+                Delete
               </button>
             </div>
           </div>
@@ -345,4 +343,3 @@ export default function VenueDetailPage({ params }: PageProps) {
     </div>
   );
 }
-

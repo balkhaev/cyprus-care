@@ -14,7 +14,7 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     
-    // Здесь будет логика аутентификации
+    // Authentication logic will go here
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     setIsLoading(false);
@@ -23,20 +23,20 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900 p-4">
       <div className="w-full max-w-md">
-        {/* Логотип/Заголовок */}
+        {/* Logo/Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">
-            Добро пожаловать
+            Welcome Back
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400">
-            Войдите в свою учетную запись
+            Sign in to your account
           </p>
         </div>
 
-        {/* Форма */}
+        {/* Form */}
         <div className="bg-white dark:bg-zinc-800 rounded-2xl shadow-xl p-8 border border-zinc-200 dark:border-zinc-700">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email поле */}
+            {/* Email field */}
             <div className="space-y-2">
               <label 
                 htmlFor="email" 
@@ -58,13 +58,13 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Пароль поле */}
+            {/* Password field */}
             <div className="space-y-2">
               <label 
                 htmlFor="password" 
                 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 block"
               >
-                Пароль
+                Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
@@ -91,7 +91,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Запомнить меня и забыли пароль */}
+            {/* Remember me and forgot password */}
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -99,18 +99,18 @@ export default function LoginPage() {
                   className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
                 />
                 <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                  Запомнить меня
+                  Remember me
                 </span>
               </label>
               <Link 
                 href="/forgot-password" 
                 className="text-sm text-zinc-900 dark:text-zinc-100 hover:underline"
               >
-                Забыли пароль?
+                Forgot password?
               </Link>
             </div>
 
-            {/* Кнопка входа */}
+            {/* Sign in button */}
             <button
               type="submit"
               disabled={isLoading}
@@ -134,51 +134,50 @@ export default function LoginPage() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     />
                   </svg>
-                  Загрузка...
+                  Loading...
                 </span>
               ) : (
-                'Войти'
+                'Sign In'
               )}
             </button>
           </form>
 
-          {/* Разделитель */}
+          {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-zinc-300 dark:border-zinc-600"></div>
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white dark:bg-zinc-800 text-zinc-500">
-                или
+                or
               </span>
             </div>
           </div>
 
-          {/* Регистрация */}
+          {/* Registration */}
           <div className="text-center">
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Нет аккаунта?{' '}
+              Don't have an account?{' '}
               <Link 
                 href="/register" 
                 className="font-medium text-zinc-900 dark:text-zinc-100 hover:underline"
               >
-                Зарегистрироваться
+                Sign up
               </Link>
             </p>
           </div>
         </div>
 
-        {/* Ссылка на карту */}
+        {/* Link to map */}
         <div className="mt-6 text-center">
           <Link 
             href="/map" 
             className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
-            Перейти к карте →
+            Go to map →
           </Link>
         </div>
       </div>
     </div>
   );
 }
-

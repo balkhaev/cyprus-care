@@ -7,39 +7,39 @@ import dynamic from 'next/dynamic';
 import { ArrowLeft, Building2, Warehouse, Home, Save } from 'lucide-react';
 import type { VenueType, VenueLocation, OperatingHours, Venue } from '@/types/venue';
 
-// Динамический импорт карты
+// Dynamic map import
 const LocationPickerMap = dynamic(() => import('@/components/LocationPickerMap'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-[400px] rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100 mx-auto mb-4"></div>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">Загрузка карты...</p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">Loading map...</p>
       </div>
     </div>
   ),
 });
 
-// Временные тестовые данные
+// Temporary test data
 const mockVenues: Record<string, Venue> = {
   '1': {
     id: '1',
-    title: 'Центральный пункт сбора',
-    description: 'Основной пункт сбора гуманитарной помощи в центре города. Здесь принимаются вещи, продукты питания, медикаменты и другая необходимая помощь для нуждающихся.',
+    title: 'Central Collection Point',
+    description: 'Main collection point for humanitarian aid in the city center. Items, food, medicine and other necessary aid for those in need are accepted here.',
     type: 'collection_point',
     location: {
       lat: 55.7558,
       lng: 37.6173,
-      address: 'Красная площадь, 1, Москва',
+      address: 'Red Square, 1, Moscow',
     },
     operatingHours: [
-      { dayOfWeek: 'Понедельник', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Вторник', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Среда', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Четверг', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Пятница', openTime: '09:00', closeTime: '18:00', isClosed: false },
-      { dayOfWeek: 'Суббота', openTime: '10:00', closeTime: '16:00', isClosed: false },
-      { dayOfWeek: 'Воскресенье', openTime: '00:00', closeTime: '00:00', isClosed: true },
+      { dayOfWeek: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Tuesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Wednesday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Thursday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Friday', openTime: '09:00', closeTime: '18:00', isClosed: false },
+      { dayOfWeek: 'Saturday', openTime: '10:00', closeTime: '16:00', isClosed: false },
+      { dayOfWeek: 'Sunday', openTime: '00:00', closeTime: '00:00', isClosed: true },
     ],
     organizerId: 'org-1',
     createdAt: new Date('2024-01-15'),
@@ -50,21 +50,21 @@ const mockVenues: Record<string, Venue> = {
 const venueTypes: Array<{ value: VenueType; label: string; icon: React.ReactNode; description: string }> = [
   {
     value: 'collection_point',
-    label: 'Пункт сбора',
+    label: 'Collection Point',
     icon: <Building2 className="h-5 w-5" />,
-    description: 'Место для сбора гуманитарной помощи',
+    description: 'Place for collecting humanitarian aid',
   },
   {
     value: 'distribution_hub',
-    label: 'Распределительный центр',
+    label: 'Distribution Hub',
     icon: <Warehouse className="h-5 w-5" />,
-    description: 'Центр для распределения помощи',
+    description: 'Center for distributing aid',
   },
   {
     value: 'shelter',
-    label: 'Убежище',
+    label: 'Shelter',
     icon: <Home className="h-5 w-5" />,
-    description: 'Временное убежище для нуждающихся',
+    description: 'Temporary shelter for those in need',
   },
 ];
 
@@ -94,7 +94,7 @@ export default function EditVenuePage({ params }: PageProps) {
 
   useEffect(() => {
     params.then((resolvedParams) => {
-      // Симуляция загрузки данных
+      // Simulate data loading
       setTimeout(() => {
         const venueData = mockVenues[resolvedParams.id];
         if (venueData) {
@@ -126,7 +126,7 @@ export default function EditVenuePage({ params }: PageProps) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Симуляция отправки данных
+    // Simulate data submission
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     const updatedVenue = {
@@ -137,9 +137,9 @@ export default function EditVenuePage({ params }: PageProps) {
       updatedAt: new Date(),
     };
 
-    console.log('Обновлена площадка:', updatedVenue);
+    console.log('Updated venue:', updatedVenue);
 
-    // Перенаправление на страницу детального просмотра
+    // Redirect to detail view
     router.push(`/venues/${venue?.id}`);
   };
 
@@ -148,7 +148,7 @@ export default function EditVenuePage({ params }: PageProps) {
       <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100 mx-auto mb-4"></div>
-          <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Загрузка...</p>
+          <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Loading...</p>
         </div>
       </div>
     );
@@ -159,17 +159,17 @@ export default function EditVenuePage({ params }: PageProps) {
       <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-            Площадка не найдена
+            Venue Not Found
           </h2>
           <p className="text-zinc-600 dark:text-zinc-400 mb-6">
-            Запрашиваемая площадка не существует или была удалена
+            The requested venue does not exist or was deleted
           </p>
           <Link
             href="/venues"
             className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
-            Вернуться к списку
+            Back to List
           </Link>
         </div>
       </div>
@@ -178,7 +178,7 @@ export default function EditVenuePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      {/* Шапка */}
+      {/* Header */}
       <header className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
@@ -190,7 +190,7 @@ export default function EditVenuePage({ params }: PageProps) {
             </Link>
             <div>
               <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                Редактировать площадку
+                Edit Venue
               </h1>
               <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
                 {venue.title}
@@ -200,51 +200,51 @@ export default function EditVenuePage({ params }: PageProps) {
         </div>
       </header>
 
-      {/* Форма */}
+      {/* Form */}
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8">
-          {/* Основная информация */}
+          {/* Basic information */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-              Основная информация
+              Basic Information
             </h2>
 
-            {/* Название */}
+            {/* Title */}
             <div className="space-y-2">
               <label htmlFor="title" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Название площадки *
+                Venue Name *
               </label>
               <input
                 id="title"
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Например: Центральный пункт сбора"
+                placeholder="E.g.: Central Collection Point"
                 className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all"
                 required
               />
             </div>
 
-            {/* Описание */}
+            {/* Description */}
             <div className="space-y-2">
               <label htmlFor="description" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Описание *
+                Description *
               </label>
               <textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Опишите назначение и функции площадки..."
+                placeholder="Describe the purpose and functions of the venue..."
                 rows={4}
                 className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all resize-none"
                 required
               />
             </div>
 
-            {/* Тип площадки */}
+            {/* Venue type */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Тип площадки *
+                Venue Type *
               </label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {venueTypes.map((type) => (
@@ -275,10 +275,10 @@ export default function EditVenuePage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Местоположение */}
+          {/* Location */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-              Местоположение
+              Location
             </h2>
 
             <LocationPickerMap
@@ -286,26 +286,26 @@ export default function EditVenuePage({ params }: PageProps) {
               onLocationSelect={handleLocationSelect}
             />
 
-            {/* Адрес */}
+            {/* Address */}
             <div className="space-y-2">
               <label htmlFor="address" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Адрес
+                Address
               </label>
               <input
                 id="address"
                 type="text"
                 value={location.address}
                 onChange={(e) => setLocation({ ...location, address: e.target.value })}
-                placeholder="Адрес будет определен автоматически"
+                placeholder="Address will be determined automatically"
                 className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all"
               />
             </div>
           </div>
 
-          {/* Часы работы */}
+          {/* Operating hours */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-              Часы работы
+              Operating Hours
             </h2>
 
             <div className="space-y-3">
@@ -322,7 +322,7 @@ export default function EditVenuePage({ params }: PageProps) {
                   
                   {hours.isClosed ? (
                     <div className="flex-1">
-                      <span className="text-sm text-zinc-500 dark:text-zinc-500">Закрыто</span>
+                      <span className="text-sm text-zinc-500 dark:text-zinc-500">Closed</span>
                     </div>
                   ) : (
                     <div className="flex-1 flex items-center gap-3">
@@ -349,20 +349,20 @@ export default function EditVenuePage({ params }: PageProps) {
                       onChange={(e) => handleOperatingHoursChange(index, 'isClosed', e.target.checked)}
                       className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
                     />
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Закрыто</span>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Closed</span>
                   </label>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Кнопки */}
+          {/* Buttons */}
           <div className="flex items-center justify-end gap-4">
             <Link
               href={`/venues/${venue.id}`}
               className="px-6 py-3 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg font-medium transition-colors"
             >
-              Отмена
+              Cancel
             </Link>
             <button
               type="submit"
@@ -372,12 +372,12 @@ export default function EditVenuePage({ params }: PageProps) {
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-2 border-white dark:border-zinc-900 border-t-transparent"></div>
-                  Сохранение...
+                  Saving...
                 </>
               ) : (
                 <>
                   <Save className="h-5 w-5" />
-                  Сохранить изменения
+                  Save Changes
                 </>
               )}
             </button>
@@ -387,4 +387,3 @@ export default function EditVenuePage({ params }: PageProps) {
     </div>
   );
 }
-

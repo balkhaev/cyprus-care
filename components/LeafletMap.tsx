@@ -55,6 +55,7 @@ export interface MapMarker {
   description: string;
   venue?: Venue; // Full venue object for rich popups
   isDistributionPoint?: boolean; // Highlight for beneficiaries
+  isSelected?: boolean; // Whether the marker is currently selected
 }
 
 interface LeafletMapProps {
@@ -65,6 +66,7 @@ interface LeafletMapProps {
   userLocation?: { lat: number; lng: number } | null;
   highlightDistributionPoints?: boolean; // For beneficiary view
   showETA?: boolean; // Show estimated time to reach
+  selectedMarkerId?: string | null; // ID of currently selected marker
 }
 
 export default function LeafletMap({
@@ -75,6 +77,7 @@ export default function LeafletMap({
   userLocation,
   highlightDistributionPoints = false,
   showETA = false,
+  selectedMarkerId = null,
 }: LeafletMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -184,7 +187,8 @@ export default function LeafletMap({
       highlightDistributionPoints,
       showETA,
       hasUserLocation: !!userLocation,
-      hasOnMarkerClick: !!onMarkerClick
+      hasOnMarkerClick: !!onMarkerClick,
+      selectedMarkerId
     })
 
     try {
@@ -195,9 +199,45 @@ export default function LeafletMap({
 
       // Add new markers
       markers.forEach((markerData) => {
-        // Create custom icon for distribution points if highlighted
+        const isSelected = markerData.id === selectedMarkerId;
+        
+        // Create custom icon
         let markerIcon = undefined;
-        if (highlightDistributionPoints && markerData.isDistributionPoint) {
+        
+        if (isSelected) {
+          // Orange icon for selected marker
+          markerIcon = L.divIcon({
+            className: 'selected-marker',
+            html: `
+              <div style="position: relative; width: 40px; height: 40px;">
+                <div style="
+                  width: 40px;
+                  height: 40px;
+                  background-color: #f97316;
+                  border: 4px solid white;
+                  border-radius: 50% 50% 50% 0;
+                  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.6);
+                  transform: rotate(-45deg);
+                  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                "></div>
+                <div style="
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  color: white;
+                  font-size: 20px;
+                  font-weight: bold;
+                  z-index: 10;
+                ">📍</div>
+              </div>
+            `,
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            popupAnchor: [0, -40],
+          });
+        } else if (highlightDistributionPoints && markerData.isDistributionPoint) {
+          // Green icon for distribution points
           markerIcon = L.divIcon({
             className: 'distribution-point-marker',
             html: `
@@ -298,6 +338,11 @@ export default function LeafletMap({
             }
           });
 
+        // Auto-open popup for selected marker
+        if (isSelected) {
+          marker.openPopup();
+        }
+
         if (markersLayerRef.current) {
           marker.addTo(markersLayerRef.current);
           addedCount++;
@@ -314,7 +359,7 @@ export default function LeafletMap({
     } catch (error) {
       console.error('Error updating markers:', error);
     }
-  }, [markers, onMarkerClick, highlightDistributionPoints, showETA, userLocation]);
+  }, [markers, onMarkerClick, highlightDistributionPoints, showETA, userLocation, selectedMarkerId]);
 
   // Update user location
   useEffect(() => {
@@ -423,7 +468,8 @@ export default function LeafletMap({
         }
         
         .user-location-marker,
-        .distribution-point-marker {
+        .distribution-point-marker,
+        .selected-marker {
           background: transparent !important;
           border: none !important;
         }
@@ -431,6 +477,23 @@ export default function LeafletMap({
         /* Ensure markers are always visible */
         .leaflet-marker-icon {
           z-index: 1000 !important;
+        }
+
+        /* Selected marker should be on top */
+        .selected-marker {
+          z-index: 2000 !important;
+        }
+        
+        /* Pulse animation for selected marker */
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+            transform: rotate(-45deg) scale(1);
+          }
+          50% {
+            opacity: .8;
+            transform: rotate(-45deg) scale(1.05);
+          }
         }
       `}</style>
     </>

@@ -176,7 +176,7 @@ export default function DebugPanel() {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-            <div className="space-y-1 max-h-[400px] overflow-y-auto">
+            <div className="space-y-1 max-h-[400px] overflow-y-auto p-1">
               {Object.values(mockUsers).map((user) => {
                 const roleInfo = getRoleInfo(user.role)
                 const isActive = user.id === currentUser.id

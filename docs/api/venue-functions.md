@@ -46,20 +46,6 @@ Content-Type: application/json
       "quantity": "some"
     }
   ],
-  "openingTimes": [
-    {
-      "dayOfWeek": "monday",
-      "openTime": "09:00",
-      "closeTime": "17:00",
-      "isClosed": false
-    },
-    {
-      "dayOfWeek": "sunday",
-      "openTime": "00:00",
-      "closeTime": "00:00",
-      "isClosed": true
-    }
-  ],
   "specialRequests": "Please bring items in clean condition"
 }
 ```
@@ -97,16 +83,12 @@ Content-Type: application/json
   "type": "services_needed",
   "services": [
     {
-      "serviceId": "srv-medical-general",
       "serviceName": "Medical Checkup",
-      "category": "medical",
       "numberOfVolunteers": 2,
       "description": "Need doctors for basic health checkups"
     },
     {
-      "serviceId": "srv-translation-russian",
       "serviceName": "Russian Translation",
-      "category": "translation",
       "numberOfVolunteers": 1
     }
   ],
@@ -123,7 +105,6 @@ Content-Type: application/json
   "customTypeId": "custom-123e4567-e89b-12d3-a456-426614174000",
   "items": [],
   "services": [],
-  "openingTimes": [],
   "specialRequests": "Custom function description"
 }
 ```
@@ -140,18 +121,11 @@ Content-Type: application/json
   - `categoryId` (UUID) - Category ID
   - `categoryPath` (string[]) - Path in category tree
   - `quantity` (string) - Quantity level: `a_lot`, `some`, `few`
-- `openingTimes` (array, required) - Operating hours
-  - `dayOfWeek` (string) - Day of week: `monday`, `tuesday`, etc.
-  - `openTime` (string) - Opening time (HH:MM)
-  - `closeTime` (string) - Closing time (HH:MM)
-  - `isClosed` (boolean) - Closed on this day
 
 **For Services Needed:**
 
 - `services` (array, required) - List of required services
-  - `serviceId` (UUID) - Service ID
   - `serviceName` (string) - Service name
-  - `category` (string) - Category: `medical`, `legal`, `psychological`, `translation`, `transport`, `education`, `other`
   - `numberOfVolunteers` (number) - Number of volunteers needed
   - `description` (string, optional) - Description
 
@@ -179,14 +153,6 @@ Content-Type: application/json
           "categoryId": "cat-food-canned",
           "categoryPath": ["Food", "Canned Food"],
           "quantity": "a_lot"
-        }
-      ],
-      "openingTimes": [
-        {
-          "dayOfWeek": "monday",
-          "openTime": "09:00",
-          "closeTime": "17:00",
-          "isClosed": false
         }
       ],
       "specialRequests": "Please bring items in clean condition",

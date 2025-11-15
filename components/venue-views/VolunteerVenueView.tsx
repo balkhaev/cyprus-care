@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Hand, Package, CheckCircle } from 'lucide-react';
+import { Hand, Package, CheckCircle, Check } from 'lucide-react';
 import type { Venue, VenueFunction, ItemWithQuantity, ServiceRequest } from '@/types/venue';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface VolunteerVenueViewProps {
   venue: Venue;
@@ -20,6 +21,23 @@ export interface ResponseData {
   serviceType?: string;
   quantity?: number;
   message?: string;
+}
+
+export interface BulkResponseData {
+  responses: Array<{
+    functionId: string;
+    responseType: 'item' | 'service';
+    categoryId?: string;
+    serviceType?: string;
+    quantity?: number;
+  }>;
+  message?: string;
+}
+
+interface SelectedItem {
+  functionId: string;
+  item?: ItemWithQuantity;
+  service?: ServiceRequest;
 }
 
 interface ResponseModalProps {
@@ -138,6 +156,159 @@ function ResponseModal({ isOpen, onClose, onSubmit, functionId, item, service }:
   );
 }
 
+interface BulkResponseModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: BulkResponseData) => void;
+  selectedItems: SelectedItem[];
+}
+
+function BulkResponseModal({ isOpen, onClose, onSubmit, selectedItems }: BulkResponseModalProps) {
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [message, setMessage] = useState<string>('');
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const responses = selectedItems.map(({ functionId, item, service }) => {
+      const response: BulkResponseData['responses'][0] = {
+        functionId,
+        responseType: item ? 'item' : 'service',
+      };
+
+      if (item) {
+        const key = `${functionId}-${item.categoryId}`;
+        response.categoryId = item.categoryId;
+        response.quantity = quantities[key] || 1;
+      } else if (service) {
+        response.serviceType = service.type;
+      }
+
+      return response;
+    });
+
+    onSubmit({
+      responses,
+      message: message || undefined,
+    });
+    onClose();
+  };
+
+  const handleQuantityChange = (functionId: string, categoryId: string, value: number) => {
+    const key = `${functionId}-${categoryId}`;
+    setQuantities(prev => ({ ...prev, [key]: value }));
+  };
+
+  const itemsToRespond = selectedItems.filter(s => s.item);
+  const servicesToRespond = selectedItems.filter(s => s.service);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+        <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
+          Bulk Respond ({selectedItems.length} items)
+        </h3>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {itemsToRespond.length > 0 && (
+            <div>
+              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+                Items ({itemsToRespond.length})
+              </p>
+              <div className="space-y-3">
+                {itemsToRespond.map(({ functionId, item }) => {
+                  if (!item) return null;
+                  const key = `${functionId}-${item.categoryId}`;
+                  return (
+                    <div key={key} className="bg-zinc-50 dark:bg-zinc-800 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                        {item.categoryPath.join(' → ')}
+                      </p>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
+                        Need level: <span className="capitalize">{item.quantity.replace('_', ' ')}</span>
+                      </p>
+                      <div className="mt-2">
+                        <Label htmlFor={`quantity-${key}`} className="text-xs">
+                          Quantity you can provide
+                        </Label>
+                        <Input
+                          id={`quantity-${key}`}
+                          type="number"
+                          min="1"
+                          value={quantities[key] || 1}
+                          onChange={(e) => handleQuantityChange(functionId, item.categoryId, parseInt(e.target.value) || 1)}
+                          className="mt-1"
+                          required
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {servicesToRespond.length > 0 && (
+            <div>
+              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+                Services ({servicesToRespond.length})
+              </p>
+              <div className="space-y-2">
+                {servicesToRespond.map(({ functionId, service }) => {
+                  if (!service) return null;
+                  return (
+                    <div key={`${functionId}-${service.type}`} className="bg-zinc-50 dark:bg-zinc-800 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 capitalize">
+                        {service.type.replace('_', ' ')}
+                      </p>
+                      {service.description && (
+                        <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
+                          {service.description}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          
+          <div>
+            <Label htmlFor="bulk-message">Message (optional)</Label>
+            <textarea
+              id="bulk-message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="mt-1 w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 dark:placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
+              rows={3}
+              placeholder="Add a message for all selected items and services..."
+            />
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              onClick={onClose}
+              className="flex-1"
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="flex-1"
+            >
+              Submit {selectedItems.length} Responses
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueViewProps) {
   const [responseModal, setResponseModal] = useState<{
     isOpen: boolean;
@@ -145,6 +316,9 @@ export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueV
     item?: ItemWithQuantity;
     service?: ServiceRequest;
   }>({ isOpen: false, functionId: '' });
+  
+  const [bulkResponseModal, setBulkResponseModal] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
 
   const handleOpenResponseModal = (
     functionId: string,
@@ -163,6 +337,44 @@ export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueV
       onRespond(data);
     }
     console.log('Volunteer response:', data);
+  };
+
+  const toggleItemSelection = (functionId: string, item?: ItemWithQuantity, service?: ServiceRequest) => {
+    const exists = selectedItems.find(
+      s => (s.item && item && s.functionId === functionId && s.item.categoryId === item.categoryId) ||
+           (s.service && service && s.functionId === functionId && s.service.type === service.type)
+    );
+
+    if (exists) {
+      setSelectedItems(selectedItems.filter(
+        s => !(
+          (s.item && item && s.functionId === functionId && s.item.categoryId === item.categoryId) ||
+          (s.service && service && s.functionId === functionId && s.service.type === service.type)
+        )
+      ));
+    } else {
+      setSelectedItems([...selectedItems, { functionId, item, service }]);
+    }
+  };
+
+  const isItemSelected = (functionId: string, item?: ItemWithQuantity, service?: ServiceRequest) => {
+    return selectedItems.some(
+      s => (s.item && item && s.functionId === functionId && s.item.categoryId === item.categoryId) ||
+           (s.service && service && s.functionId === functionId && s.service.type === service.type)
+    );
+  };
+
+  const handleBulkRespond = () => {
+    if (selectedItems.length > 0) {
+      setBulkResponseModal(true);
+    }
+  };
+
+  const handleSubmitBulkResponse = (data: BulkResponseData) => {
+    // Здесь можно обработать массовый ответ
+    console.log('Bulk volunteer response:', data);
+    setBulkResponseModal(false);
+    setSelectedItems([]);
   };
 
   const renderFunction = (func: VenueFunction) => {
@@ -193,8 +405,19 @@ export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueV
               {func.items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+                  onClick={() => isCollection && toggleItemSelection(func.id, item)}
+                  className={`flex items-center p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg ${
+                    isCollection ? 'cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors' : ''
+                  }`}
                 >
+                  {isCollection && (
+                    <Checkbox
+                      checked={isItemSelected(func.id, item)}
+                      onCheckedChange={() => toggleItemSelection(func.id, item)}
+                      className="mr-3"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  )}
                   <div className="flex-1">
                     <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                       {item.categoryPath.join(' → ')}
@@ -203,16 +426,6 @@ export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueV
                       Need level: {item.quantity.replace('_', ' ')}
                     </p>
                   </div>
-                  {isCollection && (
-                    <Button
-                      size="sm"
-                      onClick={() => handleOpenResponseModal(func.id, item)}
-                      className="ml-3"
-                    >
-                      <Hand className="h-4 w-4 mr-1" />
-                      Respond
-                    </Button>
-                  )}
                 </div>
               ))}
             </div>
@@ -257,8 +470,15 @@ export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueV
               {func.services.map((service, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+                  onClick={() => toggleItemSelection(func.id, undefined, service)}
+                  className="flex items-center p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
                 >
+                  <Checkbox
+                    checked={isItemSelected(func.id, undefined, service)}
+                    onCheckedChange={() => toggleItemSelection(func.id, undefined, service)}
+                    className="mr-3"
+                    onClick={(e) => e.stopPropagation()}
+                  />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 capitalize">
@@ -276,14 +496,6 @@ export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueV
                       </p>
                     )}
                   </div>
-                  <Button
-                    size="sm"
-                    onClick={() => handleOpenResponseModal(func.id, undefined, service)}
-                    className="ml-3"
-                  >
-                    <Hand className="h-4 w-4 mr-1" />
-                    Respond
-                  </Button>
                 </div>
               ))}
             </div>
@@ -344,9 +556,24 @@ export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueV
   return (
     <div className="space-y-4">
       {venue.functions && venue.functions.length > 0 ? (
-        <div className="space-y-4">
-          {venue.functions.map(renderFunction)}
-        </div>
+        <>
+          <div className="space-y-4">
+            {venue.functions.map(renderFunction)}
+          </div>
+          
+          {/* Кнопка Respond внизу */}
+          <div className="sticky bottom-4 flex justify-center">
+            <Button
+              onClick={handleBulkRespond}
+              disabled={selectedItems.length === 0}
+              size="lg"
+              className="flex items-center gap-2 shadow-lg"
+            >
+              <Hand className="h-5 w-5" />
+              Respond ({selectedItems.length})
+            </Button>
+          </div>
+        </>
       ) : (
         <Card className="p-8 text-center">
           <p className="text-zinc-600 dark:text-zinc-400">
@@ -362,6 +589,13 @@ export default function VolunteerVenueView({ venue, onRespond }: VolunteerVenueV
         functionId={responseModal.functionId}
         item={responseModal.item}
         service={responseModal.service}
+      />
+
+      <BulkResponseModal
+        isOpen={bulkResponseModal}
+        onClose={() => setBulkResponseModal(false)}
+        onSubmit={handleSubmitBulkResponse}
+        selectedItems={selectedItems}
       />
     </div>
   );

@@ -254,9 +254,18 @@ export default function MapPage() {
   }
 
   const handleBuildRoute = () => {
-    if (selectedMarker) {
-      alert(`Building route to: ${selectedMarker.title}`)
-      // Add route building logic here
+    if (selectedMarker && userLocation) {
+      // Build Google Maps or OpenStreetMap URL for routing
+      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${selectedMarker.lat},${selectedMarker.lng}&travelmode=driving`
+      
+      // Open route in new tab
+      window.open(googleMapsUrl, '_blank')
+    } else if (selectedMarker && !userLocation) {
+      // If no user location, just show the destination
+      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${selectedMarker.lat},${selectedMarker.lng}`
+      window.open(googleMapsUrl, '_blank')
+    } else {
+      alert('Please select a venue on the map')
     }
   }
 
@@ -286,6 +295,7 @@ export default function MapPage() {
           userLocation={userLocation}
           highlightDistributionPoints={highlightDistributionPoints}
           showETA={showETA}
+          selectedMarkerId={selectedMarker?.id || null}
         />
 
         {/* Loading overlay */}

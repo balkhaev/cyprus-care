@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
-import type { Venue } from '@/types/venue';
+import type { Venue, CollectionPointFunction, DistributionPointFunction, ServicesNeededFunction, CustomFunction } from '@/types/venue';
 
 // Fix Leaflet marker icons
 const fixLeafletIcons = () => {
@@ -303,18 +303,22 @@ export default function LeafletMap({
             
             if (func.type === 'collection_point') {
               functionLabel = '📥 Collection Point';
-              const itemCount = func.items?.length || 0;
+              const collectionFunc = func as CollectionPointFunction;
+              const itemCount = collectionFunc.items.length;
               functionDetails = itemCount > 0 ? `${itemCount} items needed` : '';
             } else if (func.type === 'distribution_point') {
               functionLabel = '📦 Distribution Point';
-              const itemCount = func.items?.length || 0;
+              const distributionFunc = func as DistributionPointFunction;
+              const itemCount = distributionFunc.items.length;
               functionDetails = itemCount > 0 ? `${itemCount} items available` : '';
             } else if (func.type === 'services_needed') {
               functionLabel = '🤝 Services Needed';
-              const serviceCount = func.services?.length || 0;
+              const servicesFunc = func as ServicesNeededFunction;
+              const serviceCount = servicesFunc.services.length;
               functionDetails = serviceCount > 0 ? `${serviceCount} services` : '';
             } else if (func.type === 'custom') {
-              functionLabel = `✨ ${func.customTypeName}`;
+              const customFunc = func as CustomFunction;
+              functionLabel = `✨ ${customFunc.customTypeName}`;
             }
             
             popupContent += `

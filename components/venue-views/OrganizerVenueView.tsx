@@ -12,7 +12,14 @@ import {
   ChevronRight,
 } from "lucide-react"
 import Link from "next/link"
-import type { Venue, VenueFunction } from "@/types/venue"
+import type {
+  Venue,
+  VenueFunction,
+  CollectionPointFunction,
+  DistributionPointFunction,
+  ServicesNeededFunction,
+  CustomFunction,
+} from "@/types/venue"
 import type { NeedStatus } from "@/types/response"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -321,6 +328,30 @@ export default function OrganizerVenueView({
     const isDistribution = func.type === "distribution_point"
     const isService = func.type === "services_needed"
 
+    // Type guards для безопасного доступа к свойствам
+    const hasItems = (
+      fn: VenueFunction
+    ): fn is
+      | CollectionPointFunction
+      | DistributionPointFunction
+      | CustomFunction => {
+      return (
+        fn.type === "collection_point" ||
+        fn.type === "distribution_point" ||
+        fn.type === "custom"
+      )
+    }
+
+    const hasServices = (
+      fn: VenueFunction
+    ): fn is ServicesNeededFunction | CustomFunction => {
+      return fn.type === "services_needed" || fn.type === "custom"
+    }
+
+    const itemsCount = hasItems(func) && func.items ? func.items.length : 0
+    const servicesCount =
+      hasServices(func) && func.services ? func.services.length : 0
+
     return (
       <Card key={func.id} className="overflow-hidden">
         {/* Хедер функции */}
@@ -349,8 +380,8 @@ export default function OrganizerVenueView({
               </p>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 {isService
-                  ? `${func.services?.length || 0} services`
-                  : `${func.items?.length || 0} categories`}
+                  ? `${servicesCount} services`
+                  : `${itemsCount} categories`}
               </p>
             </div>
           </div>
@@ -375,8 +406,8 @@ export default function OrganizerVenueView({
 
         {/* Список элементов */}
         <div className="p-3 space-y-1">
-          {isService
-            ? func.services?.map((service, idx) => {
+          {hasServices(func) && func.services
+            ? func.services.map((service, idx) => {
                 const serviceResponses = funcResponses.filter(
                   (r) =>
                     r.responseType === "service" &&
@@ -391,7 +422,8 @@ export default function OrganizerVenueView({
                   true // isService flag
                 )
               })
-            : func.items?.map((item) => {
+            : hasItems(func) && func.items
+            ? func.items.map((item) => {
                 const itemResponses = funcResponses.filter(
                   (r) => r.categoryId === item.categoryId
                 )
@@ -411,7 +443,8 @@ export default function OrganizerVenueView({
                   totalQuantity,
                   false // isService flag
                 )
-              })}
+              })
+            : null}
         </div>
       </Card>
     )

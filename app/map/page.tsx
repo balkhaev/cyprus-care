@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react"
 import { Navigation, Search, Menu, X } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
-import type { Venue } from "@/types/venue"
+import type { Venue, CollectionPointFunction, DistributionPointFunction, ServicesNeededFunction, CustomFunction } from "@/types/venue"
 import { fetchVenues } from "@/lib/api/venues"
 import { getCurrentUser } from "@/lib/mock-data/user-roles"
 import CategoryTreeFilter from "@/components/venue-functions/CategoryTreeFilter"
@@ -99,11 +99,15 @@ export default function MapPage() {
         })
 
         // Check if venue has any functions with items
-        const hasFunctionsWithItems = venue.functions.some((func) => 
-          func.type === "collection_point" || 
-          func.type === "distribution_point" || 
-          (func.type === "custom" && func.items)
-        )
+        const hasFunctionsWithItems = venue.functions.some((func) => {
+          if (func.type === "collection_point" || func.type === "distribution_point") {
+            return true
+          }
+          if (func.type === "custom" && (func as CustomFunction).items) {
+            return true
+          }
+          return false
+        })
 
         // If venue has no functions with items (e.g., only services_needed), always show it
         if (!hasFunctionsWithItems) {
@@ -116,14 +120,15 @@ export default function MapPage() {
             func.type === "collection_point" ||
             func.type === "distribution_point"
           ) {
-            return func.items.some((item) =>
+            return (func as CollectionPointFunction | DistributionPointFunction).items.some((item) =>
               allSelectedIds.has(item.categoryId)
             )
           }
-          if (func.type === "custom" && func.items) {
-            return func.items.some((item) =>
+          if (func.type === "custom") {
+            const customFunc = func as CustomFunction
+            return customFunc.items?.some((item) =>
               allSelectedIds.has(item.categoryId)
-            )
+            ) || false
           }
           return false
         })
@@ -177,7 +182,8 @@ export default function MapPage() {
           functions.push("Distribution Point")
           break
         case "services_needed":
-          const services = func.services.map((s) => {
+          const servicesFunc = func as ServicesNeededFunction
+          const services = servicesFunc.services.map((s) => {
             if (s.type === "transport_big") return "Large Transport"
             if (s.type === "transport_small") return "Small Transport"
             if (s.type === "carrying") return "Carrying"
@@ -189,7 +195,8 @@ export default function MapPage() {
           functions.push(`Services: ${services.join(", ")}`)
           break
         case "custom":
-          functions.push(func.customTypeName)
+          const customFunc = func as CustomFunction
+          functions.push(customFunc.customTypeName)
           break
       }
     })

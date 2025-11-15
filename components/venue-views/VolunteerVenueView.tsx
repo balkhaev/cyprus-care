@@ -5,6 +5,10 @@ import { Hand, Package, Check } from "lucide-react"
 import type {
   Venue,
   VenueFunction,
+  CollectionPointFunction,
+  DistributionPointFunction,
+  ServicesNeededFunction,
+  CustomFunction,
   ItemWithQuantity,
   ServiceRequest,
 } from "@/types/venue"
@@ -341,6 +345,16 @@ export default function VolunteerVenueView({ venue }: VolunteerVenueViewProps) {
     const isCollection = func.type === "collection_point"
     const isDistribution = func.type === "distribution_point"
     const isService = func.type === "services_needed"
+    const isCustom = func.type === "custom"
+
+    // Type guards для безопасного доступа к свойствам
+    const hasItems = (fn: VenueFunction): fn is CollectionPointFunction | DistributionPointFunction | CustomFunction => {
+      return fn.type === 'collection_point' || fn.type === 'distribution_point' || fn.type === 'custom'
+    }
+
+    const hasServices = (fn: VenueFunction): fn is ServicesNeededFunction | CustomFunction => {
+      return fn.type === 'services_needed' || fn.type === 'custom'
+    }
 
     return (
       <Card key={func.id} className="p-4">
@@ -364,6 +378,8 @@ export default function VolunteerVenueView({ venue }: VolunteerVenueViewProps) {
                 ? "Items Needed"
                 : isDistribution
                 ? "Items Available"
+                : isCustom && hasServices(func) && func.services
+                ? "Services Needed"
                 : "Services Needed"}
             </h4>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
@@ -376,7 +392,7 @@ export default function VolunteerVenueView({ venue }: VolunteerVenueViewProps) {
           </div>
         </div>
 
-        {func.items && func.items.length > 0 && (
+        {hasItems(func) && func.items && func.items.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
               Items ({func.items.length})
@@ -385,7 +401,7 @@ export default function VolunteerVenueView({ venue }: VolunteerVenueViewProps) {
           </div>
         )}
 
-        {func.services && func.services.length > 0 && (
+        {hasServices(func) && func.services && func.services.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
               Services ({func.services.length})

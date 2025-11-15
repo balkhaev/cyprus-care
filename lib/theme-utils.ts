@@ -1,169 +1,208 @@
 /**
- * Mediterranean Relief UI - Theme Utilities
+ * Modern Product UI - Theme Utilities
  *
- * Utilities for consistent application of the Mediterranean Relief UI theme
- * throughout the application
+ * Professional design system utilities for consistent UI
  */
 
 import { cn } from "./utils"
 
 /**
- * Mediterranean Relief UI theme colors
+ * Spacing system - consistent spacing throughout the app
+ */
+export const spacing = {
+  xs: "0.25rem", // 4px
+  sm: "0.5rem", // 8px
+  md: "0.75rem", // 12px
+  lg: "1rem", // 16px
+  xl: "1.5rem", // 24px
+  "2xl": "2rem", // 32px
+  "3xl": "3rem", // 48px
+  "4xl": "4rem", // 64px
+} as const
+
+/**
+ * Modern shadow system - subtle elevation
+ */
+export const shadows = {
+  none: "shadow-none",
+  sm: "shadow-sm",
+  base: "shadow",
+  md: "shadow-md",
+  lg: "shadow-lg",
+  xl: "shadow-xl",
+  "2xl": "shadow-2xl",
+  inner: "shadow-inner",
+} as const
+
+/**
+ * Mediterranean Relief UI theme colors - subtle tones
  */
 export const themeColors = {
   primary: {
-    hex: "#E36414",
+    hex: "#d77040",
     name: "Deep Orange",
     usage: "Primary actions, urgency, fire",
   },
   secondary: {
-    hex: "#1E88E5",
+    hex: "#4a8fc9",
     name: "Safe Blue",
     usage: "Secondary actions, trust, calm",
   },
   accent: {
-    hex: "#4CAF50",
+    hex: "#65b365",
     name: "Olive Green",
     usage: "Success, hope, recovery",
   },
   destructive: {
-    hex: "#D32F2F",
+    hex: "#c95555",
     name: "Fire Red",
     usage: "Errors, urgent alerts",
-  },
-  background: {
-    hex: "#F9F5F1",
-    name: "Soft Warm White",
-    usage: "Page background",
   },
 } as const
 
 /**
- * Ready-made classes for background elements with Mediterranean Relief UI theme
+ * Background classes
  */
 export const backgroundClasses = {
-  /** Main page background - warm white */
+  /** Main page background - clean white */
   page: "bg-background",
 
   /** Card background - pure white */
   card: "bg-card",
 
-  /** Soft background with warm tone */
-  soft: "bg-bgsoft",
+  /** Soft muted background */
+  soft: "bg-muted/30",
 
-  /** Gradients with theme colors */
-  gradientPrimarySecondary:
-    "bg-gradient-to-br from-primary/10 via-background to-secondary/10",
-  gradientPrimary: "bg-gradient-to-br from-primary/5 to-secondary/5",
+  /** Subtle gradients */
+  gradientSubtle: "bg-gradient-to-br from-muted/20 to-background",
 } as const
 
 /**
- * Text classes with proper contrast
+ * Text classes with clear hierarchy
  */
 export const textClasses = {
-  /** Primary text */
+  /** Primary text - standard body text */
   primary: "text-foreground",
 
-  /** Secondary text */
+  /** Secondary text - less emphasis */
   secondary: "text-muted-foreground",
 
-  /** Accent text (orange) */
-  accent: "text-primary",
+  /** Tertiary text - minimal emphasis */
+  tertiary: "text-muted-foreground/60",
 
-  /** Blue text */
-  blue: "text-secondary",
-
-  /** Green text */
-  green: "text-accent",
-
-  /** Headings */
+  /** Headings - bold and prominent */
   heading: "text-foreground font-semibold tracking-tight",
+
+  /** Large display text */
+  display: "text-foreground font-bold tracking-tight",
+
+  /** Small text - captions, labels */
+  small: "text-sm text-muted-foreground",
+
+  /** Extra small text */
+  xs: "text-xs text-muted-foreground/80",
 } as const
 
 /**
- * Border classes for elements
+ * Border classes - subtle and clean
  */
 export const borderClasses = {
   /** Base border */
   default: "border-border",
 
-  /** Border with orange tint (for cards) */
-  card: "border border-orange-100/50",
+  /** Subtle border */
+  subtle: "border border-border/50",
+
+  /** Strong border */
+  strong: "border-2 border-border",
+
+  /** Primary color border */
+  primary: "border border-primary/20",
 
   /** Border on hover */
-  hoverPrimary: "hover:border-primary",
-
-  /** Border on hover (blue) */
-  hoverSecondary: "hover:border-secondary",
-
-  /** Border on hover (green) */
-  hoverAccent: "hover:border-accent",
+  hoverPrimary: "hover:border-primary/40",
 } as const
 
 /**
- * Interactive state classes
+ * Interactive state classes - smooth transitions
  */
 export const interactiveClasses = {
-  /** Hover with orange background */
-  hoverPrimary: "hover:bg-primary/10 hover:text-primary transition-colors",
+  /** Subtle hover effect */
+  hover: "hover:bg-muted/50 transition-colors duration-200",
 
-  /** Hover with blue background */
+  /** Primary hover */
+  hoverPrimary:
+    "hover:bg-primary/5 hover:text-primary transition-colors duration-200",
+
+  /** Secondary hover */
   hoverSecondary:
-    "hover:bg-secondary/10 hover:text-secondary transition-colors",
+    "hover:bg-secondary/5 hover:text-secondary transition-colors duration-200",
 
-  /** Hover with green background */
-  hoverAccent: "hover:bg-accent/10 hover:text-accent transition-colors",
+  /** Accent hover */
+  hoverAccent:
+    "hover:bg-accent/5 hover:text-accent transition-colors duration-200",
 
-  /** Hover for cards */
-  hoverCard: "hover:shadow-xl transition-shadow",
+  /** Card hover with shadow */
+  hoverCard: "hover:shadow-md transition-shadow duration-200",
 
-  /** Focus state for accessibility */
+  /** Scale on hover */
+  hoverScale: "hover:scale-[1.02] transition-transform duration-200",
+
+  /** Focus ring for accessibility */
   focus:
-    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-2 focus-visible:ring-primary/20",
 } as const
 
 /**
- * Icon container classes with colored backgrounds
+ * Icon container classes - subtle backgrounds
  */
 export const iconContainerClasses = {
   primary: "bg-primary/10 text-primary",
   secondary: "bg-secondary/10 text-secondary",
   accent: "bg-accent/10 text-accent",
+  warning: "bg-warning/10 text-warning",
   destructive: "bg-destructive/10 text-destructive",
   neutral: "bg-muted text-muted-foreground",
 } as const
 
 /**
- * Ready-made combinations for header/navbar
+ * Header/navbar styles - clean and minimal
  */
 export const headerClasses = {
-  container: "bg-card/95 backdrop-blur-sm border-b border-border shadow-sm",
-  title: cn(textClasses.heading, "text-xl"),
-  link: "text-muted-foreground hover:text-primary transition-colors",
-  linkActive: "text-primary font-semibold",
+  container:
+    "sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border/50 shadow-sm",
+  title: cn(textClasses.heading, "text-lg"),
+  link: "text-muted-foreground hover:text-foreground transition-colors duration-200",
+  linkActive: "text-primary font-medium",
 } as const
 
 /**
- * Ready-made combinations for cards
+ * Card styles - modern and clean
  */
 export const cardClasses = {
-  /** Base card with shadow and border */
-  base: "bg-card rounded-2xl shadow-lg border border-orange-100/50 hover:shadow-xl transition-shadow",
+  /** Base card with subtle shadow */
+  base: "bg-card rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow duration-200",
 
-  /** Card without hover effect */
-  static: "bg-card rounded-2xl shadow-lg border border-orange-100/50",
+  /** Card without hover */
+  static: "bg-card rounded-lg border border-border shadow-sm",
+
+  /** Elevated card */
+  elevated: "bg-card rounded-lg border border-border shadow-md",
 
   /** Internal padding */
-  padding: "p-6",
+  padding: "p-4 sm:p-6",
+
+  /** Compact padding */
+  paddingCompact: "p-3 sm:p-4",
 
   /** Card header */
-  header: "flex flex-col space-y-1.5 p-6",
+  header: "flex flex-col space-y-1.5 pb-4",
 
   /** Card content */
-  content: "p-6 pt-0",
+  content: "pt-0",
 
   /** Card footer */
-  footer: "flex items-center p-6 pt-0",
+  footer: "flex items-center pt-4 border-t border-border/50",
 } as const
 
 /**
@@ -171,16 +210,17 @@ export const cardClasses = {
  */
 export function getIconContainerClasses(
   variant: keyof typeof iconContainerClasses = "neutral",
-  size: "sm" | "md" | "lg" = "md"
+  size: "xs" | "sm" | "md" | "lg" = "md"
 ): string {
   const sizeClasses = {
+    xs: "w-6 h-6 p-1",
     sm: "w-8 h-8 p-1.5",
     md: "w-10 h-10 p-2",
     lg: "w-12 h-12 p-2.5",
   }
 
   return cn(
-    "rounded-lg inline-flex items-center justify-center",
+    "rounded-md inline-flex items-center justify-center shrink-0",
     iconContainerClasses[variant],
     sizeClasses[size]
   )
@@ -215,26 +255,40 @@ export function getHoverClasses(
 }
 
 /**
- * Classes for loading/empty states
+ * Loading and empty state classes
  */
 export const stateClasses = {
   loading:
-    "animate-spin rounded-full h-16 w-16 border-4 border-border border-t-primary",
-  loadingText: cn(textClasses.heading, "text-lg"),
+    "animate-spin rounded-full h-12 w-12 border-2 border-border border-t-primary",
+  loadingText: cn(textClasses.secondary, "text-sm"),
   emptyIcon:
-    "inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted",
-  emptyIconInner: "h-8 w-8 text-muted-foreground",
-  emptyTitle: cn(textClasses.heading, "text-xl mb-2"),
-  emptyDescription: cn(textClasses.secondary, "mb-6"),
+    "inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted/50",
+  emptyIconInner: "h-6 w-6 text-muted-foreground",
+  emptyTitle: cn(textClasses.heading, "text-lg mb-1"),
+  emptyDescription: cn(textClasses.secondary, "text-sm mb-4"),
 } as const
 
 /**
- * Classes for badge components
+ * Badge styles - subtle and clean
  */
 export const badgeClasses = {
-  primary: "bg-primary text-primary-foreground",
-  secondary: "bg-secondary text-secondary-foreground",
-  accent: "bg-accent text-accent-foreground",
-  destructive: "bg-destructive text-white",
-  outline: "border-2 border-primary text-primary",
+  primary: "bg-primary/10 text-primary border border-primary/20",
+  secondary: "bg-secondary/10 text-secondary border border-secondary/20",
+  accent: "bg-accent/10 text-accent border border-accent/20",
+  warning: "bg-warning/10 text-warning border border-warning/20",
+  destructive:
+    "bg-destructive/10 text-destructive border border-destructive/20",
+  outline: "border border-border text-foreground",
+  neutral: "bg-muted text-muted-foreground",
+} as const
+
+/**
+ * Status indicator colors
+ */
+export const statusColors = {
+  active: "text-accent",
+  pending: "text-warning",
+  completed: "text-primary",
+  cancelled: "text-muted-foreground",
+  error: "text-destructive",
 } as const

@@ -112,9 +112,9 @@ export default function OrganizerVenueView({
   const [needStatuses, setNeedStatuses] = useState<NeedStatusData[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Текущий пользователь (в реальности из auth)
+  // Current user (from auth in real app)
   const currentUser = {
-    id: "org-1",
+    id: 1, // Changed from 'org-1' to numeric ID matching User.id
     name: "Organizer",
   }
 

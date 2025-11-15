@@ -3,6 +3,26 @@ import { useState, useEffect } from 'react';
 import { getVolunteerResponses, cancelResponse, updateUserProfile } from '@/lib/api';
 import { USE_MOCK_API } from '@/lib/mockData';
 import { User as AuthUser } from '@/lib/auth';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { 
+  AlertCircle, 
+  Edit2, 
+  X, 
+  Check, 
+  Clock, 
+  XCircle, 
+  MapPin, 
+  Calendar,
+  Heart
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { statusColors } from '@/lib/theme-utils';
 
 interface VolunteerProfileProps {
   user: AuthUser;
@@ -18,10 +38,10 @@ export default function VolunteerProfile({ user, onUserUpdate }: VolunteerProfil
     phone: user.phone,
     volunteer_areas_of_interest: user.volunteer_areas_of_interest || '',
   });
-  const [responses, setResponses] = useState<any[]>([]);
+  const [responses, setResponses] = useState<Record<string, string | number>[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [viewingResponse, setViewingResponse] = useState<any | null>(null);
+  const [viewingResponse, setViewingResponse] = useState<Record<string, string | number> | null>(null);
 
   useEffect(() => {
     loadResponses();
@@ -67,10 +87,8 @@ export default function VolunteerProfile({ user, onUserUpdate }: VolunteerProfil
       const success = await cancelResponse(responseId);
       if (success) {
         if (USE_MOCK_API) {
-          // Update local state for mock mode
           setResponses(responses.map(r => r.id === responseId ? { ...r, status: 'cancelled' } : r));
         } else {
-          // Reload responses from API
           await loadResponses();
         }
       } else {
@@ -83,238 +101,350 @@ export default function VolunteerProfile({ user, onUserUpdate }: VolunteerProfil
     }
   };
 
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <Check className="h-4 w-4" />;
+      case 'pending':
+        return <Clock className="h-4 w-4" />;
+      case 'cancelled':
+        return <XCircle className="h-4 w-4" />;
+      case 'completed':
+        return <Check className="h-4 w-4" />;
+      default:
+        return null;
+    }
+  };
+
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (status) {
+      case 'active':
+        return 'default';
+      case 'pending':
+        return 'secondary';
+      case 'cancelled':
+        return 'outline';
+      case 'completed':
+        return 'default';
+      default:
+        return 'outline';
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* My Details */}
-      <div className="bg-white rounded-2xl shadow-xl border border-primary/10 p-6 md:p-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg md:text-xl font-semibold mb-3">My Details</h2>
-          {!isEditing && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="px-4 py-2 text-sm md:text-base font-semibold rounded-xl bg-primary text-white shadow-md hover:bg-primary/80"
-            >
-              Edit Details
-            </button>
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* My Details Card */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>My Details</CardTitle>
+              <CardDescription>Your profile information</CardDescription>
+            </div>
+            {!isEditing && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+              >
+                <Edit2 className="h-4 w-4 mr-2" />
+                Edit
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          {isEditing ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="first_name">First Name</Label>
+                  <Input
+                    id="first_name"
+                    value={editData.first_name}
+                    onChange={(e) => setEditData({ ...editData, first_name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="last_name">Last Name</Label>
+                  <Input
+                    id="last_name"
+                    value={editData.last_name}
+                    onChange={(e) => setEditData({ ...editData, last_name: e.target.value })}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={editData.email}
+                  onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={editData.phone}
+                  onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="areas">Areas of Interest</Label>
+                <Textarea
+                  id="areas"
+                  value={editData.volunteer_areas_of_interest}
+                  onChange={(e) => setEditData({ ...editData, volunteer_areas_of_interest: e.target.value })}
+                  placeholder="e.g. sorting, logistics, transport"
+                  rows={3}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-muted-foreground text-sm">First Name</Label>
+                  <p className="text-base font-medium mt-1">{user.first_name}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-sm">Last Name</Label>
+                  <p className="text-base font-medium mt-1">{user.last_name}</p>
+                </div>
+              </div>
+              
+              <div>
+                <Label className="text-muted-foreground text-sm">Email</Label>
+                <p className="text-base font-medium mt-1">{user.email}</p>
+              </div>
+              
+              <div>
+                <Label className="text-muted-foreground text-sm">Phone</Label>
+                <p className="text-base font-medium mt-1">{user.phone}</p>
+              </div>
+              
+              <div>
+                <Label className="text-muted-foreground text-sm">Areas of Interest</Label>
+                <p className="text-base font-medium mt-1">
+                  {user.volunteer_areas_of_interest || 'Not set'}
+                </p>
+              </div>
+            </div>
           )}
-        </div>
+        </CardContent>
 
-        {error && (
-          <div className="mb-4 p-3 text-sm text-danger bg-danger/5 border border-danger/30 rounded-lg">
-            {error}
-          </div>
+        {isEditing && (
+          <CardFooter className="flex gap-3">
+            <Button
+              onClick={handleSaveDetails}
+              disabled={loading}
+              className="flex-1"
+            >
+              {loading ? 'Saving...' : 'Save Changes'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsEditing(false);
+                setEditData({
+                  first_name: user.first_name,
+                  last_name: user.last_name,
+                  email: user.email,
+                  phone: user.phone,
+                  volunteer_areas_of_interest: user.volunteer_areas_of_interest || '',
+                });
+              }}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          </CardFooter>
         )}
+      </Card>
 
-        {isEditing ? (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">First Name</label>
-              <input
-                type="text"
-                value={editData.first_name}
-                onChange={(e) => setEditData({ ...editData, first_name: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Last Name</label>
-              <input
-                type="text"
-                value={editData.last_name}
-                onChange={(e) => setEditData({ ...editData, last_name: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-              <input
-                type="email"
-                value={editData.email}
-                onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-              <input
-                type="tel"
-                value={editData.phone}
-                onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Areas of Interest</label>
-              <textarea
-                value={editData.volunteer_areas_of_interest}
-                onChange={(e) => setEditData({ ...editData, volunteer_areas_of_interest: e.target.value })}
-                rows={3}
-                className="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none"
-                placeholder="e.g. sorting, logistics, transport"
-              />
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={handleSaveDetails}
-                disabled={loading}
-                className="px-4 py-2 text-sm md:text-base font-semibold rounded-xl bg-primary text-white shadow-md hover:bg-primary/80 disabled:opacity-60"
-              >
-                {loading ? 'Saving...' : 'Save'}
-              </button>
-              <button
-                onClick={() => {
-                  setIsEditing(false);
-                  setEditData({
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    email: user.email,
-                    phone: user.phone,
-                    volunteer_areas_of_interest: user.volunteer_areas_of_interest || '',
-                  });
-                }}
-                className="px-4 py-2 text-sm md:text-base font-semibold rounded-xl bg-white text-slate-800 border border-secondary/40 hover:bg-secondary/5"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div>
-              <span className="text-sm text-slate-600">First Name:</span>
-              <p className="text-base font-medium text-slate-900">{user.first_name}</p>
-            </div>
-            <div>
-              <span className="text-sm text-slate-600">Last Name:</span>
-              <p className="text-base font-medium text-slate-900">{user.last_name}</p>
-            </div>
-            <div>
-              <span className="text-sm text-slate-600">Email:</span>
-              <p className="text-base font-medium text-slate-900">{user.email}</p>
-            </div>
-            <div>
-              <span className="text-sm text-slate-600">Phone:</span>
-              <p className="text-base font-medium text-slate-900">{user.phone}</p>
-            </div>
-            <div>
-              <span className="text-sm text-slate-600">Areas of Interest:</span>
-              <p className="text-base font-medium text-slate-900">
-                {user.volunteer_areas_of_interest || 'Not set'}
+      {/* My Responses Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>My Responses</CardTitle>
+          <CardDescription>Venues you've offered to help</CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          {responses.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-4">
+                <Heart className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold mb-1">No responses yet</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Start helping by responding to venues in need
               </p>
+              <Button asChild>
+                <a href="/map">Browse Venues</a>
+              </Button>
             </div>
-          </div>
-        )}
-      </div>
-
-      {/* My Responses to Venues */}
-      <div className="bg-white rounded-2xl shadow-xl border border-primary/10 p-6 md:p-8">
-        <h2 className="text-lg md:text-xl font-semibold mb-4">My Responses to Venues</h2>
-        {responses.length === 0 ? (
-          <p className="text-slate-600">No responses yet.</p>
-        ) : (
-          <div className="space-y-4">
-            {responses.map((response) => (
-              <div key={response.id} className="p-4 border border-primary/10 rounded-xl">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900">
-                      {response.venue_name || response.venue?.name || 'Unnamed Venue'}
-                    </h3>
-                    <p className="text-sm text-slate-600 mt-1">
-                      {response.venue_location || response.venue?.location || 'No location'}
-                    </p>
-                    {response.help_offered && (
-                      <p className="text-sm text-slate-700 mt-2">
-                        Help offered: {response.help_offered}
-                      </p>
-                    )}
-                  </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    response.status === 'active' ? 'bg-accent/20 text-accent' :
-                    response.status === 'cancelled' ? 'bg-slate-200 text-slate-700' :
-                    response.status === 'completed' ? 'bg-primary/20 text-primary' :
-                    'bg-slate-200 text-slate-700'
-                  }`}>
-                    {response.status || 'unknown'}
-                  </span>
-                </div>
-                <div className="flex gap-2 mt-3">
-                  <button
-                    onClick={() => setViewingResponse(response)}
-                    className="px-3 py-2 text-sm font-semibold rounded-full bg-white text-slate-800 border border-secondary/40 hover:bg-secondary/5"
-                  >
-                    View Details
-                  </button>
-                  {response.status === 'active' && (
-                    <button
-                      onClick={() => handleCancelResponse(response.id)}
-                      disabled={loading}
-                      className="px-3 py-2 text-sm font-semibold rounded-full bg-white text-slate-800 border border-danger/40 hover:bg-danger/5 text-danger"
-                    >
-                      Cancel Response
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* View Response Details Modal */}
-      {viewingResponse && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl border border-primary/10 p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg md:text-xl font-semibold">Response Details</h3>
-              <button
-                onClick={() => setViewingResponse(null)}
-                className="text-slate-500 hover:text-slate-700"
-              >
-                ✕
-              </button>
-            </div>
+          ) : (
             <div className="space-y-3">
+              {responses.map((response) => (
+                <Card key={response.id as string} className="overflow-hidden">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="font-semibold text-base truncate">
+                            {(response.venue_name || response.venue?.name || 'Unnamed Venue') as string}
+                          </h4>
+                          <Badge 
+                            variant={getStatusVariant(response.status as string)}
+                            className="shrink-0"
+                          >
+                            <span className="flex items-center gap-1">
+                              {getStatusIcon(response.status as string)}
+                              {response.status as string}
+                            </span>
+                          </Badge>
+                        </div>
+                        
+                        {(response.venue_location || response.venue?.location) && (
+                          <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
+                            <MapPin className="h-4 w-4 shrink-0" />
+                            <span className="truncate">
+                              {(response.venue_location || response.venue?.location) as string}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {response.help_offered && (
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {response.help_offered as string}
+                          </p>
+                        )}
+                        
+                        {response.created_at && (
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(response.created_at as string).toLocaleDateString()}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col gap-2 shrink-0">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setViewingResponse(response)}
+                        >
+                          Details
+                        </Button>
+                        {response.status === 'active' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleCancelResponse(response.id as number)}
+                            disabled={loading}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* View Response Details Dialog */}
+      {viewingResponse && (
+        <div 
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setViewingResponse(null)}
+        >
+          <Card 
+            className="w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Response Details</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setViewingResponse(null)}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
               <div>
-                <span className="text-sm text-slate-600">Venue:</span>
-                <p className="text-base font-medium text-slate-900">
-                  {viewingResponse.venue_name || viewingResponse.venue?.name || 'Unknown'}
+                <Label className="text-muted-foreground text-sm">Venue</Label>
+                <p className="text-base font-medium mt-1">
+                  {(viewingResponse.venue_name || viewingResponse.venue?.name || 'Unknown') as string}
                 </p>
               </div>
+              
               <div>
-                <span className="text-sm text-slate-600">Location:</span>
-                <p className="text-base font-medium text-slate-900">
-                  {viewingResponse.venue_location || viewingResponse.venue?.location || 'No location'}
+                <Label className="text-muted-foreground text-sm">Location</Label>
+                <p className="text-base font-medium mt-1">
+                  {(viewingResponse.venue_location || viewingResponse.venue?.location || 'No location') as string}
                 </p>
               </div>
+              
               {viewingResponse.help_offered && (
                 <div>
-                  <span className="text-sm text-slate-600">Help Offered:</span>
-                  <p className="text-base font-medium text-slate-900">{viewingResponse.help_offered}</p>
+                  <Label className="text-muted-foreground text-sm">Help Offered</Label>
+                  <p className="text-base font-medium mt-1">{viewingResponse.help_offered as string}</p>
                 </div>
               )}
+              
               <div>
-                <span className="text-sm text-slate-600">Status:</span>
-                <p className="text-base font-medium text-slate-900 capitalize">
-                  {viewingResponse.status || 'unknown'}
-                </p>
+                <Label className="text-muted-foreground text-sm">Status</Label>
+                <div className="mt-1">
+                  <Badge variant={getStatusVariant(viewingResponse.status as string)}>
+                    <span className="flex items-center gap-1">
+                      {getStatusIcon(viewingResponse.status as string)}
+                      {viewingResponse.status as string}
+                    </span>
+                  </Badge>
+                </div>
               </div>
+              
               {viewingResponse.created_at && (
                 <div>
-                  <span className="text-sm text-slate-600">Response Date:</span>
-                  <p className="text-base font-medium text-slate-900">
-                    {new Date(viewingResponse.created_at).toLocaleDateString()}
+                  <Label className="text-muted-foreground text-sm">Response Date</Label>
+                  <p className="text-base font-medium mt-1">
+                    {new Date(viewingResponse.created_at as string).toLocaleDateString()}
                   </p>
                 </div>
               )}
-            </div>
-            <button
-              onClick={() => setViewingResponse(null)}
-              className="mt-6 px-4 py-2 text-sm md:text-base font-semibold rounded-xl bg-primary text-white shadow-md hover:bg-primary/80"
-            >
-              Close
-            </button>
-          </div>
+            </CardContent>
+            
+            <CardFooter>
+              <Button onClick={() => setViewingResponse(null)} className="w-full">
+                Close
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
       )}
     </div>

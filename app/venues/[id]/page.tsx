@@ -18,7 +18,8 @@ import {
 import type { Venue, VenueType } from "@/types/venue"
 import { fetchVenueById, deleteVenue } from "@/lib/api/venues"
 import { removeVenueFunction } from "@/lib/api/venue-functions"
-import { getCurrentUser } from "@/lib/mock-data/user-roles"
+import type { User } from "@/lib/mock-data/user-roles"
+import { canEditVenue, canDeleteVenue } from "@/lib/venue-permissions"
 import VolunteerVenueView from "@/components/venue-views/VolunteerVenueView"
 import OrganizerVenueView from "@/components/venue-views/OrganizerVenueView"
 import BeneficiaryVenueView from "@/components/venue-views/BeneficiaryVenueView"
@@ -71,8 +72,20 @@ export default function VenueDetailPage({ params }: PageProps) {
   const [venue, setVenue] = useState<Venue | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [currentUser] = useState(() => getCurrentUser())
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [isOperatingHoursOpen, setIsOperatingHoursOpen] = useState(false)
+
+  const loadCurrentUser = useCallback(async () => {
+    try {
+      const response = await fetch("/api/me")
+      if (response.ok) {
+        const user = await response.json()
+        setCurrentUser(user)
+      }
+    } catch (error) {
+      console.error("Failed to load user:", error)
+    }
+  }, [])
 
   const loadVenue = useCallback(async () => {
     const resolvedParams = await params
@@ -82,9 +95,10 @@ export default function VenueDetailPage({ params }: PageProps) {
   }, [params])
 
   useEffect(() => {
+    loadCurrentUser()
     // eslint-disable-next-line react-compiler/react-compiler
     loadVenue()
-  }, [loadVenue])
+  }, [loadVenue, loadCurrentUser])
 
   const handleDelete = async () => {
     if (!venue) return
@@ -165,13 +179,13 @@ export default function VenueDetailPage({ params }: PageProps) {
 
   // Determine which view to show based on user role
   const renderRoleBasedView = () => {
-    if (!venue) return null
+    if (!venue || !currentUser) return null
 
     if (currentUser.role === "volunteer") {
       return <VolunteerVenueView venue={venue} />
     } else if (currentUser.role === "organizer") {
       // Only show organizer view if they own this venue
-      if (currentUser.organizerId === venue.organizerId) {
+      if (canEditVenue(venue, currentUser)) {
         return <OrganizerVenueView venue={venue} />
       }
       // Otherwise show volunteer view
@@ -183,10 +197,9 @@ export default function VenueDetailPage({ params }: PageProps) {
     return null
   }
 
-  // Check if user can edit this venue
-  const canEdit =
-    currentUser.role === "organizer" &&
-    currentUser.organizerId === venue?.organizerId
+  // Check if user can edit/delete this venue
+  const canEdit = canEditVenue(venue, currentUser)
+  const canDelete = canDeleteVenue(venue, currentUser)
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -202,12 +215,14 @@ export default function VenueDetailPage({ params }: PageProps) {
                 <Edit className="h-4 w-4" />
                 Edit
               </Link>
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+              {canDelete && (
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
+              )}
             </>
           ) : null
         }

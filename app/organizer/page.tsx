@@ -1,9 +1,19 @@
-'use client';
+"use client"
 
-import Link from 'next/link';
-import { User, Mail, Phone, Calendar, Plus, Settings, LogOut, Building2, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import Link from "next/link"
+import {
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Plus,
+  Settings,
+  LogOut,
+  Building2,
+  MapPin,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import {
   backgroundClasses,
   textClasses,
@@ -11,42 +21,42 @@ import {
   getIconContainerClasses,
   borderClasses,
   interactiveClasses,
-} from '@/lib/theme-utils';
+} from "@/lib/theme-utils"
 
 export default function OrganizerPage() {
   // Temporary organizer data
   const organizer = {
-    id: 'org-1',
-    name: 'John Smith',
-    email: 'john.smith@example.com',
-    phone: '+357 99 123 456',
-    organization: 'Cyprus Relief Foundation',
-    role: 'Organizer',
-    joinedDate: 'January 15, 2024',
+    id: "org-1",
+    name: "John Smith",
+    email: "john.smith@example.com",
+    phone: "+357 99 123 456",
+    organization: "Cyprus Relief Foundation",
+    role: "Organizer",
+    joinedDate: "January 15, 2024",
     venuesCount: 3,
     avatar: null,
-  };
+  }
 
   const stats = [
     {
-      label: 'Active Venues',
-      value: '3',
+      label: "Active Venues",
+      value: "3",
       icon: <Building2 className="h-5 w-5" />,
-      variant: 'primary' as const,
+      variant: "primary" as const,
     },
     {
-      label: 'Total Events',
-      value: '12',
+      label: "Total Events",
+      value: "12",
       icon: <Calendar className="h-5 w-5" />,
-      variant: 'secondary' as const,
+      variant: "secondary" as const,
     },
     {
-      label: 'Volunteers',
-      value: '45',
+      label: "Volunteers",
+      value: "45",
       icon: <User className="h-5 w-5" />,
-      variant: 'accent' as const,
+      variant: "accent" as const,
     },
-  ];
+  ]
 
   return (
     <div className={`min-h-screen ${backgroundClasses.page}`}>
@@ -81,7 +91,9 @@ export default function OrganizerPage() {
           {/* Profile card */}
           <Card>
             {/* Banner */}
-            <div className={`h-32 ${backgroundClasses.gradientPrimarySecondary}`}></div>
+            <div
+              className={`h-32 ${backgroundClasses.gradientPrimarySecondary}`}
+            ></div>
 
             {/* Information */}
             <CardContent className="px-6 pb-6">
@@ -101,15 +113,21 @@ export default function OrganizerPage() {
                   </p>
 
                   <div className="flex flex-wrap gap-4 text-sm mt-3">
-                    <div className={`flex items-center gap-2 ${textClasses.secondary}`}>
+                    <div
+                      className={`flex items-center gap-2 ${textClasses.secondary}`}
+                    >
                       <Mail className="h-4 w-4" />
                       <span>{organizer.email}</span>
                     </div>
-                    <div className={`flex items-center gap-2 ${textClasses.secondary}`}>
+                    <div
+                      className={`flex items-center gap-2 ${textClasses.secondary}`}
+                    >
                       <Phone className="h-4 w-4" />
                       <span>{organizer.phone}</span>
                     </div>
-                    <div className={`flex items-center gap-2 ${textClasses.secondary}`}>
+                    <div
+                      className={`flex items-center gap-2 ${textClasses.secondary}`}
+                    >
                       <Calendar className="h-4 w-4" />
                       <span>Joined {organizer.joinedDate}</span>
                     </div>
@@ -118,8 +136,11 @@ export default function OrganizerPage() {
 
                 {/* Add venue button */}
                 <div className="pt-16">
-                  <Button asChild size="lg">
-                    <Link href="/venues/new" className="flex items-center gap-2">
+                  <Button asChild size="sm">
+                    <Link
+                      href="/venues/new"
+                      className="flex items-center gap-2"
+                    >
                       <Plus className="h-5 w-5" />
                       Add Venue
                     </Link>
@@ -131,7 +152,12 @@ export default function OrganizerPage() {
               <div className="grid grid-cols-3 gap-4 pt-6 border-t border-border">
                 {stats.map((stat) => (
                   <div key={stat.label} className="text-center">
-                    <div className={getIconContainerClasses(stat.variant, 'md') + ' mx-auto mb-2'}>
+                    <div
+                      className={
+                        getIconContainerClasses(stat.variant, "md") +
+                        " mx-auto mb-2"
+                      }
+                    >
                       {stat.icon}
                     </div>
                     <div className={`text-2xl ${textClasses.heading} mb-1`}>
@@ -160,7 +186,7 @@ export default function OrganizerPage() {
                   href="/venues"
                   className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverPrimary} hover:bg-primary/5 transition-all`}
                 >
-                  <div className={getIconContainerClasses('primary', 'md')}>
+                  <div className={getIconContainerClasses("primary", "md")}>
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div>
@@ -177,7 +203,7 @@ export default function OrganizerPage() {
                   href="/venues/new"
                   className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverPrimary} hover:bg-primary/5 transition-all`}
                 >
-                  <div className={getIconContainerClasses('primary', 'md')}>
+                  <div className={getIconContainerClasses("primary", "md")}>
                     <Plus className="h-5 w-5" />
                   </div>
                   <div>
@@ -194,7 +220,7 @@ export default function OrganizerPage() {
                   href="/map"
                   className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverSecondary} hover:bg-secondary/5 transition-all`}
                 >
-                  <div className={getIconContainerClasses('secondary', 'md')}>
+                  <div className={getIconContainerClasses("secondary", "md")}>
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div>
@@ -211,7 +237,7 @@ export default function OrganizerPage() {
                   href="/organizer/settings"
                   className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverSecondary} hover:bg-secondary/5 transition-all`}
                 >
-                  <div className={getIconContainerClasses('secondary', 'md')}>
+                  <div className={getIconContainerClasses("secondary", "md")}>
                     <Settings className="h-5 w-5" />
                   </div>
                   <div>
@@ -228,7 +254,7 @@ export default function OrganizerPage() {
                   href="/organizer/custom-functions"
                   className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverAccent} hover:bg-accent/5 transition-all`}
                 >
-                  <div className={getIconContainerClasses('accent', 'md')}>
+                  <div className={getIconContainerClasses("accent", "md")}>
                     <Plus className="h-5 w-5" />
                   </div>
                   <div>
@@ -246,6 +272,5 @@ export default function OrganizerPage() {
         </div>
       </main>
     </div>
-  );
+  )
 }
-

@@ -1,11 +1,25 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { API_BASE_URL } from '@/lib/api';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle, Heart, Building, Users, Check } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+type Role = 'beneficiary' | 'volunteer' | 'organizer';
+type Step = 1 | 2 | 3 | 4;
 
 export default function SignupPage() {
   const router = useRouter();
-  const [role, setRole] = useState<'beneficiary' | 'volunteer' | 'organizer'>('beneficiary');
+  const searchParams = useSearchParams();
+  const initialRole = searchParams.get('role') as Role | null;
+  
+  const [currentStep, setCurrentStep] = useState<Step>(initialRole ? 2 : 1);
+  const [role, setRole] = useState<Role>(initialRole || 'volunteer');
   const [userType, setUserType] = useState<'person' | 'organization'>('person');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,6 +35,34 @@ export default function SignupPage() {
     areaOfInterest: '',
   });
 
+  const roles = [
+    {
+      value: 'volunteer' as const,
+      title: 'Volunteer',
+      description: 'Offer your time and skills',
+      icon: Heart,
+    },
+    {
+      value: 'organizer' as const,
+      title: 'Organizer',
+      description: 'Coordinate relief efforts',
+      icon: Building,
+    },
+    {
+      value: 'beneficiary' as const,
+      title: 'Get Help',
+      description: 'Access support services',
+      icon: Users,
+    },
+  ];
+
+  const steps = [
+    { number: 1, title: 'Choose Role' },
+    { number: 2, title: 'Basic Info' },
+    { number: 3, title: 'Details' },
+    { number: 4, title: 'Complete' },
+  ];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -34,7 +76,7 @@ export default function SignupPage() {
     
     try {
       let endpoint = '';
-      let payload: any = {
+      let payload: Record<string, string | boolean> = {
         first_name: formData.name,
         last_name: formData.surname,
         email: formData.email,
@@ -66,15 +108,12 @@ export default function SignupPage() {
       if (res.ok) {
         const data = await res.json();
         
-        // Django REST Framework may return token on registration
         if (data.token) {
           localStorage.setItem('authToken', data.token);
           
-          // Fetch user profile if available
           if (data.user) {
             localStorage.setItem('currentUser', JSON.stringify(data.user));
           } else {
-            // Try to fetch user profile
             try {
               const userRes = await fetch(`${API_BASE_URL}/api/me/`, {
                 headers: {
@@ -92,21 +131,12 @@ export default function SignupPage() {
             }
           }
           
-          // Redirect to map if token received, otherwise to login
-          if (data.token) {
-            router.push('/map');
-          } else {
-            router.push('/login');
-          }
+          setCurrentStep(4);
         } else {
-          // No token returned, redirect to login
           router.push('/login');
         }
       } else {
-        // Handle Django REST Framework validation errors
         const errorData = await res.json().catch(() => ({}));
-        
-        // Django returns field-specific errors
         const errorMessages: string[] = [];
         
         if (errorData.non_field_errors) {
@@ -116,7 +146,6 @@ export default function SignupPage() {
           errorMessages.push(...nonFieldErrors);
         }
         
-        // Collect field-specific errors
         Object.keys(errorData).forEach((field) => {
           if (field !== 'non_field_errors' && errorData[field]) {
             const fieldErrors = Array.isArray(errorData[field]) 
@@ -150,174 +179,299 @@ export default function SignupPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-bgsoft text-slate-900 w-full flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-primary/10 p-6 md:p-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Join the Relief Network</h1>
-        <p className="text-sm md:text-base text-slate-600 mb-6">Together we build stronger communities</p>
-        
-        {error && (
-          <div className="mb-4 p-4 text-danger bg-danger/5 border border-danger/30 rounded-lg text-sm">
-            {error}
-          </div>
-        )}
+  const canProceedToStep3 = formData.name && formData.surname && formData.email && formData.password && formData.confirmPassword && formData.phone;
 
-        {/* Role Selection */}
-        <div className="mb-6">
-          <label className="block text-lg font-medium text-slate-700 mb-3">I am a:</label>
-          <div className="grid grid-cols-3 gap-3">
-            {['beneficiary', 'volunteer', 'organizer'].map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRole(r as any)}
-                className={`py-3 rounded-xl font-semibold transition-colors ${
-                  role === r
-                    ? 'bg-primary text-white shadow-md'
-                    : 'bg-white border-2 border-gray-200 text-slate-700 hover:border-primary/30'
-                }`}
-              >
-                {r.charAt(0).toUpperCase() + r.slice(1)}
-              </button>
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-10">
+      <Card className="w-full max-w-2xl">
+        <CardHeader>
+          <CardTitle className="text-2xl">Create Your Account</CardTitle>
+          <CardDescription>Join the relief network and make a difference</CardDescription>
+          
+          {/* Progress Indicator */}
+          <div className="flex items-center justify-between mt-6 relative">
+            {steps.map((step, index) => (
+              <div key={step.number} className="flex flex-col items-center relative z-10">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all",
+                    currentStep > step.number
+                      ? "bg-primary text-primary-foreground"
+                      : currentStep === step.number
+                      ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {currentStep > step.number ? (
+                    <Check className="h-5 w-5" />
+                  ) : (
+                    step.number
+                  )}
+                </div>
+                <span className="text-xs mt-2 text-muted-foreground hidden sm:block">
+                  {step.title}
+                </span>
+                
+                {/* Connector line */}
+                {index < steps.length - 1 && (
+                  <div
+                    className={cn(
+                      "absolute top-5 left-[50%] w-full h-0.5 -z-10",
+                      currentStep > step.number ? "bg-primary" : "bg-muted"
+                    )}
+                    style={{ width: 'calc(100% + 2rem)' }}
+                  />
+                )}
+              </div>
             ))}
           </div>
-        </div>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Common Fields */}
-          <input
-            type="text"
-            placeholder="First Name"
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Surname"
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-            value={formData.surname}
-            onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
-            required
-          />
-          <input
-            type="tel"
-            placeholder="Phone"
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-            value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-            value={formData.confirmPassword}
-            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-            required
-          />
-
-          {/* Beneficiary Fields */}
-          {role === 'beneficiary' && (
-            <>
-              <input
-                type="text"
-                placeholder="General Location / Municipality"
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-                value={formData.municipality}
-                onChange={(e) => setFormData({ ...formData, municipality: e.target.value })}
-                required
-              />
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setUserType('person')}
-                  className={`flex-1 py-3 rounded-xl font-semibold transition-colors ${
-                    userType === 'person' ? 'bg-secondary text-white shadow-md' : 'bg-gray-100 text-slate-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Person
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setUserType('organization')}
-                  className={`flex-1 py-3 rounded-xl font-semibold transition-colors ${
-                    userType === 'organization' ? 'bg-secondary text-white shadow-md' : 'bg-gray-100 text-slate-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Organization
-                </button>
+          {/* Step 1: Choose Role */}
+          {currentStep === 1 && (
+            <div className="space-y-4">
+              <Label className="text-base font-medium">I am a:</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {roles.map((r) => {
+                  const Icon = r.icon;
+                  return (
+                    <button
+                      key={r.value}
+                      type="button"
+                      onClick={() => setRole(r.value)}
+                      className={cn(
+                        "flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all",
+                        role === r.value
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:border-primary/50 hover:bg-muted/50"
+                      )}
+                    >
+                      <Icon className={cn("h-6 w-6", role === r.value ? "text-primary" : "text-muted-foreground")} />
+                      <div className="text-center">
+                        <div className="font-semibold text-sm">{r.title}</div>
+                        <div className="text-xs text-muted-foreground">{r.description}</div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
-              {userType === 'organization' && (
-                <input
-                  type="text"
-                  placeholder="Organisation Name"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-                  value={formData.organizationName}
-                  onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
+              <Button onClick={() => setCurrentStep(2)} className="w-full" size="lg">
+                Continue
+              </Button>
+            </div>
+          )}
+
+          {/* Step 2: Basic Information */}
+          {currentStep === 2 && (
+            <form onSubmit={(e) => { e.preventDefault(); setCurrentStep(3); }} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">First Name</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="surname">Surname</Label>
+                  <Input
+                    id="surname"
+                    value={formData.surname}
+                    onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   required
                 />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <Button type="button" variant="outline" onClick={() => setCurrentStep(1)} className="w-full">
+                  Back
+                </Button>
+                <Button type="submit" className="w-full" disabled={!canProceedToStep3}>
+                  Continue
+                </Button>
+              </div>
+            </form>
+          )}
+
+          {/* Step 3: Role-specific Details */}
+          {currentStep === 3 && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {role === 'beneficiary' && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="municipality">Municipality / Location</Label>
+                    <Input
+                      id="municipality"
+                      value={formData.municipality}
+                      onChange={(e) => setFormData({ ...formData, municipality: e.target.value })}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Account Type</Label>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setUserType('person')}
+                        className={cn(
+                          "flex-1 py-3 px-4 rounded-lg border-2 transition-all font-medium",
+                          userType === 'person'
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border hover:border-primary/50"
+                        )}
+                      >
+                        Person
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setUserType('organization')}
+                        className={cn(
+                          "flex-1 py-3 px-4 rounded-lg border-2 transition-all font-medium",
+                          userType === 'organization'
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border hover:border-primary/50"
+                        )}
+                      >
+                        Organization
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {userType === 'organization' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="organizationName">Organization Name</Label>
+                      <Input
+                        id="organizationName"
+                        value={formData.organizationName}
+                        onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
+                        required
+                      />
+                    </div>
+                  )}
+                </>
               )}
-            </>
+
+              {role === 'volunteer' && (
+                <div className="space-y-2">
+                  <Label htmlFor="areaOfInterest">Areas of Interest</Label>
+                  <Input
+                    id="areaOfInterest"
+                    placeholder="e.g. logistics, sorting, transport"
+                    value={formData.areaOfInterest}
+                    onChange={(e) => setFormData({ ...formData, areaOfInterest: e.target.value })}
+                    required
+                  />
+                </div>
+              )}
+
+              {role === 'organizer' && (
+                <div className="space-y-2">
+                  <Label htmlFor="organizationName">Association / Organization Name</Label>
+                  <Input
+                    id="organizationName"
+                    value={formData.organizationName}
+                    onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
+                    required
+                  />
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <Button type="button" variant="outline" onClick={() => setCurrentStep(2)} className="w-full">
+                  Back
+                </Button>
+                <Button type="submit" disabled={loading} className="w-full">
+                  {loading ? 'Creating Account...' : 'Create Account'}
+                </Button>
+              </div>
+            </form>
           )}
 
-          {/* Volunteer Fields */}
-          {role === 'volunteer' && (
-            <input
-              type="text"
-              placeholder="Area of Interest"
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-              value={formData.areaOfInterest}
-              onChange={(e) => setFormData({ ...formData, areaOfInterest: e.target.value })}
-              required
-            />
+          {/* Step 4: Success */}
+          {currentStep === 4 && (
+            <div className="text-center space-y-6 py-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 text-accent">
+                <Check className="h-8 w-8" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-semibold mb-2">Welcome to ENOCYPRUS!</h3>
+                <p className="text-muted-foreground">
+                  Your account has been created successfully. You're now ready to make a difference.
+                </p>
+              </div>
+              <Button onClick={() => router.push('/map')} size="lg" className="w-full">
+                Get Started
+              </Button>
+            </div>
           )}
 
-          {/* Organizer Fields */}
-          {role === 'organizer' && (
-            <input
-              type="text"
-              placeholder="Association / Organisation Name"
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-lg focus:border-primary focus:outline-none"
-              value={formData.organizationName}
-              onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
-              required
-            />
+          {/* Sign In Link */}
+          {currentStep < 4 && (
+            <p className="text-center text-sm text-muted-foreground pt-4 border-t border-border">
+              Already have an account?{' '}
+              <a href="/login" className="text-primary font-medium hover:underline">
+                Sign in
+              </a>
+            </p>
           )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-4 text-lg font-semibold rounded-xl bg-primary text-white shadow-md hover:bg-primary/80 disabled:opacity-60 transition-colors"
-          >
-            {loading ? 'Creating Account...' : 'Create Account'}
-          </button>
-        </form>
-
-        <p className="text-center mt-6 text-sm md:text-base text-slate-600">
-          Already have an account?{' '}
-          <a href="/login" className="text-secondary font-semibold hover:underline">
-            Login
-          </a>
-        </p>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -223,6 +223,7 @@ export class VenuesAPI {
 
   /**
    * Создать новую площадку
+   * Требуется роль organizer или admin
    */
   static async createVenue(
     data: CreateVenueRequest
@@ -241,6 +242,7 @@ export class VenuesAPI {
 
   /**
    * Обновить площадку
+   * Требуется владение площадкой (organizerId === userId) или роль admin
    */
   static async updateVenue(
     venueId: string,
@@ -260,6 +262,7 @@ export class VenuesAPI {
 
   /**
    * Удалить площадку
+   * Требуется владение площадкой (organizerId === userId) или роль admin
    */
   static async deleteVenue(venueId: string): Promise<void> {
     if (USE_MOCK_API) {

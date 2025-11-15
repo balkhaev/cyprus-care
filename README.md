@@ -10,10 +10,10 @@ The project uses a specially designed **Mediterranean Relief UI** design system 
 
 ### Color Palette
 
-- 🧡 **Deep Orange** (#E36414) - urgency, fire, Cypriot sunsets
-- 💙 **Safe Blue** (#1E88E5) - trust, calm, sea
-- 💚 **Olive Green** (#4CAF50) - hope, nature, recovery
-- ❤️ **Fire Red** (#D32F2F) - urgent alerts
+- 🧡 **Deep Orange** (#d77040) - urgency, fire, Cypriot sunsets (less saturated)
+- 💙 **Safe Blue** (#4a8fc9) - trust, calm, sea (softer tone)
+- 💚 **Olive Green** (#65b365) - hope, nature, recovery (muted)
+- ❤️ **Fire Red** (#c95555) - urgent alerts (less intense)
 
 ### UI Features
 

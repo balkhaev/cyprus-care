@@ -104,7 +104,7 @@ export interface CustomFunctionType {
   id: string;
   name: string;
   description: string;
-  organizerId: string;
+  organizerId: number; // Changed from string to number to match User.id
   createdAt: Date;
 }
 
@@ -116,7 +116,9 @@ export interface Venue {
   location: VenueLocation;
   operatingHours: OperatingHours[];
   functions: VenueFunction[]; // Added functions array
-  organizerId: string;
+  organizerId: number; // Changed from string to number to match User.id
+  status?: string; // Optional status field from contracts
+  functionsCount?: number; // Optional functions count from contracts
   createdAt: Date;
   updatedAt: Date;
 }

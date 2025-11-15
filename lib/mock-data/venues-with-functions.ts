@@ -130,7 +130,7 @@ export const mockVenues: Venue[] = [
         updatedAt: new Date('2024-01-15'),
       } as ServicesNeededFunction,
     ],
-    organizerId: 'org-1',
+    organizerId: 1, // Changed from 'org-1' to numeric ID matching User.id
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15'),
   },
@@ -193,7 +193,7 @@ export const mockVenues: Venue[] = [
         updatedAt: new Date('2024-01-16'),
       } as DistributionPointFunction,
     ],
-    organizerId: 'org-1',
+    organizerId: 1, // Owned by same user as venue 1
     createdAt: new Date('2024-01-16'),
     updatedAt: new Date('2024-01-16'),
   },
@@ -269,7 +269,7 @@ export const mockVenues: Venue[] = [
         updatedAt: new Date('2024-01-17'),
       } as CollectionPointFunction,
     ],
-    organizerId: 'org-2',
+    organizerId: 2, // Different owner (user ID 2)
     createdAt: new Date('2024-01-17'),
     updatedAt: new Date('2024-01-17'),
   },
@@ -367,7 +367,7 @@ export const mockVenues: Venue[] = [
         updatedAt: new Date('2024-01-18'),
       } as ServicesNeededFunction,
     ],
-    organizerId: 'org-1',
+    organizerId: 3, // Different owner (user ID 3)
     createdAt: new Date('2024-01-18'),
     updatedAt: new Date('2024-01-18'),
   },
@@ -379,14 +379,14 @@ export const mockCustomFunctionTypes: CustomFunctionType[] = [
     id: 'custom-type-1',
     name: 'Medical Clinic',
     description: 'Temporary medical clinic providing basic healthcare',
-    organizerId: 'org-1',
+    organizerId: 1, // Changed from 'org-1' to numeric ID
     createdAt: new Date('2024-01-10'),
   },
   {
     id: 'custom-type-2',
     name: 'Education Center',
     description: 'Providing educational support for children',
-    organizerId: 'org-2',
+    organizerId: 2, // Changed from 'org-2' to numeric ID
     createdAt: new Date('2024-01-12'),
   },
 ];

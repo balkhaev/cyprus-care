@@ -68,7 +68,15 @@ export function VenueFilters({ filters, onFiltersChange }: VenueFiltersProps) {
   }
 
   const toggleOpenNow = () => {
-    const newOpenNow = filters.openNow === null ? true : filters.openNow === true ? false : null
+    const newOpenNow = filters.openNow === true ? null : true
+    onFiltersChange({
+      ...filters,
+      openNow: newOpenNow,
+    })
+  }
+
+  const toggleClosed = () => {
+    const newOpenNow = filters.openNow === false ? null : false
     onFiltersChange({
       ...filters,
       openNow: newOpenNow,
@@ -151,7 +159,7 @@ export function VenueFilters({ filters, onFiltersChange }: VenueFiltersProps) {
             <Button
               variant={filters.openNow === false ? "default" : "outline"}
               size="sm"
-              onClick={toggleOpenNow}
+              onClick={toggleClosed}
             >
               Closed
             </Button>

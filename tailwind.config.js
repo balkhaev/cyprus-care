@@ -3,11 +3,12 @@ module.exports = {
     theme: {
       extend: {
         colors: {
-          primary: '#E36414',
-          secondary: '#1E88E5',
-          bgsoft: '#F9F5F1',
-          accent: '#4CAF50',
-          danger: '#D32F2F',
+          // Mediterranean Relief UI colors (from README.md)
+          primary: '#d77040',      // Deep Orange - urgency, fire, Cypriot sunsets
+          secondary: '#4a8fc9',    // Safe Blue - trust, calm, sea
+          accent: '#65b365',       // Olive Green - hope, nature, recovery
+          danger: '#c95555',       // Fire Red - urgent alerts
+          bgsoft: '#F9F5F1',       // Soft warm background
         },
       },
     },

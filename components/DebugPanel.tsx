@@ -29,6 +29,12 @@ import {
 
 export default function DebugPanel() {
   const [isOpen, setIsOpen] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("care_hub_current_user") || "user-org-1"
+    }
+    return "user-org-1"
+  })
   const [currentUser, setCurrentUserState] = useState<User>(getCurrentUser())
   const [showResetDialog, setShowResetDialog] = useState(false)
 
@@ -38,10 +44,26 @@ export default function DebugPanel() {
   if (!isVisible) return null
 
   const handleUserChange = (userId: string) => {
-    setCurrentUser(userId)
-    setCurrentUserState(mockUsers[userId])
-    // Reload the page to update all components
-    window.location.reload()
+    // Update user via API
+    fetch("/api/me", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        // Update local state and reload
+        setCurrentUserId(userId)
+        setCurrentUser(userId)
+        setCurrentUserState(mockUsers[userId])
+        window.location.reload()
+      })
+      .catch((err) => {
+        console.error("Failed to update user:", err)
+        alert("Failed to switch user. Please try again.")
+      })
   }
 
   const handleResetConfirm = () => {
@@ -71,6 +93,13 @@ export default function DebugPanel() {
           icon: <Hand className="h-4 w-4" />,
           label: "Volunteer",
           description: "Can respond to needs",
+        }
+      default:
+        return {
+          color: "bg-gray-500 dark:bg-gray-600",
+          icon: <Bug className="h-4 w-4" />,
+          label: "Unknown",
+          description: "Unknown role",
         }
     }
   }
@@ -123,7 +152,7 @@ export default function DebugPanel() {
                   Current User
                 </p>
                 <p className="font-bold text-base truncate">
-                  {currentUser.name}
+                  {currentUser.first_name} {currentUser.last_name}
                 </p>
                 <p className="text-xs opacity-90 truncate">
                   {currentUser.email}
@@ -177,14 +206,14 @@ export default function DebugPanel() {
               </AlertDialog>
             </div>
             <div className="space-y-1 max-h-[400px] overflow-y-auto p-1">
-              {Object.values(mockUsers).map((user) => {
+              {Object.entries(mockUsers).map(([userId, user]) => {
                 const roleInfo = getRoleInfo(user.role)
-                const isActive = user.id === currentUser.id
+                const isActive = userId === currentUserId
 
                 return (
                   <button
-                    key={user.id}
-                    onClick={() => handleUserChange(user.id)}
+                    key={userId}
+                    onClick={() => handleUserChange(userId)}
                     disabled={isActive}
                     className={`w-full text-left p-3 rounded-lg transition-all ${
                       isActive
@@ -201,7 +230,7 @@ export default function DebugPanel() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">
-                            {user.name}
+                            {user.first_name} {user.last_name}
                           </p>
                           {isActive && (
                             <span className="px-1.5 py-0.5 bg-green-500 text-white text-xs font-bold rounded">

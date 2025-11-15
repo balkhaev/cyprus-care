@@ -10,9 +10,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Cyprus Care - Crisis Relief Coordination",
+  title: "ENOCYPRUS - Crisis Relief Coordination",
   description:
-    "Platform for coordinating volunteers and relief during emergencies in Cyprus",
+    "Platform for coordinating volunteers and relief during emergencies",
 }
 
 export default function RootLayout({
@@ -20,11 +20,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Show DebugPanel only in development
+  const showDebugPanel = process.env.NODE_ENV === 'development';
+  
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
         {children}
-        <DebugPanel />
+        {showDebugPanel && <DebugPanel />}
       </body>
     </html>
   )

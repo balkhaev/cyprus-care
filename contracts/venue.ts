@@ -32,7 +32,7 @@ export interface Venue {
   type: VenueType;
   location: GeoLocation;
   operatingHours: OperatingHours[];
-  organizerId: UUID;
+  organizerId: number; // Changed to number to match User.id
   status: EntityStatus;
   functionsCount: number; // Количество функций
   imageUrls?: string[];
@@ -90,7 +90,7 @@ export interface UpdateVenueResponse {
 
 export interface GetVenuesRequest extends PaginationParams {
   type?: VenueType;
-  organizerId?: UUID;
+  organizerId?: number; // Changed to number to match User.id
   status?: EntityStatus;
   searchQuery?: string;
   // Геофильтрация

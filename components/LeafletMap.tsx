@@ -33,7 +33,7 @@ interface LeafletMapProps {
 
 export default function LeafletMap({
   markers = [],
-  center = [55.7558, 37.6173], // Москва по умолчанию
+  center = [35.1264, 33.4299], // Кипр - Никосия по умолчанию
   zoom = 13,
   onMarkerClick,
   userLocation,

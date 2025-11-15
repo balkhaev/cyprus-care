@@ -89,8 +89,8 @@ export default function NewVenuePage() {
   })
 
   const [location, setLocation] = useState<VenueLocation>({
-    lat: 55.7558,
-    lng: 37.6173,
+    lat: 35.1264,
+    lng: 33.4299,
     address: "",
   })
 
@@ -107,7 +107,7 @@ export default function NewVenuePage() {
         },
         (error) => {
           console.error("Ошибка получения геолокации:", error)
-          // Оставляем координаты по умолчанию (Москва)
+          // Оставляем координаты по умолчанию (Кипр - Никосия)
         }
       )
     }

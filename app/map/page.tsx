@@ -284,7 +284,7 @@ export default function MapPage() {
         {isMapLoaded && (
           <LeafletMap
             markers={markers}
-            center={[55.7558, 37.6173]}
+            center={[35.1264, 33.4299]}
             zoom={13}
             onMarkerClick={handleMarkerClick}
             userLocation={userLocation}

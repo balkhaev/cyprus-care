@@ -60,8 +60,8 @@ export default function EditVenuePage({ params }: PageProps) {
   });
 
   const [location, setLocation] = useState<VenueLocation>({
-    lat: 55.7558,
-    lng: 37.6173,
+    lat: 35.1264,
+    lng: 33.4299,
     address: '',
   });
 

@@ -29,7 +29,7 @@ export async function fetchVenueById(id: string): Promise<Venue | null> {
  * Create a new venue
  */
 export async function createVenue(
-  data: VenueFormData & { organizerId: string }
+  data: VenueFormData & { organizerId: number }
 ): Promise<Venue> {
   await delay()
 

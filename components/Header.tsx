@@ -19,18 +19,29 @@ import type { User as UserType } from '@/lib/mock-data/user-roles';
 
 interface HeaderProps {
   actions?: React.ReactNode;
+  customBreadcrumb?: string;
 }
 
 // Breadcrumb generator based on pathname
-function getBreadcrumbs(pathname: string): { label: string; href: string }[] {
+function getBreadcrumbs(pathname: string, customBreadcrumb?: string): { label: string; href: string }[] {
   const paths = pathname.split('/').filter(Boolean);
   const breadcrumbs: { label: string; href: string }[] = [
     { label: 'Home', href: '/' },
   ];
 
   let currentPath = '';
+  let dynamicRouteIndex = -1;
+  
   paths.forEach((path, index) => {
     currentPath += `/${path}`;
+    
+    // Check if this is a dynamic route value (e.g., "2" in /venues/2)
+    const isNumber = /^\d+$/.test(path);
+    if (isNumber && customBreadcrumb) {
+      dynamicRouteIndex = breadcrumbs.length;
+      breadcrumbs.push({ label: customBreadcrumb, href: currentPath });
+      return;
+    }
     
     // Skip dynamic routes (like [id])
     if (path.startsWith('[')) return;
@@ -51,9 +62,9 @@ function getBreadcrumbs(pathname: string): { label: string; href: string }[] {
   return breadcrumbs;
 }
 
-export default function Header({ actions }: HeaderProps) {
+export default function Header({ actions, customBreadcrumb }: HeaderProps) {
   const pathname = usePathname();
-  const breadcrumbs = getBreadcrumbs(pathname || '/');
+  const breadcrumbs = getBreadcrumbs(pathname || '/', customBreadcrumb);
   
   // Get current user from API
   const [user, setUser] = useState<UserType | null>(null);

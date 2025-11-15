@@ -159,7 +159,7 @@ export default function EditVenuePage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       {/* Header */}
-      <Header />
+      <Header customBreadcrumb={venue.title} />
 
       {/* Form */}
       <main className="container mx-auto px-4 py-8">

@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Building2, Warehouse, Home, X } from "lucide-react"
+import { Search, Building2, Warehouse, Users, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import type { VenueType } from "@/types/venue"
+import type { VenueFunctionType } from "@/types/venue"
 import {
   textClasses,
   interactiveClasses,
@@ -14,7 +14,7 @@ import {
 
 export interface VenueFilterState {
   searchQuery: string
-  types: VenueType[]
+  functionTypes: VenueFunctionType[]
   openNow: boolean | null
 }
 
@@ -23,8 +23,8 @@ interface VenueFiltersProps {
   onFiltersChange: (filters: VenueFilterState) => void
 }
 
-const venueTypeOptions: Array<{
-  value: VenueType
+const functionTypeOptions: Array<{
+  value: VenueFunctionType
   label: string
   icon: React.ReactNode
 }> = [
@@ -34,14 +34,14 @@ const venueTypeOptions: Array<{
     icon: <Building2 className="h-4 w-4" />,
   },
   {
-    value: "distribution_hub",
-    label: "Distribution Hub",
+    value: "distribution_point",
+    label: "Distribution Point",
     icon: <Warehouse className="h-4 w-4" />,
   },
   {
-    value: "shelter",
-    label: "Shelter",
-    icon: <Home className="h-4 w-4" />,
+    value: "services_needed",
+    label: "Services Needed",
+    icon: <Users className="h-4 w-4" />,
   },
 ]
 
@@ -56,14 +56,14 @@ export function VenueFilters({ filters, onFiltersChange }: VenueFiltersProps) {
     })
   }
 
-  const toggleType = (type: VenueType) => {
-    const newTypes = filters.types.includes(type)
-      ? filters.types.filter((t) => t !== type)
-      : [...filters.types, type]
+  const toggleFunctionType = (type: VenueFunctionType) => {
+    const newTypes = filters.functionTypes.includes(type)
+      ? filters.functionTypes.filter((t) => t !== type)
+      : [...filters.functionTypes, type]
 
     onFiltersChange({
       ...filters,
-      types: newTypes,
+      functionTypes: newTypes,
     })
   }
 
@@ -87,14 +87,14 @@ export function VenueFilters({ filters, onFiltersChange }: VenueFiltersProps) {
     setSearchValue("")
     onFiltersChange({
       searchQuery: "",
-      types: [],
+      functionTypes: [],
       openNow: null,
     })
   }
 
   const hasActiveFilters =
     filters.searchQuery ||
-    filters.types.length > 0 ||
+    filters.functionTypes.length > 0 ||
     filters.openNow !== null
 
   return (
@@ -122,18 +122,18 @@ export function VenueFilters({ filters, onFiltersChange }: VenueFiltersProps) {
           </div>
         </div>
 
-        {/* Type filters */}
+        {/* Function type filters */}
         <div className="mb-4">
           <label className={`text-sm font-medium ${textClasses.primary} mb-2 block`}>
-            Venue Type:
+            Function Type:
           </label>
           <div className="flex flex-wrap gap-2">
-            {venueTypeOptions.map((option) => (
+            {functionTypeOptions.map((option) => (
               <Button
                 key={option.value}
-                variant={filters.types.includes(option.value) ? "default" : "outline"}
+                variant={filters.functionTypes.includes(option.value) ? "default" : "outline"}
                 size="sm"
-                onClick={() => toggleType(option.value)}
+                onClick={() => toggleFunctionType(option.value)}
                 className="gap-2"
               >
                 {option.icon}
@@ -175,8 +175,8 @@ export function VenueFilters({ filters, onFiltersChange }: VenueFiltersProps) {
                   Search: {filters.searchQuery}
                 </Badge>
               )}
-              {filters.types.map((type) => {
-                const option = venueTypeOptions.find((o) => o.value === type)
+              {filters.functionTypes.map((type) => {
+                const option = functionTypeOptions.find((o) => o.value === type)
                 return (
                   <Badge key={type} variant="secondary">
                     {option?.label}

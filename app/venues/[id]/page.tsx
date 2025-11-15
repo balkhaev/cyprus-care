@@ -12,14 +12,16 @@ import {
   Trash2,
   Building2,
   Warehouse,
-  Home,
+  Users,
   ChevronDown,
 } from "lucide-react"
-import type { Venue, VenueType } from "@/types/venue"
+import type { Venue, VenueFunctionType } from "@/types/venue"
 import { fetchVenueById, deleteVenue } from "@/lib/api/venues"
 import { removeVenueFunction } from "@/lib/api/venue-functions"
 import type { User } from "@/lib/mock-data/user-roles"
 import { canEditVenue, canDeleteVenue } from "@/lib/venue-permissions"
+import { getVenueFunctionTypes, getFunctionTypeLabel } from "@/lib/venue-type-utils"
+import { Badge } from "@/components/ui/badge"
 import VolunteerVenueView from "@/components/venue-views/VolunteerVenueView"
 import OrganizerVenueView from "@/components/venue-views/OrganizerVenueView"
 import BeneficiaryVenueView from "@/components/venue-views/BeneficiaryVenueView"
@@ -45,22 +47,11 @@ const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
   ),
 })
 
-const venueTypeIcons: Record<VenueType, React.ReactNode> = {
+const functionTypeIcons: Record<VenueFunctionType, React.ReactNode> = {
   collection_point: <Building2 className="h-6 w-6" />,
-  distribution_hub: <Warehouse className="h-6 w-6" />,
-  shelter: <Home className="h-6 w-6" />,
-}
-
-const venueTypeLabels: Record<VenueType, string> = {
-  collection_point: "Collection Point",
-  distribution_hub: "Distribution Hub",
-  shelter: "Shelter",
-}
-
-const venueTypeDescriptions: Record<VenueType, string> = {
-  collection_point: "Place for collecting humanitarian aid",
-  distribution_hub: "Center for distributing aid",
-  shelter: "Temporary shelter for those in need",
+  distribution_point: <Warehouse className="h-6 w-6" />,
+  services_needed: <Users className="h-6 w-6" />,
+  custom: <Building2 className="h-6 w-6" />,
 }
 
 interface PageProps {
@@ -205,6 +196,7 @@ export default function VenueDetailPage({ params }: PageProps) {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       {/* Header */}
       <Header
+        customBreadcrumb={venue.title}
         actions={
           canEdit ? (
             <>
@@ -240,16 +232,18 @@ export default function VenueDetailPage({ params }: PageProps) {
             }`}
             onClick={() => canEdit && router.push(`/venues/${venue.id}/edit`)}
           >
-            <div className="p-6">
+              <div className="p-6">
               <div className="flex items-start justify-between mb-6">
                 <div className="flex-1">
                   <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
                     {venue.title}
                   </h1>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {venueTypeLabels[venue.type]}
-                    </span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {getVenueFunctionTypes(venue).map((type) => (
+                      <Badge key={type} variant="secondary">
+                        {getFunctionTypeLabel(type)}
+                      </Badge>
+                    ))}
                     <span className="text-zinc-400">•</span>
                     <span
                       className={`text-sm font-medium ${
@@ -270,16 +264,22 @@ export default function VenueDetailPage({ params }: PageProps) {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-zinc-700 dark:text-zinc-300 shrink-0">
-                  {venueTypeIcons[venue.type]}
-                </div>
+                {getVenueFunctionTypes(venue).length > 0 && (
+                  <div className="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-zinc-700 dark:text-zinc-300 shrink-0">
+                    {functionTypeIcons[getVenueFunctionTypes(venue)[0]]}
+                  </div>
+                )}
                 <div className="flex-1">
                   <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-                    {venueTypeLabels[venue.type]}
+                    Functions
                   </h2>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
-                    {venueTypeDescriptions[venue.type]}
-                  </p>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {getVenueFunctionTypes(venue).map((type) => (
+                      <span key={type} className="text-sm text-zinc-600 dark:text-zinc-400">
+                        {getFunctionTypeLabel(type)}
+                      </span>
+                    ))}
+                  </div>
                   <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800">
                     <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
                       {venue.description}

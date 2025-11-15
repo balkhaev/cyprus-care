@@ -6,7 +6,6 @@ export const mockVenues: Venue[] = [
     id: '1',
     title: 'Central Collection Point',
     description: 'Main collection point for humanitarian aid in the city center',
-    type: 'collection_point',
     location: {
       lat: 35.1738,
       lng: 33.3642,
@@ -138,7 +137,6 @@ export const mockVenues: Venue[] = [
     id: '2',
     title: 'West District Distribution Hub',
     description: 'Distribution center for the western part of the city',
-    type: 'distribution_hub',
     location: {
       lat: 35.1590,
       lng: 33.3450,
@@ -201,7 +199,6 @@ export const mockVenues: Venue[] = [
     id: '3',
     title: 'Emergency Shelter North',
     description: 'Temporary shelter providing accommodation and basic services',
-    type: 'shelter',
     location: {
       lat: 35.1850,
       lng: 33.3800,
@@ -277,7 +274,6 @@ export const mockVenues: Venue[] = [
     id: '4',
     title: 'South Community Center',
     description: 'Community center serving as both collection and distribution point',
-    type: 'collection_point',
     location: {
       lat: 35.1450,
       lng: 33.3700,

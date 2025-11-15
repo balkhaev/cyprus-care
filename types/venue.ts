@@ -1,5 +1,3 @@
-export type VenueType = 'collection_point' | 'distribution_hub' | 'shelter';
-
 export interface VenueLocation {
   lat: number;
   lng: number;
@@ -112,10 +110,9 @@ export interface Venue {
   id: string;
   title: string;
   description: string;
-  type: VenueType;
   location: VenueLocation;
   operatingHours: OperatingHours[];
-  functions: VenueFunction[]; // Added functions array
+  functions: VenueFunction[]; // Functions determine the venue types
   organizerId: number; // Changed from string to number to match User.id
   status?: string; // Optional status field from contracts
   functionsCount?: number; // Optional functions count from contracts
@@ -126,7 +123,6 @@ export interface Venue {
 export interface VenueFormData {
   title: string;
   description: string;
-  type: VenueType;
   location: VenueLocation;
   operatingHours: OperatingHours[];
 }

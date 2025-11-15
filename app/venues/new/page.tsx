@@ -6,13 +6,10 @@ import Link from "next/link"
 import dynamic from "next/dynamic"
 import {
   ArrowLeft,
-  Building2,
-  Warehouse,
-  Home,
   Plus,
   Trash2,
 } from "lucide-react"
-import type { VenueType, VenueLocation, OperatingHours } from "@/types/venue"
+import type { VenueLocation, OperatingHours } from "@/types/venue"
 import { createVenue } from "@/lib/api/venues"
 
 // Dynamic map import
@@ -85,7 +82,6 @@ export default function NewVenuePage() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    type: "collection_point" as VenueType,
   })
 
   const [location, setLocation] = useState<VenueLocation>({
@@ -116,32 +112,6 @@ export default function NewVenuePage() {
   const [operatingHours, setOperatingHours] = useState<OperatingHours[]>(
     defaultOperatingHours
   )
-
-  const venueTypes: Array<{
-    value: VenueType
-    label: string
-    icon: React.ReactNode
-    description: string
-  }> = [
-    {
-      value: "collection_point",
-      label: "Collection Point",
-      icon: <Building2 className="h-5 w-5" />,
-      description: "Place for collecting humanitarian aid",
-    },
-    {
-      value: "distribution_hub",
-      label: "Distribution Hub",
-      icon: <Warehouse className="h-5 w-5" />,
-      description: "Center for distributing aid",
-    },
-    {
-      value: "shelter",
-      label: "Shelter",
-      icon: <Home className="h-5 w-5" />,
-      description: "Temporary shelter for those in need",
-    },
-  ]
 
   const handleLocationSelect = (newLocation: VenueLocation) => {
     setLocation(newLocation)

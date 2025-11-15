@@ -1,32 +1,32 @@
-# Функции и отклики площадок
+# Venue Functions and Responses
 
-Управление функциями площадок (сбор, раздача, услуги) и откликами на них.
+Managing venue functions (collection, distribution, services) and responses to them.
 
-## 📋 Быстрая навигация
+## 📋 Quick Navigation
 
-### Функции площадок
+### Venue Functions
 
-- [Создать функцию](#создать-функцию) - `POST /venue-functions`
-- [Список функций](#список-функций) - `GET /venue-functions`
-- [Обновить функцию](#обновить-функцию) - `PATCH /venue-functions/:id`
-- [Удалить функцию](#удалить-функцию) - `DELETE /venue-functions/:id`
+- [Create Function](#create-function) - `POST /venue-functions`
+- [List Functions](#list-functions) - `GET /venue-functions`
+- [Update Function](#update-function) - `PATCH /venue-functions/:id`
+- [Delete Function](#delete-function) - `DELETE /venue-functions/:id`
 
-### Типы функций
+### Function Types
 
-- [Сбор вещей](#тип-сбор-вещей) - `collection_point`
-- [Раздача вещей](#тип-раздача-вещей) - `distribution_point`
-- [Волонтерские услуги](#тип-услуги) - `services_needed`
-- [Пользовательские функции](#пользовательские-функции) - `custom`
+- [Collection Items](#collection-items-type) - `collection_point`
+- [Distribution Items](#distribution-items-type) - `distribution_point`
+- [Volunteer Services](#services-type) - `services_needed`
+- [Custom Functions](#custom-functions) - `custom`
 
 ---
 
-## Создать функцию
+## Create Function
 
 `POST /venue-functions`
 
-🔐 **Требуется авторизация:** Организатор, владелец площадки
+🔐 **Authentication Required:** Organizer, venue owner
 
-### Базовый пример
+### Basic Example
 
 ```javascript
 const response = await fetch("/api/venue-functions", {
@@ -39,15 +39,15 @@ const response = await fetch("/api/venue-functions", {
     venueId: "venue-uuid",
     type: "collection_point",
     items: [{ categoryId: "cat-food", quantity: "a_lot" }],
-    specialRequests: "Только чистые вещи",
+    specialRequests: "Only clean items",
   }),
 })
 ```
 
-### Типы функций
+### Function Types
 
 <details>
-<summary><strong>Сбор вещей</strong> (collection_point)</summary>
+<summary><strong>Collection Items</strong> (collection_point)</summary>
 
 ```json
 {
@@ -62,7 +62,7 @@ const response = await fetch("/api/venue-functions", {
 </details>
 
 <details>
-<summary><strong>Раздача вещей</strong> (distribution_point)</summary>
+<summary><strong>Distribution Items</strong> (distribution_point)</summary>
 
 ```json
 {
@@ -77,23 +77,23 @@ const response = await fetch("/api/venue-functions", {
 </details>
 
 <details>
-<summary><strong>Волонтерские услуги</strong> (services_needed)</summary>
+<summary><strong>Volunteer Services</strong> (services_needed)</summary>
 
 ```json
 {
   "type": "services_needed",
   "services": [
-    { "serviceName": "Медосмотр", "numberOfVolunteers": 2 },
-    { "serviceName": "Перевод", "numberOfVolunteers": 1 }
+    { "serviceName": "Medical examination", "numberOfVolunteers": 2 },
+    { "serviceName": "Translation", "numberOfVolunteers": 1 }
   ]
 }
 ```
 
 </details>
 
-### Ответ сервера
+### Server Response
 
-✅ **Успех (201):**
+✅ **Success (201):**
 
 ```json
 {
@@ -109,31 +109,31 @@ const response = await fetch("/api/venue-functions", {
 }
 ```
 
-❌ **Ошибки:**
+❌ **Errors:**
 
-| Код | Описание                               |
-| --- | -------------------------------------- |
-| 400 | Ошибка валидации (недостаточно данных) |
-| 403 | Нет прав на площадку                   |
+| Code | Description                          |
+| ---- | ------------------------------------ |
+| 400  | Validation error (insufficient data) |
+| 403  | No access to venue                   |
 
 ---
 
-## Список функций
+## List Functions
 
 `GET /venue-functions`
 
-🌍 **Публичный доступ** (авторизация не требуется)
+🌍 **Public Access** (authentication not required)
 
-### Параметры запроса
+### Query Parameters
 
 ```
-?venueId=venue-uuid     // Фильтр по площадке
-&type=collection_point  // Фильтр по типу
-&status=active          // Фильтр по статусу
-&page=1&limit=10        // Пагинация
+?venueId=venue-uuid     // Filter by venue
+&type=collection_point  // Filter by type
+&status=active          // Filter by status
+&page=1&limit=10        // Pagination
 ```
 
-### Пример
+### Example
 
 ```javascript
 const params = new URLSearchParams({
@@ -145,11 +145,11 @@ const params = new URLSearchParams({
 const response = await fetch(`/api/venue-functions?${params}`)
 const { data } = await response.json()
 
-console.log(data.items) // Массив функций
-console.log(data.pagination) // Информация о пагинации
+console.log(data.items) // Array of functions
+console.log(data.pagination) // Pagination info
 ```
 
-### Ответ
+### Response
 
 ```json
 {
@@ -167,13 +167,13 @@ console.log(data.pagination) // Информация о пагинации
 
 ---
 
-## Обновить функцию
+## Update Function
 
 `PATCH /venue-functions/:id`
 
-🔐 **Требуется авторизация:** Владелец площадки
+🔐 **Authentication Required:** Venue owner
 
-### Пример
+### Example
 
 ```javascript
 const response = await fetch(`/api/venue-functions/${functionId}`, {
@@ -189,17 +189,17 @@ const response = await fetch(`/api/venue-functions/${functionId}`, {
 })
 ```
 
-💡 **Отправляйте только те поля, которые хотите изменить**
+💡 **Only send the fields you want to change**
 
 ---
 
-## Удалить функцию
+## Delete Function
 
 `DELETE /venue-functions/:id`
 
-🔐 **Требуется авторизация:** Владелец площадки
+🔐 **Authentication Required:** Venue owner
 
-### Пример
+### Example
 
 ```javascript
 await fetch(`/api/venue-functions/${functionId}`, {
@@ -208,56 +208,56 @@ await fetch(`/api/venue-functions/${functionId}`, {
 })
 ```
 
-⚠️ **Внимание:** Удаление может быть заблокировано при наличии активных откликов
+⚠️ **Warning:** Deletion may be blocked if there are active responses
 
 ---
 
-## 📘 Справочник
+## 📘 Reference
 
-### Типы функций
+### Function Types
 
-| Тип                  | Описание                 | Пример использования            |
-| -------------------- | ------------------------ | ------------------------------- |
-| `collection_point`   | Пункт сбора вещей        | Собираем еду, одежду            |
-| `distribution_point` | Пункт раздачи вещей      | Раздаем еду, одежду нуждающимся |
-| `services_needed`    | Требуются волонтеры      | Нужны врачи, переводчики        |
-| `custom`             | Пользовательская функция | Любая другая помощь             |
+| Type                 | Description             | Use Case                                    |
+| -------------------- | ----------------------- | ------------------------------------------- |
+| `collection_point`   | Item collection point   | Collecting food, clothes                    |
+| `distribution_point` | Item distribution point | Distributing food, clothes to those in need |
+| `services_needed`    | Volunteers needed       | Need doctors, translators                   |
+| `custom`             | Custom function         | Any other help                              |
 
-### Уровни количества
+### Quantity Levels
 
-| Значение | Описание | Использование                   |
-| -------- | -------- | ------------------------------- |
-| `a_lot`  | Много    | Принимаем/раздаем большой объем |
-| `some`   | Средне   | Умеренное количество            |
-| `few`    | Мало     | Ограниченные запасы             |
+| Value   | Description | Usage                               |
+| ------- | ----------- | ----------------------------------- |
+| `a_lot` | A lot       | Accepting/distributing large volume |
+| `some`  | Medium      | Moderate amount                     |
+| `few`   | Little      | Limited stock                       |
 
-### Категории услуг
+### Service Categories
 
-| Категория       | Примеры                          |
-| --------------- | -------------------------------- |
-| `medical`       | Медосмотр, консультация врача    |
-| `legal`         | Юридическая помощь, консультация |
-| `psychological` | Психологическая поддержка        |
-| `translation`   | Перевод, устный/письменный       |
-| `transport`     | Транспортные услуги              |
-| `education`     | Обучение, курсы                  |
-| `other`         | Другие услуги                    |
+| Category        | Examples                                 |
+| --------------- | ---------------------------------------- |
+| `medical`       | Medical examination, doctor consultation |
+| `legal`         | Legal aid, consultation                  |
+| `psychological` | Psychological support                    |
+| `translation`   | Translation, oral/written                |
+| `transport`     | Transport services                       |
+| `education`     | Training, courses                        |
+| `other`         | Other services                           |
 
-### Статусы функций
+### Function Statuses
 
-| Статус     | Описание                                |
+| Status     | Description                             |
 | ---------- | --------------------------------------- |
-| `active`   | Функция активна и отображается на карте |
-| `inactive` | Функция временно неактивна              |
-| `archived` | Функция заархивирована                  |
+| `active`   | Function is active and displayed on map |
+| `inactive` | Function temporarily inactive           |
+| `archived` | Function is archived                    |
 
 ---
 
-## Пользовательские функции
+## Custom Functions
 
-Для специфических потребностей можно создать свой тип функции.
+For specific needs, you can create your own function type.
 
-### Создать тип
+### Create Type
 
 `POST /custom-function-types`
 
@@ -269,13 +269,13 @@ const response = await fetch("/api/custom-function-types", {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    name: "Общественная кухня",
-    description: "Приготовление еды для беженцев",
+    name: "Community Kitchen",
+    description: "Cooking food for refugees",
   }),
 })
 ```
 
-### Список типов
+### List Types
 
 `GET /custom-function-types`
 
@@ -287,19 +287,19 @@ console.log(data.customFunctionTypes)
 
 ---
 
-## ⚡ Быстрый старт
+## ⚡ Quick Start
 
-### 1. Создайте площадку
+### 1. Create a Venue
 
 ```javascript
-// Сначала создайте площадку (см. venues API)
-const venue = await createVenue({ name: "Склад гумпомощи", ... })
+// First, create a venue (see venues API)
+const venue = await createVenue({ name: "Humanitarian warehouse", ... })
 ```
 
-### 2. Добавьте функцию
+### 2. Add a Function
 
 ```javascript
-// Добавьте функцию к площадке
+// Add a function to the venue
 const func = await fetch("/api/venue-functions", {
   method: "POST",
   body: JSON.stringify({
@@ -310,46 +310,46 @@ const func = await fetch("/api/venue-functions", {
 })
 ```
 
-### 3. Пользователи увидят на карте
+### 3. Users Will See It on the Map
 
-Функция автоматически появится на карте, и пользователи смогут откликнуться.
-
----
-
-## ⚠️ Важные правила
-
-1. **Валидация:**
-
-   - Для `collection_point` и `distribution_point` нужен минимум 1 элемент в `items`
-   - Для `services_needed` нужен минимум 1 элемент в `services`
-   - Для `custom` обязателен `customTypeId`
-
-2. **Права доступа:**
-
-   - Создавать функции могут только организаторы
-   - Редактировать и удалять — только владельцы площадки
-   - Просматривать — все (включая неавторизованных)
-
-3. **Каскадное удаление:**
-   - При удалении площадки удаляются все её функции
-   - Удаление функции с активными откликами может быть заблокировано
+The function will automatically appear on the map, and users can respond to it.
 
 ---
 
-## 🔍 Полезные ссылки
+## ⚠️ Important Rules
 
-- [API площадок](./venues.md)
-- [API авторизации](./auth.md)
-- [Категории вещей](./item-categories.md)
+1. **Validation:**
+
+   - For `collection_point` and `distribution_point`, at least 1 item in `items` is required
+   - For `services_needed`, at least 1 item in `services` is required
+   - For `custom`, `customTypeId` is mandatory
+
+2. **Access Rights:**
+
+   - Only organizers can create functions
+   - Only venue owners can edit and delete
+   - Everyone can view (including unauthenticated users)
+
+3. **Cascading Deletion:**
+   - When a venue is deleted, all its functions are deleted
+   - Deletion of a function with active responses may be blocked
 
 ---
 
-## 💬 Частые вопросы
+## 🔍 Useful Links
+
+- [Venues API](./venues.md)
+- [Authentication API](./auth.md)
+- [Item Categories](./item-categories.md)
+
+---
+
+## 💬 FAQ
 
 <details>
-<summary><strong>Как добавить часы работы?</strong></summary>
+<summary><strong>How to add opening hours?</strong></summary>
 
-Добавьте массив `openingTimes` при создании/обновлении:
+Add the `openingTimes` array when creating/updating:
 
 ```json
 {
@@ -363,16 +363,16 @@ const func = await fetch("/api/venue-functions", {
 </details>
 
 <details>
-<summary><strong>Можно ли изменить тип функции?</strong></summary>
+<summary><strong>Can I change the function type?</strong></summary>
 
-Нет, тип функции нельзя изменить после создания. Создайте новую функцию с нужным типом.
+No, the function type cannot be changed after creation. Create a new function with the desired type.
 
 </details>
 
 <details>
-<summary><strong>Как узнать, сколько откликов на функцию?</strong></summary>
+<summary><strong>How to know how many responses a function has?</strong></summary>
 
-Используйте эндпоинт статистики:
+Use the statistics endpoint:
 
 ```javascript
 GET /venue-functions/:id/statistics

@@ -34,6 +34,17 @@ The project uses a specially designed **Mediterranean Relief UI** design system 
 npm install
 ```
 
+### Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```bash
+# Debug Panel - set to 'true' to enable debug menu (for development)
+NEXT_PUBLIC_SHOW_DEBUG_PANEL=true
+```
+
+See `.env.example` for all available environment variables.
+
 ### Run in Development Mode
 
 ```bash

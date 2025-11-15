@@ -8,9 +8,9 @@ export const mockVenues: Venue[] = [
     description: 'Main collection point for humanitarian aid in the city center',
     type: 'collection_point',
     location: {
-      lat: 55.7558,
-      lng: 37.6173,
-      address: 'Red Square, 1, Moscow',
+      lat: 35.1738,
+      lng: 33.3642,
+      address: 'Ledra Street, 1, Nicosia',
     },
     operatingHours: [
       { dayOfWeek: 'Monday', openTime: '09:00', closeTime: '18:00', isClosed: false },
@@ -90,9 +90,9 @@ export const mockVenues: Venue[] = [
     description: 'Distribution center for the western part of the city',
     type: 'distribution_hub',
     location: {
-      lat: 55.7520,
-      lng: 37.6100,
-      address: 'Arbat Street, 10, Moscow',
+      lat: 35.1590,
+      lng: 33.3450,
+      address: 'Makarios Avenue, 10, Nicosia',
     },
     operatingHours: [
       { dayOfWeek: 'Monday', openTime: '10:00', closeTime: '19:00', isClosed: false },
@@ -153,9 +153,9 @@ export const mockVenues: Venue[] = [
     description: 'Temporary shelter providing accommodation and basic services',
     type: 'shelter',
     location: {
-      lat: 55.7600,
-      lng: 37.6200,
-      address: 'Lenin Street, 25, Moscow',
+      lat: 35.1850,
+      lng: 33.3800,
+      address: 'Kennedy Avenue, 25, Nicosia',
     },
     operatingHours: [
       { dayOfWeek: 'Monday', openTime: '00:00', closeTime: '23:59', isClosed: false },
@@ -229,9 +229,9 @@ export const mockVenues: Venue[] = [
     description: 'Community center serving as both collection and distribution point',
     type: 'collection_point',
     location: {
-      lat: 55.7480,
-      lng: 37.6150,
-      address: 'Community Street, 42, Moscow',
+      lat: 35.1450,
+      lng: 33.3700,
+      address: 'Stasikratous Street, 42, Nicosia',
     },
     operatingHours: [
       { dayOfWeek: 'Monday', openTime: '09:00', closeTime: '17:00', isClosed: false },

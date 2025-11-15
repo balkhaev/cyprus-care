@@ -1,64 +1,84 @@
-'use client';
+"use client"
 
-import { useState, useEffect } from 'react';
-import { Bug, ChevronRight, ChevronLeft, Users, MapPin, Package, Hand, RotateCcw } from 'lucide-react';
-import { getCurrentUser, setCurrentUser, mockUsers, type User } from '@/lib/mock-data/user-roles';
+import { useState } from "react"
+import {
+  Bug,
+  ChevronRight,
+  MapPin,
+  Package,
+  Hand,
+  RotateCcw,
+} from "lucide-react"
+import {
+  getCurrentUser,
+  setCurrentUser,
+  mockUsers,
+  type User,
+} from "@/lib/mock-data/user-roles"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function DebugPanel() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentUser, setCurrentUserState] = useState<User>(getCurrentUser());
-  const [isVisible, setIsVisible] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [currentUser, setCurrentUserState] = useState<User>(getCurrentUser())
+  const [showResetDialog, setShowResetDialog] = useState(false)
 
-  // Only show in development
-  useEffect(() => {
-    setIsVisible(process.env.NODE_ENV === 'development');
-  }, []);
+  // Only show when enabled via env
+  const isVisible = process.env.NEXT_PUBLIC_SHOW_DEBUG_PANEL === "true"
 
-  if (!isVisible) return null;
+  if (!isVisible) return null
 
   const handleUserChange = (userId: string) => {
-    setCurrentUser(userId);
-    setCurrentUserState(mockUsers[userId]);
+    setCurrentUser(userId)
+    setCurrentUserState(mockUsers[userId])
     // Reload the page to update all components
-    window.location.reload();
-  };
+    window.location.reload()
+  }
 
-  const handleReset = () => {
-    if (confirm('Сбросить на пользователя по умолчанию (John Smith - Organizer)?')) {
-      handleUserChange('user-org-1');
-    }
-  };
+  const handleResetConfirm = () => {
+    handleUserChange("user-org-1")
+    setShowResetDialog(false)
+  }
 
-  const getRoleInfo = (role: User['role']) => {
+  const getRoleInfo = (role: User["role"]) => {
     switch (role) {
-      case 'organizer':
+      case "organizer":
         return {
-          color: 'bg-purple-500 dark:bg-purple-600',
+          color: "bg-purple-500 dark:bg-purple-600",
           icon: <MapPin className="h-4 w-4" />,
-          label: 'Organizer',
-          description: 'Manages venues & responses',
-        };
-      case 'volunteer':
+          label: "Organizer",
+          description: "Manages venues & responses",
+        }
+      case "beneficiary":
         return {
-          color: 'bg-blue-500 dark:bg-blue-600',
-          icon: <Hand className="h-4 w-4" />,
-          label: 'Volunteer',
-          description: 'Can respond to needs',
-        };
-      case 'beneficiary':
-        return {
-          color: 'bg-green-500 dark:bg-green-600',
+          color: "bg-green-500 dark:bg-green-600",
           icon: <Package className="h-4 w-4" />,
-          label: 'Beneficiary',
-          description: 'Can commit to distributions',
-        };
+          label: "Beneficiary",
+          description: "Can commit to distributions",
+        }
+      case "volunteer":
+        return {
+          color: "bg-blue-500 dark:bg-blue-600",
+          icon: <Hand className="h-4 w-4" />,
+          label: "Volunteer",
+          description: "Can respond to needs",
+        }
     }
-  };
+  }
 
-  const currentRoleInfo = getRoleInfo(currentUser.role);
+  const currentRoleInfo = getRoleInfo(currentUser.role)
 
   return (
-    <div className="fixed bottom-4 right-4 z-[9999] font-sans">
+    <div className="fixed bottom-4 right-4 z-9999 font-sans">
       {/* Toggle Button */}
       {!isOpen && (
         <button
@@ -126,57 +146,82 @@ export default function DebugPanel() {
               <p className="text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
                 Switch User
               </p>
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-colors"
-                title="Reset to default user"
+              <AlertDialog
+                open={showResetDialog}
+                onOpenChange={setShowResetDialog}
               >
-                <RotateCcw className="h-3 w-3" />
-                Reset
-              </button>
+                <AlertDialogTrigger asChild>
+                  <button
+                    className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-colors"
+                    title="Reset to default user"
+                  >
+                    <RotateCcw className="h-3 w-3" />
+                    Reset
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Сбросить пользователя?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Вы будете переключены на пользователя по умолчанию (John
+                      Smith - Organizer). Страница будет перезагружена.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Отмена</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleResetConfirm}>
+                      Сбросить
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
             <div className="space-y-1 max-h-[400px] overflow-y-auto">
-              {Object.values(mockUsers).map((user) => {
-                const roleInfo = getRoleInfo(user.role);
-                const isActive = user.id === currentUser.id;
-                
-                return (
-                  <button
-                    key={user.id}
-                    onClick={() => handleUserChange(user.id)}
-                    disabled={isActive}
-                    className={`w-full text-left p-3 rounded-lg transition-all ${
-                      isActive
-                        ? 'bg-zinc-100 dark:bg-zinc-800 ring-2 ring-zinc-900 dark:ring-zinc-100 cursor-default'
-                        : 'hover:bg-zinc-50 dark:hover:bg-zinc-800 active:scale-95'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`p-2 ${roleInfo.color} text-white rounded-lg shrink-0`}>
-                        {roleInfo.icon}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">
-                            {user.name}
-                          </p>
-                          {isActive && (
-                            <span className="px-1.5 py-0.5 bg-green-500 text-white text-xs font-bold rounded">
-                              ✓
-                            </span>
-                          )}
+              {Object.values(mockUsers)
+                .filter((user) => user.role !== "volunteer")
+                .map((user) => {
+                  const roleInfo = getRoleInfo(user.role)
+                  const isActive = user.id === currentUser.id
+
+                  return (
+                    <button
+                      key={user.id}
+                      onClick={() => handleUserChange(user.id)}
+                      disabled={isActive}
+                      className={`w-full text-left p-3 rounded-lg transition-all ${
+                        isActive
+                          ? "bg-zinc-100 dark:bg-zinc-800 ring-2 ring-zinc-900 dark:ring-zinc-100 cursor-default"
+                          : "hover:bg-zinc-50 dark:hover:bg-zinc-800 active:scale-95"
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={`p-2 ${roleInfo.color} text-white rounded-lg shrink-0`}
+                        >
+                          {roleInfo.icon}
                         </div>
-                        <p className="text-xs text-zinc-600 dark:text-zinc-400 truncate mb-1">
-                          {user.email}
-                        </p>
-                        <span className="inline-block px-2 py-0.5 bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-semibold rounded capitalize">
-                          {user.role}
-                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                              {user.name}
+                            </p>
+                            {isActive && (
+                              <span className="px-1.5 py-0.5 bg-green-500 text-white text-xs font-bold rounded">
+                                ✓
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-zinc-600 dark:text-zinc-400 truncate mb-1">
+                            {user.email}
+                          </p>
+                          <span className="inline-block px-2 py-0.5 bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-semibold rounded capitalize">
+                            {user.role}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                );
-              })}
+                    </button>
+                  )
+                })}
             </div>
           </div>
 
@@ -189,6 +234,5 @@ export default function DebugPanel() {
         </div>
       )}
     </div>
-  );
+  )
 }
-

@@ -46,50 +46,50 @@
 :root {
   /* Mediterranean Relief UI Theme */
   --radius: 0.75rem;
-  
+
   /* Primary: Deep Orange (#E36414) - fire, urgency, Cyprus sunsets */
   --primary: oklch(0.62 0.16 45);
   --primary-foreground: oklch(1 0 0);
-  
+
   /* Secondary: Safe Blue (#1E88E5) - trust, calm, water */
   --secondary: oklch(0.6 0.14 240);
   --secondary-foreground: oklch(1 0 0);
-  
+
   /* Background: Soft warm white (#F9F5F1) - friendly, readable for elderly */
   --background: oklch(0.98 0.01 60);
   --foreground: oklch(0.2 0.01 60);
-  
+
   /* Card: Pure white with warm undertone */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.2 0.01 60);
-  
+
   /* Popover */
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0.01 60);
-  
+
   /* Muted: Light warm gray */
   --muted: oklch(0.95 0.01 60);
   --muted-foreground: oklch(0.5 0.01 60);
-  
+
   /* Accent: Olive Green (#4CAF50) - hope, nature, recovery */
   --accent: oklch(0.68 0.15 145);
   --accent-foreground: oklch(1 0 0);
-  
+
   /* Destructive: Fire Red (#D32F2F) - error/urgent */
   --destructive: oklch(0.55 0.22 25);
-  
+
   /* Borders & Inputs */
   --border: oklch(0.88 0.01 60);
   --input: oklch(0.88 0.01 60);
   --ring: oklch(0.62 0.16 45);
-  
+
   /* Charts - Mediterranean palette */
   --chart-1: oklch(0.62 0.16 45); /* Deep orange */
   --chart-2: oklch(0.6 0.14 240); /* Safe blue */
   --chart-3: oklch(0.68 0.15 145); /* Olive green */
   --chart-4: oklch(0.75 0.12 80); /* Warm yellow */
   --chart-5: oklch(0.65 0.18 180); /* Mediterranean teal */
-  
+
   /* Sidebar */
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.2 0.01 60);
@@ -105,42 +105,42 @@
   /* Dark mode optimized for crisis response - calm, focused */
   --background: oklch(0.18 0.01 240);
   --foreground: oklch(0.95 0.01 60);
-  
+
   --card: oklch(0.22 0.01 240);
   --card-foreground: oklch(0.95 0.01 60);
-  
+
   --popover: oklch(0.22 0.01 240);
   --popover-foreground: oklch(0.95 0.01 60);
-  
+
   /* Primary remains visible in dark mode */
   --primary: oklch(0.68 0.16 45);
   --primary-foreground: oklch(0.15 0.01 240);
-  
+
   /* Secondary slightly lighter for contrast */
   --secondary: oklch(0.65 0.14 240);
   --secondary-foreground: oklch(1 0 0);
-  
+
   --muted: oklch(0.28 0.01 240);
   --muted-foreground: oklch(0.65 0.01 60);
-  
+
   /* Accent remains visible */
   --accent: oklch(0.72 0.15 145);
   --accent-foreground: oklch(0.15 0.01 240);
-  
+
   /* Destructive more visible in dark */
   --destructive: oklch(0.65 0.22 25);
-  
+
   --border: oklch(0.35 0.01 240);
   --input: oklch(0.35 0.01 240);
   --ring: oklch(0.68 0.16 45);
-  
+
   /* Charts maintain identity in dark */
   --chart-1: oklch(0.68 0.16 45);
   --chart-2: oklch(0.65 0.14 240);
   --chart-3: oklch(0.72 0.15 145);
   --chart-4: oklch(0.78 0.12 80);
   --chart-5: oklch(0.7 0.18 180);
-  
+
   /* Sidebar in dark mode */
   --sidebar: oklch(0.22 0.01 240);
   --sidebar-foreground: oklch(0.95 0.01 60);
@@ -159,29 +159,29 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* Enhanced typography for accessibility and elderly users */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
-  
+
   h1 {
     @apply text-4xl lg:text-5xl;
   }
-  
+
   h2 {
     @apply text-3xl lg:text-4xl;
   }
-  
+
   h3 {
     @apply text-2xl lg:text-3xl;
   }
-  
+
   /* Improved readability */
   p {
     @apply leading-relaxed;
   }
-  
+
   /* Focus styles for accessibility */
   button:focus-visible,
   a:focus-visible,

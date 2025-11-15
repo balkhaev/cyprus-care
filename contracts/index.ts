@@ -20,6 +20,9 @@ export * from './response';
 // Категории предметов
 export * from './item-category';
 
+// Утилиты
+export * from './utils';
+
 // === Сводная типизация всех endpoints ===
 
 import type { AuthEndpoints } from './auth';

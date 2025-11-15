@@ -10,9 +10,10 @@ const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
   ssr: false,
   loading: () => (
     <div className="flex h-full items-center justify-center bg-zinc-100 dark:bg-zinc-900">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zinc-900 dark:border-zinc-100 mx-auto mb-4"></div>
-        <p className="text-zinc-600 dark:text-zinc-400">Загрузка карты...</p>
+      <div className="text-center p-8">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100 mx-auto mb-4"></div>
+        <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Загрузка карты...</p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2">Пожалуйста, подождите</p>
       </div>
     </div>
   ),
@@ -31,6 +32,7 @@ export default function MapPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   // Примеры маркеров (замените на реальные данные из API)
   const markers: MapMarker[] = [
@@ -81,6 +83,15 @@ export default function MapPage() {
     }
   }, []);
 
+  // Отметка загрузки карты
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsMapLoaded(true);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleLocateMe = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -104,6 +115,7 @@ export default function MapPage() {
 
   const handleMarkerClick = (marker: MapMarker) => {
     setSelectedMarker(marker);
+    console.log('Выбран маркер:', marker);
   };
 
   const handleBuildRoute = () => {
@@ -190,17 +202,19 @@ export default function MapPage() {
 
       {/* Основная область карты */}
       <div className="h-full w-full pt-[60px]">
-        <LeafletMap
-          markers={markers}
-          center={[55.7558, 37.6173]}
-          zoom={13}
-          onMarkerClick={handleMarkerClick}
-          userLocation={userLocation}
-        />
+        {isMapLoaded && (
+          <LeafletMap
+            markers={markers}
+            center={[55.7558, 37.6173]}
+            zoom={13}
+            onMarkerClick={handleMarkerClick}
+            userLocation={userLocation}
+          />
+        )}
 
         {/* Информация о выбранном маркере */}
         {selectedMarker && (
-          <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-80 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 p-4 z-[1000]">
+          <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-80 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 p-4 z-[1000] animate-slide-up">
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1">
@@ -235,8 +249,11 @@ export default function MapPage() {
         {/* Кнопка "Моё местоположение" */}
         <button
           onClick={handleLocateMe}
-          className="absolute bottom-6 right-6 p-3 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all z-[999] hover:scale-110"
-          style={{ marginBottom: selectedMarker ? '160px' : '0' }}
+          className="absolute right-6 p-3 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all z-[999] hover:scale-110"
+          style={{ 
+            bottom: selectedMarker ? 'calc(24px + 160px)' : '24px',
+            transition: 'bottom 0.3s ease'
+          }}
           title="Моё местоположение"
           aria-label="Моё местоположение"
         >
@@ -245,11 +262,28 @@ export default function MapPage() {
 
         {/* Индикатор местоположения */}
         {userLocation && (
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-full shadow-lg z-[999] animate-fade-in">
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-full shadow-lg z-[999]">
             Местоположение определено
           </div>
         )}
       </div>
+
+      <style jsx global>{`
+        @keyframes slide-up {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        
+        .animate-slide-up {
+          animation: slide-up 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

@@ -1,26 +1,8 @@
 import Link from "next/link";
-import { MapPin, LogIn, Building2, User } from "lucide-react";
+import { MapPin, LogIn } from "lucide-react";
 
 export default function Home() {
   return (
-<<<<<<< Updated upstream
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900 font-sans">
-      <main className="flex min-h-screen w-full max-w-4xl flex-col items-center justify-between py-20 px-8 sm:px-16">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={120}
-          height={24}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold leading-tight tracking-tight text-zinc-900 dark:text-zinc-50">
-            Welcome to Care
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Platform for coordinating humanitarian aid, managing collection points and shelter maps.
-=======
     <div className="flex min-h-screen items-center justify-center bg-bgsoft text-slate-900 font-sans">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-8 sm:px-16">
         <div className="flex flex-col items-center gap-6 text-center">
@@ -29,39 +11,11 @@ export default function Home() {
           </h1>
           <p className="max-w-md text-sm md:text-base leading-8 text-slate-600">
             Modern application with authentication system and interactive maps.
->>>>>>> Stashed changes
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base font-medium w-full max-w-2xl">
+        <div className="flex flex-col gap-4 text-base font-medium w-full sm:flex-row sm:w-auto">
           <Link
             href="/login"
-<<<<<<< Updated upstream
-            className="flex h-14 items-center justify-center gap-3 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-6 text-white dark:text-zinc-900 transition-all hover:bg-zinc-800 dark:hover:bg-zinc-200 hover:shadow-lg"
-          >
-            <LogIn className="h-5 w-5" />
-            Sign In
-          </Link>
-          <Link
-            href="/organizer"
-            className="flex h-14 items-center justify-center gap-3 rounded-xl border-2 border-zinc-300 dark:border-zinc-700 px-6 text-zinc-900 dark:text-zinc-100 transition-all hover:border-zinc-900 dark:hover:border-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-          >
-            <User className="h-5 w-5" />
-            Organizer Profile
-          </Link>
-          <Link
-            href="/venues"
-            className="flex h-14 items-center justify-center gap-3 rounded-xl border-2 border-zinc-300 dark:border-zinc-700 px-6 text-zinc-900 dark:text-zinc-100 transition-all hover:border-zinc-900 dark:hover:border-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-          >
-            <Building2 className="h-5 w-5" />
-            Venues
-          </Link>
-          <Link
-            href="/map"
-            className="flex h-14 items-center justify-center gap-3 rounded-xl border-2 border-zinc-300 dark:border-zinc-700 px-6 text-zinc-900 dark:text-zinc-100 transition-all hover:border-zinc-900 dark:hover:border-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-          >
-            <MapPin className="h-5 w-5" />
-            Map
-=======
             className="flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-primary px-8 text-white transition-all hover:bg-primary/80 hover:shadow-lg sm:w-auto"
           >
             <LogIn className="h-5 w-5" />
@@ -73,7 +27,6 @@ export default function Home() {
           >
             <MapPin className="h-5 w-5" />
             Open Map
->>>>>>> Stashed changes
           </Link>
         </div>
       </main>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { MapPin, Clock, Plus, Building2, Warehouse, Home } from "lucide-react"
 import type { Venue, VenueType } from "@/types/venue"
@@ -8,6 +8,7 @@ import { fetchVenues } from "@/lib/api/venues"
 import Header from "@/components/Header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { VenueFilters, type VenueFilterState } from "@/components/VenueFilters"
 import {
   backgroundClasses,
   textClasses,
@@ -32,6 +33,11 @@ const venueTypeLabels: Record<VenueType, string> = {
 export default function VenuesPage() {
   const [venues, setVenues] = useState<Venue[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [filters, setFilters] = useState<VenueFilterState>({
+    searchQuery: "",
+    types: [],
+    openNow: null,
+  })
 
   const loadVenues = async () => {
     setIsLoading(true)
@@ -55,6 +61,48 @@ export default function VenuesPage() {
     return `${hours.openTime} - ${hours.closeTime}`
   }
 
+  const isOpenNow = (venue: Venue): boolean => {
+    const now = new Date()
+    const today = now.toLocaleDateString("en-US", { weekday: "long" })
+    const hours = venue.operatingHours.find((h) => h.dayOfWeek === today)
+
+    if (!hours || hours.isClosed) {
+      return false
+    }
+
+    const currentTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
+    return currentTime >= hours.openTime && currentTime <= hours.closeTime
+  }
+
+  // Apply filters
+  const filteredVenues = useMemo(() => {
+    return venues.filter((venue) => {
+      // Search filter
+      if (filters.searchQuery) {
+        const query = filters.searchQuery.toLowerCase()
+        const matchesSearch =
+          venue.title.toLowerCase().includes(query) ||
+          venue.description.toLowerCase().includes(query) ||
+          venue.location.address.toLowerCase().includes(query)
+        
+        if (!matchesSearch) return false
+      }
+
+      // Type filter
+      if (filters.types.length > 0) {
+        if (!filters.types.includes(venue.type)) return false
+      }
+
+      // Open now filter
+      if (filters.openNow !== null) {
+        const open = isOpenNow(venue)
+        if (filters.openNow !== open) return false
+      }
+
+      return true
+    })
+  }, [venues, filters])
+
   return (
     <div className={`min-h-screen ${backgroundClasses.page}`}>
       {/* Header */}
@@ -71,33 +119,50 @@ export default function VenuesPage() {
 
       {/* Content */}
       <main className="container mx-auto px-4 py-8">
+        {/* Filters */}
+        <VenueFilters filters={filters} onFiltersChange={setFilters} />
+
         {isLoading ? (
           <div className="text-center py-16">
             <div className={`${stateClasses.loading} mx-auto mb-4`}></div>
             <p className={stateClasses.loadingText}>Loading venues...</p>
           </div>
-        ) : venues.length === 0 ? (
+        ) : filteredVenues.length === 0 ? (
           <div className="text-center py-16">
             <div className={stateClasses.emptyIcon}>
               <MapPin className={stateClasses.emptyIconInner} />
             </div>
-            <h2 className={stateClasses.emptyTitle}>No Venues</h2>
+            <h2 className={stateClasses.emptyTitle}>
+              {venues.length === 0 ? "No Venues" : "No Results Found"}
+            </h2>
             <p className={stateClasses.emptyDescription}>
-              Create your first venue to get started
+              {venues.length === 0 
+                ? "Create your first venue to get started"
+                : "Try adjusting your filter criteria"}
             </p>
-            <Button asChild size="lg">
-              <Link
-                href="/venues/new"
-                className="inline-flex items-center gap-2"
-              >
-                <Plus className="h-5 w-5" />
-                Add Venue
-              </Link>
-            </Button>
+            {venues.length === 0 && (
+              <Button asChild size="lg">
+                <Link
+                  href="/venues/new"
+                  className="inline-flex items-center gap-2"
+                >
+                  <Plus className="h-5 w-5" />
+                  Add Venue
+                </Link>
+              </Button>
+            )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {venues.map((venue) => (
+          <>
+            {/* Results count */}
+            <div className="mb-4">
+              <p className={`text-sm ${textClasses.secondary}`}>
+                Showing {filteredVenues.length} of {venues.length} venues
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredVenues.map((venue) => (
               <Card key={venue.id} className="overflow-hidden">
                 {/* Card header */}
                 <CardContent className="p-6">
@@ -167,8 +232,9 @@ export default function VenuesPage() {
                   </Button>
                 </div>
               </Card>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </main>
     </div>

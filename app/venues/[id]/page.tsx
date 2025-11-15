@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import dynamic from "next/dynamic"
@@ -71,22 +71,20 @@ export default function VenueDetailPage({ params }: PageProps) {
   const [venue, setVenue] = useState<Venue | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [deletingFunctionId, setDeletingFunctionId] = useState<string | null>(
-    null
-  )
   const [currentUser] = useState(() => getCurrentUser())
   const [isOperatingHoursOpen, setIsOperatingHoursOpen] = useState(false)
 
-  useEffect(() => {
-    loadVenue()
-  }, [])
-
-  const loadVenue = async () => {
+  const loadVenue = useCallback(async () => {
     const resolvedParams = await params
     const venueData = await fetchVenueById(resolvedParams.id)
     setVenue(venueData)
     setIsLoading(false)
-  }
+  }, [params])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-compiler/react-compiler
+    loadVenue()
+  }, [loadVenue])
 
   const handleDelete = async () => {
     if (!venue) return
@@ -104,7 +102,6 @@ export default function VenueDetailPage({ params }: PageProps) {
     if (!venue || !confirm("Are you sure you want to delete this function?"))
       return
 
-    setDeletingFunctionId(functionId)
     const success = await removeVenueFunction(venue.id, functionId)
 
     if (success) {
@@ -113,8 +110,6 @@ export default function VenueDetailPage({ params }: PageProps) {
     } else {
       alert("Failed to delete function")
     }
-
-    setDeletingFunctionId(null)
   }
 
   if (isLoading) {
@@ -221,66 +216,62 @@ export default function VenueDetailPage({ params }: PageProps) {
       {/* Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto space-y-6">
-          {/* Venue Title and Status */}
+          {/* Venue Hero Section */}
           <div
-            className={`bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 ${
+            className={`bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden ${
               canEdit
                 ? "cursor-pointer hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
                 : ""
             }`}
             onClick={() => canEdit && router.push(`/venues/${venue.id}/edit`)}
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-                  {venue.title}
-                </h1>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                    {venueTypeLabels[venue.type]}
-                  </span>
-                  <span className="text-zinc-400">•</span>
-                  <span
-                    className={`text-sm font-medium ${
-                      todayHours.isOpen
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-red-600 dark:text-red-400"
-                    }`}
-                  >
-                    {todayHours.text}
-                  </span>
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex-1">
+                  <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+                    {venue.title}
+                  </h1>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      {venueTypeLabels[venue.type]}
+                    </span>
+                    <span className="text-zinc-400">•</span>
+                    <span
+                      className={`text-sm font-medium ${
+                        todayHours.isOpen
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
+                      }`}
+                    >
+                      {todayHours.text}
+                    </span>
+                  </div>
                 </div>
+                {canEdit && (
+                  <div className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Click to edit
+                  </div>
+                )}
               </div>
-              {canEdit && (
-                <div className="text-sm text-zinc-500 dark:text-zinc-400">
-                  Click to edit
-                </div>
-              )}
-            </div>
-          </div>
 
-          {/* Type and description */}
-          <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-zinc-700 dark:text-zinc-300">
-                {venueTypeIcons[venue.type]}
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-zinc-700 dark:text-zinc-300 shrink-0">
+                  {venueTypeIcons[venue.type]}
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
+                    {venueTypeLabels[venue.type]}
+                  </h2>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
+                    {venueTypeDescriptions[venue.type]}
+                  </p>
+                  <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                      {venue.description}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-                  {venueTypeLabels[venue.type]}
-                </h2>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  {venueTypeDescriptions[venue.type]}
-                </p>
-              </div>
-            </div>
-            <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
-              <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                Description
-              </h3>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                {venue.description}
-              </p>
             </div>
           </div>
 
@@ -291,7 +282,7 @@ export default function VenueDetailPage({ params }: PageProps) {
             </h2>
             <div className="mb-4">
               <div className="flex items-start gap-2 text-zinc-600 dark:text-zinc-400">
-                <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <MapPin className="h-5 w-5 mt-0.5 shrink-0" />
                 <span>{venue.location.address}</span>
               </div>
             </div>
@@ -385,7 +376,7 @@ export default function VenueDetailPage({ params }: PageProps) {
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
               {currentUser.role === "organizer" && canEdit
-                ? "Manage Functions & Responses"
+                ? "Manage Venue"
                 : currentUser.role === "volunteer"
                 ? "Volunteer Opportunities"
                 : "Available Distribution Points"}
@@ -410,8 +401,8 @@ export default function VenueDetailPage({ params }: PageProps) {
               Delete Venue?
             </h3>
             <p className="text-zinc-600 dark:text-zinc-400 mb-6">
-              Are you sure you want to delete venue "{venue.title}"? This action
-              cannot be undone.
+              Are you sure you want to delete venue &quot;{venue.title}&quot;?
+              This action cannot be undone.
             </p>
             <div className="flex items-center gap-3">
               <button

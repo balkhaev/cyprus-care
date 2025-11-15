@@ -1,26 +1,53 @@
 "use client"
 
-import { useState } from "react"
-import { Users, Package, AlertCircle, Edit, Trash2, Plus } from "lucide-react"
+import { useState, useEffect } from "react"
+import {
+  Users,
+  Package,
+  AlertCircle,
+  Edit,
+  Trash2,
+  Plus,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react"
 import Link from "next/link"
 import type { Venue, VenueFunction } from "@/types/venue"
 import type { NeedStatus } from "@/types/response"
-import {
-  getResponsesForFunction,
-  getNeedStatus,
-} from "@/lib/mock-data/responses"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { TreeView } from "./TreeView"
+import { Badge } from "@/components/ui/badge"
 
 interface OrganizerVenueViewProps {
   venue: Venue
-  onUpdateNeedStatus?: (
-    functionId: string,
-    itemOrServiceId: string,
-    status: NeedStatus
-  ) => void
   onDeleteFunction?: (functionId: string) => void
+}
+
+interface VolunteerResponse {
+  id: string
+  venueId: string
+  functionId: string
+  volunteerId: string
+  volunteerName: string
+  volunteerEmail: string
+  responseType: "item" | "service"
+  categoryId?: string
+  serviceType?: string
+  quantity?: number
+  message?: string
+  status: "pending" | "approved" | "rejected"
+  timestamp: string
+}
+
+interface NeedStatusData {
+  id: string
+  venueId: string
+  functionId: string
+  itemCategoryId?: string
+  serviceType?: string
+  status: NeedStatus
+  updatedBy: string
+  updatedAt: string
 }
 
 function NeedStatusButton({
@@ -34,28 +61,32 @@ function NeedStatusButton({
     {
       status: "need_a_lot",
       label: "Need a lot",
-      color: "bg-red-600 hover:bg-red-700 text-white",
+      color: "bg-red-500",
     },
     {
       status: "need_few_more",
       label: "Need few more",
-      color: "bg-amber-600 hover:bg-amber-700 text-white",
+      color: "bg-amber-500",
     },
     {
       status: "dont_need",
       label: "Don't need",
-      color: "bg-green-600 hover:bg-green-700 text-white",
+      color: "bg-green-500",
     },
   ]
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1.5">
       {statuses.map(({ status, label, color }) => (
         <Button
           key={status}
           size="sm"
           variant={currentStatus === status ? "default" : "outline"}
-          className={currentStatus === status ? color : ""}
+          className={
+            currentStatus === status
+              ? `${color} text-white hover:opacity-90 h-7 text-xs`
+              : "h-7 text-xs"
+          }
           onClick={() => onStatusChange(status)}
         >
           {label}
@@ -65,52 +96,121 @@ function NeedStatusButton({
   )
 }
 
-function ProjectionBadge({ count }: { count: number }) {
-  if (count === 0) {
-    return (
-      <div className="inline-flex items-center gap-1 px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded text-xs text-zinc-600 dark:text-zinc-400">
-        <AlertCircle className="h-3 w-3" />
-        No responses
-      </div>
+export default function OrganizerVenueView({
+  venue,
+  onDeleteFunction,
+}: OrganizerVenueViewProps) {
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
+  const [responses, setResponses] = useState<VolunteerResponse[]>([])
+  const [needStatuses, setNeedStatuses] = useState<NeedStatusData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Текущий пользователь (в реальности из auth)
+  const currentUser = {
+    id: "org-1",
+    name: "Organizer",
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [venue.id])
+
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      const [responsesRes, statusesRes] = await Promise.all([
+        fetch(`/api/responses?venueId=${venue.id}`),
+        fetch(`/api/need-status?venueId=${venue.id}`),
+      ])
+
+      if (responsesRes.ok) {
+        const responsesData = await responsesRes.json()
+        setResponses(responsesData)
+      }
+
+      if (statusesRes.ok) {
+        const statusesData = await statusesRes.json()
+        setNeedStatuses(statusesData)
+      }
+    } catch (error) {
+      console.error("Error loading data:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getNeedStatus = (
+    functionId: string,
+    categoryId?: string,
+    serviceType?: string
+  ): NeedStatusData | undefined => {
+    return needStatuses.find(
+      (s) =>
+        s.functionId === functionId &&
+        (categoryId
+          ? s.itemCategoryId === categoryId
+          : s.serviceType === serviceType)
     )
   }
 
-  return (
-    <div className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900 rounded text-xs text-blue-700 dark:text-blue-300">
-      <Users className="h-3 w-3" />
-      {count} response{count !== 1 ? "s" : ""}
-    </div>
-  )
-}
-
-export default function OrganizerVenueView({
-  venue,
-  onUpdateNeedStatus,
-  onDeleteFunction,
-}: OrganizerVenueViewProps) {
-  const [expandedFunctions, setExpandedFunctions] = useState<Set<string>>(
-    new Set()
-  )
-
-  const toggleFunction = (functionId: string) => {
-    const newExpanded = new Set(expandedFunctions)
-    if (newExpanded.has(functionId)) {
-      newExpanded.delete(functionId)
-    } else {
-      newExpanded.add(functionId)
-    }
-    setExpandedFunctions(newExpanded)
+  const getResponsesForFunction = (functionId: string): VolunteerResponse[] => {
+    return responses.filter((r) => r.functionId === functionId)
   }
 
-  const handleStatusChange = (
+  const toggleItem = (key: string) => {
+    const newExpanded = new Set(expandedItems)
+    if (newExpanded.has(key)) {
+      newExpanded.delete(key)
+    } else {
+      newExpanded.add(key)
+    }
+    setExpandedItems(newExpanded)
+  }
+
+  const handleStatusChange = async (
     functionId: string,
     itemOrServiceId: string,
-    status: NeedStatus
+    status: NeedStatus,
+    isService: boolean
   ) => {
-    if (onUpdateNeedStatus) {
-      onUpdateNeedStatus(functionId, itemOrServiceId, status)
+    try {
+      const response = await fetch("/api/need-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          venueId: venue.id,
+          functionId,
+          [isService ? "serviceType" : "itemCategoryId"]: itemOrServiceId,
+          status,
+          updatedBy: currentUser.id,
+        }),
+      })
+
+      if (response.ok) {
+        const updatedStatus = await response.json()
+        // Обновляем локальное состояние
+        setNeedStatuses((prev) => {
+          const existingIndex = prev.findIndex(
+            (s) =>
+              s.functionId === functionId &&
+              (isService
+                ? s.serviceType === itemOrServiceId
+                : s.itemCategoryId === itemOrServiceId)
+          )
+          if (existingIndex >= 0) {
+            const newStatuses = [...prev]
+            newStatuses[existingIndex] = updatedStatus
+            return newStatuses
+          } else {
+            return [...prev, updatedStatus]
+          }
+        })
+      }
+    } catch (error) {
+      console.error("Error updating status:", error)
     }
-    console.log("Status update:", { functionId, itemOrServiceId, status })
   }
 
   const handleDelete = (functionId: string) => {
@@ -119,323 +219,259 @@ export default function OrganizerVenueView({
     }
   }
 
-  const renderFunction = (func: VenueFunction) => {
-    const responses = getResponsesForFunction(func.id)
+  const hasAnyFunctions = venue.functions && venue.functions.length > 0
 
-    if (
-      func.type === "collection_point" ||
-      func.type === "distribution_point"
-    ) {
-      const isCollection = func.type === "collection_point"
+  // Рендер элемента (товара/услуги) с компактным дизайном
+  const renderItemRow = (
+    func: VenueFunction,
+    itemName: string,
+    categoryId: string,
+    responsesCount: number,
+    totalQuantity?: number,
+    isService?: boolean
+  ) => {
+    const currentStatus = getNeedStatus(
+      func.id,
+      isService ? undefined : categoryId,
+      isService ? categoryId : undefined
+    )
+    const itemKey = `${func.id}-${categoryId}`
+    const isExpanded = expandedItems.has(itemKey)
+    const itemResponses = getResponsesForFunction(func.id).filter((r) =>
+      isService ? r.serviceType === categoryId : r.categoryId === categoryId
+    )
 
-      return (
-        <Card key={func.id} className="p-4">
-          <div className="flex items-start gap-3 mb-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-              <Package className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">
-                {isCollection ? "Collection Point" : "Distribution Point"}
-              </h4>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                {isCollection
-                  ? "Items needed for collection"
-                  : "Items available for distribution"}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link
-                href={`/venues/${venue.id}/functions/${func.id}/edit`}
-                className="p-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
-                title="Edit function"
-              >
-                <Edit className="h-4 w-4" />
-              </Link>
-              <button
-                onClick={() => handleDelete(func.id)}
-                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                title="Delete function"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
+    return (
+      <div key={itemKey}>
+        <div className="flex items-center gap-3 py-2.5 px-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-lg transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700">
+          {/* Название */}
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+              {itemName}
+            </p>
           </div>
 
-          {func.items && func.items.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
-                  Items ({func.items.length})
-                </p>
-                <ProjectionBadge
-                  count={
-                    responses.filter((r) => r.responseType === "item").length
-                  }
-                />
-              </div>
-
-              <TreeView
-                items={func.items}
-                functionId={func.id}
-                responses={responses.filter((r) => r.responseType === "item")}
-                getNeedStatus={getNeedStatus}
-                onStatusChange={(categoryId, status) =>
-                  handleStatusChange(func.id, categoryId, status)
-                }
-                onToggleDetails={(key) => toggleFunction(func.id + "-" + key)}
-                isDetailsExpanded={(key) =>
-                  expandedFunctions.has(func.id + "-" + key)
-                }
-                showExpandCollapseButton={true}
-                renderItem={(item, level, itemResponses, currentStatus) => {
-                  const relevantResponses = itemResponses.filter(
-                    (r) => r.categoryId === item.categoryId
-                  )
-                  const totalQuantityOffered = relevantResponses.reduce(
-                    (sum, r) => sum + (r.quantityOffered || 0),
-                    0
-                  )
-                  const detailsKey = func.id + "-" + item.categoryId
-                  const isDetailsOpen = expandedFunctions.has(detailsKey)
-
-                  return (
-                    <div className="p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg mb-2">
-                      {relevantResponses.length > 0 && (
-                        <div className="my-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
-                          <div className="flex items-center justify-between mb-1">
-                            <p className="text-xs font-semibold text-blue-900 dark:text-blue-100">
-                              Projected Turnout
-                            </p>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                toggleFunction(detailsKey)
-                              }}
-                              className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                            >
-                              {isDetailsOpen ? "Hide" : "Show"} details
-                            </button>
-                          </div>
-                          <p className="text-sm text-blue-800 dark:text-blue-300">
-                            {relevantResponses.length} volunteer
-                            {relevantResponses.length !== 1 ? "s" : ""} • Total:{" "}
-                            {totalQuantityOffered} units
-                          </p>
-
-                          {isDetailsOpen && (
-                            <div className="mt-2 space-y-1">
-                              {relevantResponses.map((response) => (
-                                <div
-                                  key={
-                                    response.volunteerName + response.categoryId
-                                  }
-                                  className="text-xs p-2 bg-white dark:bg-zinc-900 rounded"
-                                >
-                                  <p className="font-medium text-zinc-900 dark:text-zinc-100">
-                                    {response.volunteerName}
-                                  </p>
-                                  <p className="text-zinc-600 dark:text-zinc-400">
-                                    Quantity: {response.quantityOffered}
-                                    {response.message &&
-                                      ` • ${response.message}`}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      <NeedStatusButton
-                        currentStatus={currentStatus?.status}
-                        onStatusChange={(status) =>
-                          handleStatusChange(func.id, item.categoryId, status)
-                        }
-                      />
-                    </div>
-                  )
-                }}
-              />
-            </div>
+          {/* Ответы волонтеров */}
+          {responsesCount > 0 ? (
+            <button
+              onClick={() => toggleItem(itemKey)}
+              className="flex items-center gap-1.5 px-2 py-1 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded text-xs font-medium text-blue-700 dark:text-blue-300 transition-colors"
+            >
+              <Users className="h-3 w-3" />
+              <span>{responsesCount}</span>
+              {totalQuantity !== undefined && (
+                <span>• {totalQuantity} units</span>
+              )}
+              {isExpanded ? (
+                <ChevronDown className="h-3 w-3" />
+              ) : (
+                <ChevronRight className="h-3 w-3" />
+              )}
+            </button>
+          ) : (
+            <Badge variant="outline" className="text-xs">
+              No responses
+            </Badge>
           )}
-        </Card>
-      )
-    }
 
-    if (func.type === "services_needed") {
-      return (
-        <Card key={func.id} className="p-4">
-          <div className="flex items-start gap-3 mb-3">
-            <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-              <Users className="h-5 w-5 text-green-600 dark:text-green-400" />
+          {/* Статус потребности */}
+          <div className="flex items-center gap-2">
+            <NeedStatusButton
+              currentStatus={currentStatus?.status}
+              onStatusChange={(status) =>
+                handleStatusChange(func.id, categoryId, status, !!isService)
+              }
+            />
+          </div>
+        </div>
+
+        {/* Детали ответов */}
+        {isExpanded && itemResponses.length > 0 && (
+          <div className="px-3 pb-2 space-y-1">
+            {itemResponses.map((response) => (
+              <div
+                key={response.id}
+                className="text-xs p-2 bg-blue-50 dark:bg-blue-900/10 rounded"
+              >
+                <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                  {response.volunteerName}
+                </p>
+                {response.quantity && (
+                  <p className="text-zinc-600 dark:text-zinc-400">
+                    Quantity: {response.quantity}
+                  </p>
+                )}
+                {response.message && (
+                  <p className="text-zinc-600 dark:text-zinc-400 mt-0.5">
+                    {response.message}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Рендер карточки функции
+  const renderFunctionCard = (func: VenueFunction, index: number) => {
+    const funcResponses = getResponsesForFunction(func.id)
+    const isCollection = func.type === "collection_point"
+    const isDistribution = func.type === "distribution_point"
+    const isService = func.type === "services_needed"
+
+    return (
+      <Card key={func.id} className="overflow-hidden">
+        {/* Хедер функции */}
+        <div className="flex items-center justify-between px-4 py-3 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-700">
+          <div className="flex items-center gap-3">
+            <div
+              className={`p-2 rounded-lg ${
+                isService
+                  ? "bg-green-100 dark:bg-green-900"
+                  : "bg-blue-100 dark:bg-blue-900"
+              }`}
+            >
+              {isService ? (
+                <Users className="h-4 w-4 text-green-600 dark:text-green-400" />
+              ) : (
+                <Package className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              )}
             </div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">
-                Services Needed
-              </h4>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                Volunteer services required
+            <div>
+              <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                {isCollection
+                  ? "Humanitarian Aid Collection"
+                  : isDistribution
+                  ? "Aid Distribution"
+                  : "Volunteers Needed"}
               </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link
-                href={`/venues/${venue.id}/functions/${func.id}/edit`}
-                className="p-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
-                title="Edit function"
-              >
-                <Edit className="h-4 w-4" />
-              </Link>
-              <button
-                onClick={() => handleDelete(func.id)}
-                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                title="Delete function"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                {isService
+                  ? `${func.services?.length || 0} services`
+                  : `${func.items?.length || 0} categories`}
+              </p>
             </div>
           </div>
 
-          {func.services && func.services.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
-                  Services ({func.services.length})
-                </p>
-                <ProjectionBadge
-                  count={
-                    responses.filter((r) => r.responseType === "service").length
-                  }
-                />
-              </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/venues/${venue.id}/functions/${func.id}/edit`}
+              className="p-1.5 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded transition-colors"
+              title="Edit"
+            >
+              <Edit className="h-4 w-4" />
+            </Link>
+            <button
+              onClick={() => handleDelete(func.id)}
+              className="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+              title="Delete"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
 
-              {func.services.map((service, idx) => {
-                const serviceResponses = responses.filter(
+        {/* Список элементов */}
+        <div className="p-3 space-y-1">
+          {isService
+            ? func.services?.map((service, idx) => {
+                const serviceResponses = funcResponses.filter(
                   (r) =>
                     r.responseType === "service" &&
                     r.serviceType === service.type
                 )
-                const currentStatus = getNeedStatus(
-                  func.id,
+                return renderItemRow(
+                  func,
+                  service.type.replace("_", " "),
+                  service.type,
+                  serviceResponses.length,
                   undefined,
-                  service.type
+                  true // isService flag
                 )
-                const serviceDetailsKey = func.id + "-" + service.type
-                const isServiceDetailsExpanded =
-                  expandedFunctions.has(serviceDetailsKey)
-
-                return (
-                  <div
-                    key={idx}
-                    className="p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 capitalize">
-                            {service.type.replace("_", " ")}
-                          </p>
-                          {service.isRequired && (
-                            <span className="px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 text-xs font-medium rounded">
-                              Required
-                            </span>
-                          )}
-                        </div>
-                        {service.description && (
-                          <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
-                            {service.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {serviceResponses.length > 0 && (
-                      <div className="my-2 p-2 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="text-xs font-semibold text-green-900 dark:text-green-100">
-                            Projected Turnout
-                          </p>
-                          <button
-                            onClick={() => toggleFunction(serviceDetailsKey)}
-                            className="text-xs text-green-600 dark:text-green-400 hover:underline"
-                          >
-                            {isServiceDetailsExpanded ? "Hide" : "Show"} details
-                          </button>
-                        </div>
-                        <p className="text-sm text-green-800 dark:text-green-300">
-                          {serviceResponses.length} volunteer
-                          {serviceResponses.length !== 1 ? "s" : ""}
-                        </p>
-
-                        {isServiceDetailsExpanded && (
-                          <div className="mt-2 space-y-1">
-                            {serviceResponses.map((response) => (
-                              <div
-                                key={response.id}
-                                className="text-xs p-2 bg-white dark:bg-zinc-900 rounded"
-                              >
-                                <p className="font-medium text-zinc-900 dark:text-zinc-100">
-                                  {response.volunteerName}
-                                </p>
-                                {response.message && (
-                                  <p className="text-zinc-600 dark:text-zinc-400">
-                                    {response.message}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <NeedStatusButton
-                      currentStatus={currentStatus?.status}
-                      onStatusChange={(status) =>
-                        handleStatusChange(func.id, service.type, status)
-                      }
-                    />
-                  </div>
+              })
+            : func.items?.map((item) => {
+                const itemResponses = funcResponses.filter(
+                  (r) => r.categoryId === item.categoryId
+                )
+                const totalQuantity = itemResponses.reduce(
+                  (sum, r) => sum + (r.quantity || 0),
+                  0
+                )
+                // Используем последний элемент categoryPath как имя
+                const itemName =
+                  item.categoryPath[item.categoryPath.length - 1] ||
+                  "Unknown Item"
+                return renderItemRow(
+                  func,
+                  itemName,
+                  item.categoryId,
+                  itemResponses.length,
+                  totalQuantity,
+                  false // isService flag
                 )
               })}
-            </div>
-          )}
-        </Card>
-      )
-    }
+        </div>
+      </Card>
+    )
+  }
 
-    return null
+  if (loading) {
+    return (
+      <Card className="p-8 text-center">
+        <p className="text-zinc-600 dark:text-zinc-400">Loading...</p>
+      </Card>
+    )
+  }
+
+  if (!hasAnyFunctions) {
+    return (
+      <Card className="p-8 text-center">
+        <div className="max-w-sm mx-auto">
+          <div className="mb-4 inline-flex p-4 rounded-full bg-zinc-100 dark:bg-zinc-800">
+            <Package className="h-8 w-8 text-zinc-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
+            No Functions
+          </h3>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+            Add the first function for your venue
+          </p>
+          <Link
+            href={`/venues/${venue.id}/functions/new`}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            Add Function
+          </Link>
+        </div>
+      </Card>
+    )
   }
 
   return (
     <div className="space-y-4">
-      {venue.functions && venue.functions.length > 0 ? (
-        <>
-          <div className="flex items-center justify-between mb-4">
-            <Link
-              href={`/venues/${venue.id}/functions/new`}
-              className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              Add Function
-            </Link>
-          </div>
-          <div className="space-y-4">{venue.functions.map(renderFunction)}</div>
-        </>
-      ) : (
-        <Card className="p-8 text-center">
-          <p className="text-zinc-600 dark:text-zinc-400 mb-4">
-            No functions or needs defined for this venue yet.
+      {/* Add button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Manage venue functions and volunteer responses
           </p>
-          <Link
-            href={`/venues/${venue.id}/functions/new`}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-          >
-            <Plus className="h-5 w-5" />
-            Add First Function
-          </Link>
-        </Card>
-      )}
+        </div>
+        <Link
+          href={`/venues/${venue.id}/functions/new`}
+          className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          Add
+        </Link>
+      </div>
+
+      {/* List of all functions */}
+      <div className="space-y-3">
+        {venue.functions?.map((func, idx) => renderFunctionCard(func, idx))}
+      </div>
     </div>
   )
 }

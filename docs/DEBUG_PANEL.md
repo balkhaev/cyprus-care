@@ -1,134 +1,133 @@
 # Debug Panel
 
-## Описание
+## Description
 
-Дебаг-панель для переключения между пользователями в режиме разработки. Позволяет быстро тестировать различные представления и функциональность для разных ролей пользователей.
+Debug panel for switching between users in development mode. Allows quickly testing different views and functionality for different user roles.
 
-## Особенности
+## Features
 
-### Автоматическое определение окружения
-- Панель показывается **только в режиме разработки** (`NODE_ENV === 'development'`)
-- В продакшене панель полностью скрыта
+### Automatic Environment Detection
+- Panel is shown **only in development mode** (`NODE_ENV === 'development'`)
+- In production, panel is completely hidden
 
-### Плавающая кнопка
-- Расположена в правом нижнем углу экрана
-- Яркий дизайн с индикатором "DEV"
-- Не мешает основному интерфейсу
+### Floating Button
+- Located in bottom right corner of screen
+- Bright design with "DEV" indicator
+- Doesn't interfere with main interface
 
-### Информация о текущем пользователе
-- Имя и email
-- Роль с цветовой кодировкой:
-  - 🟣 **Organizer** (Фиолетовый) - Управляет площадками и откликами
-  - 🔵 **Volunteer** (Синий) - Может откликаться на нужды
-  - 🟢 **Beneficiary** (Зеленый) - Может подтверждать посещение точек раздачи
+### Current User Information
+- Name and email
+- Role with color coding:
+  - 🟣 **Organizer** (Purple) - Manages venues and responses
+  - 🔵 **Volunteer** (Blue) - Can respond to needs
+  - 🟢 **Beneficiary** (Green) - Can confirm attendance at distribution points
 
-### Список пользователей
-- 6 тестовых пользователей:
+### User List
+- 6 test users:
   - **John Smith** - Organizer (org-1)
   - **Maria Garcia** - Organizer (org-2)
   - **Alex Johnson** - Volunteer
   - **Sarah Williams** - Volunteer
   - **Mohammed Ali** - Beneficiary
   - **Elena Petrov** - Beneficiary
-- Текущий пользователь выделен
-- Один клик для переключения
-- Автоматическая перезагрузка страницы после смены
+- Current user is highlighted
+- One click to switch
+- Automatic page reload after switch
 
-## Использование
+## Usage
 
-### Открытие панели
-1. В режиме разработки в правом нижнем углу появится кнопка "Debug"
-2. Кликните на неё для открытия панели
+### Opening Panel
+1. In development mode, a "Debug" button will appear in bottom right corner
+2. Click it to open panel
 
-### Переключение пользователя
-1. Откройте дебаг-панель
-2. Выберите нужного пользователя из списка
-3. Страница автоматически перезагрузится
-4. Все компоненты обновятся под новую роль
+### Switching User
+1. Open debug panel
+2. Select desired user from list
+3. Page will automatically reload
+4. All components will update to new role
 
-### Закрытие панели
-- Кликните на стрелку вправо (→) в заголовке панели
+### Closing Panel
+- Click right arrow (→) in panel header
 
-## Технические детали
+## Technical Details
 
-### Расположение
-Компонент добавлен в `app/layout.tsx` и доступен на всех страницах приложения.
+### Location
+Component added to `app/layout.tsx` and available on all application pages.
 
 ### z-index
-Панель использует `z-[9999]` для отображения поверх всех элементов интерфейса, включая модальные окна и попапы.
+Panel uses `z-[9999]` to display over all interface elements, including modals and popups.
 
-### Адаптивность
-Панель имеет фиксированную ширину 320px и автоматически подстраивает высоту под список пользователей.
+### Responsiveness
+Panel has fixed width of 320px and automatically adjusts height to user list.
 
-### Иконки ролей
-- **MapPin** - Organizer (управление площадками)
-- **Hand** - Volunteer (помощь)
-- **Package** - Beneficiary (получение помощи)
+### Role Icons
+- **MapPin** - Organizer (venue management)
+- **Hand** - Volunteer (help)
+- **Package** - Beneficiary (receiving aid)
 
-## Интеграция с системой ролей
+## Integration with Role System
 
-Панель использует:
-- `getCurrentUser()` - получение текущего пользователя
-- `setCurrentUser(userId)` - установка нового пользователя
-- `mockUsers` - список всех тестовых пользователей
+Panel uses:
+- `getCurrentUser()` - get current user
+- `setCurrentUser(userId)` - set new user
+- `mockUsers` - list of all test users
 
-После смены пользователя происходит полная перезагрузка страницы (`window.location.reload()`), чтобы все компоненты получили актуальные данные.
+After changing user, full page reload occurs (`window.location.reload()`), so all components get current data.
 
-## Что меняется при переключении роли
+## What Changes When Switching Role
 
-### На карте (`/map`)
-- **Volunteer**: Видит ETA до площадок
-- **Beneficiary**: Видит выделенные точки распределения + ETA
-- **Organizer**: Видит ETA, может управлять своими площадками
+### On Map (`/map`)
+- **Volunteer**: Sees ETA to venues
+- **Beneficiary**: Sees highlighted distribution points + ETA
+- **Organizer**: Sees ETA, can manage their venues
 
-### На странице площадки (`/venues/[id]`)
-- **Volunteer**: Видит возможность откликнуться на нужды
-- **Beneficiary**: Видит только точки распределения с кнопкой "I will be there"
-- **Organizer**: Видит статистику откликов и может управлять статусами нужд (только для своих площадок)
+### On Venue Page (`/venues/[id]`)
+- **Volunteer**: Sees ability to respond to needs
+- **Beneficiary**: Sees only distribution points with "I will be there" button
+- **Organizer**: Sees response statistics and can manage need statuses (only for their venues)
 
-### Редактирование
-- Только **Organizer** может редактировать и удалять свои площадки
-- Другие пользователи видят площадки в режиме только для чтения
+### Editing
+- Only **Organizer** can edit and delete their venues
+- Other users see venues in read-only mode
 
-## Безопасность
+## Security
 
-⚠️ **Важно**: Этот компонент предназначен ТОЛЬКО для разработки!
+⚠️ **Important**: This component is ONLY for development!
 
-В продакшене:
-- Панель не отображается
-- Переключение пользователей недоступно
-- Используется настоящая аутентификация
+In production:
+- Panel is not displayed
+- User switching is unavailable
+- Real authentication is used
 
-## Примеры использования
+## Usage Examples
 
-### Тестирование функционала волонтера
-1. Откройте дебаг-панель
-2. Выберите "Alex Johnson" (Volunteer)
-3. Перейдите на карту `/map`
-4. Увидите ETA до всех площадок
-5. Кликните на площадку и нажмите "Respond"
+### Testing Volunteer Functionality
+1. Open debug panel
+2. Select "Alex Johnson" (Volunteer)
+3. Go to map `/map`
+4. See ETA to all venues
+5. Click on venue and click "Respond"
 
-### Тестирование функционала организатора
-1. Откройте дебаг-панель
-2. Выберите "John Smith" (Organizer)
-3. Перейдите к его площадке (id: 1)
-4. Увидите статистику откликов волонтеров
-5. Можете обновлять статусы нужд
+### Testing Organizer Functionality
+1. Open debug panel
+2. Select "John Smith" (Organizer)
+3. Go to their venue (id: 1)
+4. See volunteer response statistics
+5. Can update need statuses
 
-### Тестирование функционала получателя помощи
-1. Откройте дебаг-панель
-2. Выберите "Mohammed Ali" (Beneficiary)
-3. Перейдите на карту `/map`
-4. Увидите выделенные зеленым точки распределения
-5. Перейдите к точке распределения
-6. Нажмите "I will be there"
+### Testing Beneficiary Functionality
+1. Open debug panel
+2. Select "Mohammed Ali" (Beneficiary)
+3. Go to map `/map`
+4. See green highlighted distribution points
+5. Go to distribution point
+6. Click "I will be there"
 
-## Стилизация
+## Styling
 
-Панель использует:
-- Tailwind CSS классы
-- Dark mode поддержка
-- Цветовая схема проекта
-- Анимации и переходы
-- Тени и градиенты для выделения
-
+Panel uses:
+- Tailwind CSS classes
+- Dark mode support
+- Project color scheme
+- Animations and transitions
+- Shadows and gradients for highlighting

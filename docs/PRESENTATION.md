@@ -1,231 +1,231 @@
-# Презентация Mediterranean Relief UI для судей
+# Presenting Mediterranean Relief UI to Judges
 
-## 🎯 Elevator Pitch (30 секунд)
+## 🎯 Elevator Pitch (30 seconds)
 
-> "Cyprus Care — это платформа координации помощи в кризисных ситуациях.
-> Мы разработали уникальную дизайн-систему **Mediterranean Relief UI**,
-> вдохновленную кипрским средиземноморьем: оранжевый огонь и закаты,
-> синее спокойное море, зеленая надежда природы.
+> "Cyprus Care is a crisis relief coordination platform.
+> We developed a unique **Mediterranean Relief UI** design system,
+> inspired by the Cypriot Mediterranean: orange fire and sunsets,
+> blue calm sea, green hope of nature.
 >
-> Каждый элемент продуман для пожилых пользователей: большие кнопки,
-> высокий контраст, простая архитектура.
+> Every element is designed for elderly users: large buttons,
+> high contrast, simple architecture.
 >
-> **В кризисной ситуации простота спасает жизни.**"
+> **In a crisis, simplicity saves lives.**"
 
-## 🎨 Визуальная демонстрация
+## 🎨 Visual Demonstration
 
-### 1. Откройте `/theme-demo`
+### 1. Open `/theme-demo`
 
-Это ваш главный козырь для демонстрации темы.
+This is your main asset for demonstrating the theme.
 
-**Что показать (в порядке важности):**
+**What to Show (in order of importance):**
 
-1. **Hero section** — первое впечатление
+1. **Hero section** — first impression
 
-   - Покажите градиент от оранжевого к синему
-   - Упомяните: "Средиземноморская палитра сразу создает связь с Кипром"
+   - Show gradient from orange to blue
+   - Mention: "Mediterranean palette immediately creates connection with Cyprus"
 
-2. **Цветовая палитра**
+2. **Color Palette**
 
-   - Укажите на значение каждого цвета
-   - "Каждый цвет имеет эмоциональное значение и функцию"
+   - Point out meaning of each color
+   - "Each color has emotional meaning and function"
 
-3. **Кнопки разных размеров**
+3. **Buttons of Different Sizes**
 
-   - Покажите кнопку XL
-   - "Большие кнопки — это не случайность, это accessibility для пожилых"
+   - Show XL button
+   - "Large buttons are not by chance, it's accessibility for elderly"
 
-4. **Форма регистрации**
+4. **Registration Form**
 
-   - Покажите размер инпутов
-   - "Высота 48px — стандарт WCAG для touch targets"
+   - Show input sizes
+   - "48px height — WCAG standard for touch targets"
 
 5. **Alerts**
-   - Покажите все 4 варианта
-   - "Цветовая кодировка помогает мгновенно понять уровень срочности"
+   - Show all 4 variants
+   - "Color coding helps instantly understand urgency level"
 
-### 2. Откройте реальную страницу (например, `/venues`)
+### 2. Open Real Page (e.g., `/venues`)
 
-Покажите, что тема используется во всем приложении, не только в демо.
+Show that theme is used throughout application, not just in demo.
 
-### 3. Откройте на мобильном устройстве
+### 3. Open on Mobile Device
 
-Если есть возможность, покажите на телефоне:
+If possible, show on phone:
 
 - Responsive design
-- Большие touch targets
-- Удобство одной рукой
+- Large touch targets
+- One-hand convenience
 
-## 💡 Ключевые сообщения для судей
+## 💡 Key Messages for Judges
 
-### Message #1: Уникальность
+### Message #1: Uniqueness
 
-**"Мы не взяли готовый Bootstrap или Material UI"**
+**"We didn't use ready-made Bootstrap or Material UI"**
 
-Объяснение:
+Explanation:
 
-- Создали собственную дизайн-систему
-- Вдохновленную географией и миссией проекта
-- С продуманной семантикой каждого цвета
+- Created own design system
+- Inspired by geography and project mission
+- With thoughtful semantics for each color
 
 ### Message #2: Accessibility First
 
-**"Дизайн для самых уязвимых пользователей"**
+**"Design for most vulnerable users"**
 
-Факты:
+Facts:
 
-- ✅ WCAG AA compliance для контрастности
-- ✅ Минимум 44x44px touch targets
-- ✅ Шрифт размером минимум 16px, рекомендуется 18px
-- ✅ Видимые focus states на всех элементах
-- ✅ Простая информационная архитектура
+- ✅ WCAG AA compliance for contrast
+- ✅ Minimum 44x44px touch targets
+- ✅ Font size minimum 16px, recommended 18px
+- ✅ Visible focus states on all elements
+- ✅ Simple information architecture
 
 ### Message #3: Emotion-Driven Design
 
-**"Цвета, которые успокаивают и мотивируют"**
+**"Colors that calm and motivate"**
 
-Психология цветов:
+Color Psychology:
 
-- 🧡 Оранжевый — срочность, но не паника (не красный!)
-- 💙 Синий — доверие, спокойствие, противовес огню
-- 💚 Зеленый — надежда, восстановление, будущее
+- 🧡 Orange — urgency, but not panic (not red!)
+- 💙 Blue — trust, calm, counterbalance to fire
+- 💚 Green — hope, recovery, future
 
 ### Message #4: Production Ready
 
-**"Это не прототип, это готовая система"**
+**"This is not a prototype, it's a ready system"**
 
-Доказательства:
+Evidence:
 
-- ✅ Полная документация (THEME.md, QUICK_START.md)
-- ✅ Переиспользуемые компоненты
-- ✅ Консистентный дизайн по всему приложению
-- ✅ Dark mode поддержка
-- ✅ Responsive на всех устройствах
+- ✅ Complete documentation (THEME.md, QUICK_START.md)
+- ✅ Reusable components
+- ✅ Consistent design throughout application
+- ✅ Dark mode support
+- ✅ Responsive on all devices
 
-## 🗣️ Скрипт презентации (3-5 минут)
+## 🗣️ Presentation Script (3-5 minutes)
 
-### Введение (30 сек)
+### Introduction (30 sec)
 
-> "Cyprus Care координирует помощь во время кризисов. Я хочу показать вам
-> дизайн-систему, которая делает это возможным."
+> "Cyprus Care coordinates help during crises. I want to show you
+> the design system that makes this possible."
 
-### Демонстрация (2 минуты)
+### Demonstration (2 minutes)
 
-1. Откройте `/theme-demo`
+1. Open `/theme-demo`
 
-> "Посмотрите на цветовую палитру. Оранжевый — это не просто цвет огня,
-> это цвет кипрских закатов. Синий — это Средиземное море. Зеленый —
-> оливковые рощи. Мы создали визуальный язык, который говорит: 'мы здесь для Кипра'."
+> "Look at the color palette. Orange is not just fire color,
+> it's the color of Cypriot sunsets. Blue is the Mediterranean Sea. Green is
+> olive groves. We created a visual language that says: 'we're here for Cyprus'."
 
-2. Покажите кнопки
+2. Show buttons
 
-> "Все кнопки минимум 48 пикселей в высоту. Это не случайность —
-> это стандарт WCAG для людей с ограниченной моторикой и пожилых.
-> В кризисной ситуации каждая секунда важна, и пользователь должен
-> попасть по кнопке с первого раза."
+> "All buttons minimum 48 pixels high. This is not by chance —
+> it's WCAG standard for people with limited mobility and elderly.
+> In a crisis, every second matters, and user must
+> hit the button on first try."
 
-3. Покажите формы
+3. Show forms
 
-> "Шрифт Inter размером 18 пикселей. Высокий контраст. Большие инпуты.
-> Мы тестировали это с пожилыми людьми в виду — они наша главная аудитория."
+> "Inter font size 18 pixels. High contrast. Large inputs.
+> We tested this with elderly people in mind — they're our main audience."
 
-4. Покажите alerts
+4. Show alerts
 
-> "Оповещения цветокодированы: оранжевое — предупреждение,
-> красное — критическое, зеленое — успешное действие.
-> Это работает даже для людей с нарушениями зрения."
+> "Alerts are color-coded: orange — warning,
+> red — critical, green — successful action.
+> This works even for people with vision impairments."
 
-### Технические детали (1 минута)
+### Technical Details (1 minute)
 
-> "Технически это:
+> "Technically this is:
 >
-> - Next.js 16 с TypeScript
-> - Tailwind CSS 4 с custom theme
-> - Полная документация для разработчиков
-> - Dark mode из коробки
-> - Responsive design для всех устройств
+> - Next.js 16 with TypeScript
+> - Tailwind CSS 4 with custom theme
+> - Complete documentation for developers
+> - Dark mode out of the box
+> - Responsive design for all devices
 >
-> У нас есть полная дизайн-система с документацией, готовая для масштабирования."
+> We have complete design system with documentation, ready for scaling."
 
-### Заключение (30 сек)
+### Conclusion (30 sec)
 
-> "Mediterranean Relief UI — это не просто красивый интерфейс.
-> Это продуманный инструмент для спасения жизней.
-> В кризисной ситуации простота и ясность — это не роскошь, это необходимость.
+> "Mediterranean Relief UI is not just a beautiful interface.
+> It's a thoughtful tool for saving lives.
+> In a crisis, simplicity and clarity are not luxury, they're necessity.
 >
-> Мы создали систему, которая работает для всех — от 18 до 80 лет."
+> We created a system that works for everyone — from 18 to 80 years old."
 
-## 📊 Если спросят конкретные вопросы
+## 📊 If Asked Specific Questions
 
-### "Почему вы выбрали именно эти цвета?"
+### "Why did you choose these colors?"
 
-> "Оранжевый вместо красного — потому что красный создает панику.
-> Оранжевый сигнализирует срочность, но остается теплым и человечным.
-> Синий балансирует его — он ассоциируется с водой, спокойствием, защитой.
-> Зеленый дает надежду — символ восстановления после кризиса."
+> "Orange instead of red — because red creates panic.
+> Orange signals urgency, but remains warm and humane.
+> Blue balances it — associated with water, calm, protection.
+> Green gives hope — symbol of recovery after crisis."
 
-### "Как вы тестировали accessibility?"
+### "How did you test accessibility?"
 
-> "Мы использовали:
+> "We used:
 >
-> - WCAG 2.1 контраст-чекер для всех цветовых комбинаций
-> - Проверили минимальные размеры touch targets (44x44px WCAG)
-> - Тестировали с screen readers
-> - Проверили keyboard navigation
-> - Все focus states видимы и понятны"
+> - WCAG 2.1 contrast checker for all color combinations
+> - Verified minimum touch target sizes (44x44px WCAG)
+> - Tested with screen readers
+> - Verified keyboard navigation
+> - All focus states are visible and clear"
 
-### "Это responsive?"
+### "Is this responsive?"
 
-> "Да, полностью. Мы использовали mobile-first подход.
-> Все touch targets увеличены, grid layouts адаптируются,
-> типографика масштабируется. Покажите на телефоне если есть возможность."
+> "Yes, fully. We used mobile-first approach.
+> All touch targets increased, grid layouts adapt,
+> typography scales. Show on phone if possible."
 
-### "Сколько времени заняла разработка темы?"
+### "How long did theme development take?"
 
-> "Мы потратили X часов на дизайн-систему, но это инвестиция.
-> Теперь любой компонент создается за минуты, а весь UI консистентен.
-> Это профессиональный подход — сначала система, потом приложение."
+> "We spent X hours on design system, but it's an investment.
+> Now any component is created in minutes, and all UI is consistent.
+> This is professional approach — first system, then application."
 
-### "Можно ли изменить цвета?"
+### "Can colors be changed?"
 
-> "Да! Все цвета определены как CSS переменные в globals.css.
-> Можно легко создать другие темы — для других регионов, или white-label.
-> Это настоящая дизайн-система, не хардкод."
+> "Yes! All colors defined as CSS variables in globals.css.
+> Easy to create other themes — for other regions, or white-label.
+> This is real design system, not hardcode."
 
-## 🏆 Победные факторы
+## 🏆 Winning Factors
 
-Что выделяет ваш проект:
+What sets your project apart:
 
-1. ⭐ **Профессионализм** — выглядит как коммерческий продукт
-2. ⭐ **Уникальность** — средиземноморская палитра, никто другой не использует
-3. ⭐ **Эмпатия** — фокус на пожилых и уязвимых пользователях
-4. ⭐ **Масштабируемость** — готовая система, не просто страницы
-5. ⭐ **Культурная связь** — цвета Кипра, локальная идентичность
+1. ⭐ **Professionalism** — looks like commercial product
+2. ⭐ **Uniqueness** — Mediterranean palette, no one else uses
+3. ⭐ **Empathy** — focus on elderly and vulnerable users
+4. ⭐ **Scalability** — ready system, not just pages
+5. ⭐ **Cultural Connection** — Cyprus colors, local identity
 
-## 📸 Что сфотографировать для портфолио
+## 📸 What to Screenshot for Portfolio
 
-После хакатона обязательно сделайте скриншоты:
+After hackathon, definitely take screenshots:
 
-- [ ] Главная страница `/theme-demo`
-- [ ] Секция с цветовой палитрой
-- [ ] Кнопки всех размеров
-- [ ] Формы и инпуты
-- [ ] Alerts и notifications
-- [ ] Карточки с информацией
-- [ ] Мобильная версия
-- [ ] Dark mode (если реализован)
+- [ ] Main page `/theme-demo`
+- [ ] Color palette section
+- [ ] Buttons of all sizes
+- [ ] Forms and inputs
+- [ ] Alerts and notifications
+- [ ] Information cards
+- [ ] Mobile version
+- [ ] Dark mode (if implemented)
 
 ## 🎬 Final Tips
 
-1. **Практикуйте презентацию** — 3-5 минут, не больше
-2. **Будьте уверены** — вы создали отличную систему
-3. **Показывайте код** только если спросят
-4. **Фокус на ценности**, не на технологиях
-5. **Улыбайтесь** — вы гордитесь своей работой!
+1. **Practice presentation** — 3-5 minutes, no more
+2. **Be confident** — you created excellent system
+3. **Show code** only if asked
+4. **Focus on value**, not technologies
+5. **Smile** — you're proud of your work!
 
 ---
 
 **Good luck! 🍀**
 
-Вы создали что-то действительно особенное. Mediterranean Relief UI — это
-не просто красивая тема, это продуманный инструмент для реальной помощи людям.
+You created something truly special. Mediterranean Relief UI is not
+just a beautiful theme, it's a thoughtful tool for real help to people.

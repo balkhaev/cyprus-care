@@ -94,7 +94,7 @@ export default function NewVenuePage() {
     address: "",
   })
 
-  // Автоматически получить геолокацию пользователя при загрузке страницы
+  // Automatically get user geolocation on page load
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -106,8 +106,8 @@ export default function NewVenuePage() {
           })
         },
         (error) => {
-          console.error("Ошибка получения геолокации:", error)
-          // Оставляем координаты по умолчанию (Кипр - Никосия)
+          console.error("Error getting geolocation:", error)
+          // Keep default coordinates (Cyprus - Nicosia)
         }
       )
     }

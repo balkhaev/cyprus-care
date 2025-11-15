@@ -1,225 +1,225 @@
 # Mediterranean Relief UI Theme
 
-## 🎨 Описание
+## 🎨 Description
 
-**Mediterranean Relief UI** - это дизайн-система для платформы Cyprus Care, разработанная специально для координации помощи в кризисных ситуациях (пожары, чрезвычайные ситуации).
+**Mediterranean Relief UI** is a design system for the Cyprus Care platform, specifically developed for coordinating relief efforts during crisis situations (fires, emergencies).
 
-### Философия
+### Philosophy
 
-Тема сочетает в себе:
-- **Срочность** (оранжевый) - огонь, необходимость действовать
-- **Доверие** (синий) - спокойствие, надежность
-- **Надежда** (зеленый) - природа, восстановление
+The theme combines:
+- **Urgency** (orange) - fire, need to act
+- **Trust** (blue) - calm, reliability
+- **Hope** (green) - nature, recovery
 
-## 🎯 Целевая аудитория
+## 🎯 Target Audience
 
-- Все возрастные группы
-- Особый фокус на пожилых людях
-- Максимальная доступность (accessibility)
-- Простота использования в стрессовых ситуациях
+- All age groups
+- Special focus on elderly users
+- Maximum accessibility
+- Ease of use in stressful situations
 
-## 🎨 Цветовая палитра
+## 🎨 Color Palette
 
 ### Primary: Deep Orange (#E36414)
-- **Использование**: Основные действия, индикаторы срочности
-- **Символизм**: Огонь, кипрские закаты, необходимость действовать
-- **Доступность**: WCAG AA compliant
+- **Usage**: Primary actions, urgency indicators
+- **Symbolism**: Fire, Cypriot sunsets, need to act
+- **Accessibility**: WCAG AA compliant
 
 ### Secondary: Safe Blue (#1E88E5)
-- **Использование**: Вторичные действия, элементы доверия
-- **Символизм**: Вода, спокойствие, Средиземное море
-- **Доступность**: WCAG AA compliant
+- **Usage**: Secondary actions, elements of trust
+- **Symbolism**: Water, calm, Mediterranean Sea
+- **Accessibility**: WCAG AA compliant
 
 ### Accent: Olive Green (#4CAF50)
-- **Использование**: Успешные действия, состояния надежды
-- **Символизм**: Природа, оливковые рощи Кипра, восстановление
-- **Доступность**: WCAG AA compliant
+- **Usage**: Successful actions, states of hope
+- **Symbolism**: Nature, Cypriot olive groves, recovery
+- **Accessibility**: WCAG AA compliant
 
 ### Destructive: Fire Red (#D32F2F)
-- **Использование**: Ошибки, срочные предупреждения
-- **Символизм**: Опасность, необходимость немедленного внимания
-- **Доступность**: WCAG AA compliant
+- **Usage**: Errors, urgent warnings
+- **Symbolism**: Danger, need for immediate attention
+- **Accessibility**: WCAG AA compliant
 
 ### Background: Soft Warm White (#F9F5F1)
-- **Использование**: Фон страниц
-- **Символизм**: Теплота, дружелюбность, спокойствие
-- **Преимущества**: Снижает напряжение глаз, особенно для пожилых
+- **Usage**: Page backgrounds
+- **Symbolism**: Warmth, friendliness, calm
+- **Advantages**: Reduces eye strain, especially for elderly users
 
-## 📝 Типографика
+## 📝 Typography
 
-### Шрифт: Inter
-- **Начертания**: Regular (400), Semibold (600)
-- **Языки**: Latin, Latin Extended, Cyrillic
-- **Почему Inter?**
-  - Отличная читаемость на всех устройствах
-  - Современный, профессиональный вид
-  - Хорошо масштабируется
-  - Доступен в Google Fonts
+### Font: Inter
+- **Weights**: Regular (400), Semibold (600)
+- **Languages**: Latin, Latin Extended, Cyrillic
+- **Why Inter?**
+  - Excellent readability on all devices
+  - Modern, professional appearance
+  - Scales well
+  - Available in Google Fonts
 
-### Размеры
-- **Базовый**: 16px (минимум для accessibility)
-- **Увеличенный**: 18px (для пожилых пользователей)
-- **Кнопки**: 16-20px (крупно и читабельно)
-- **Заголовки**: 24px - 48px (h3 - h1)
+### Sizes
+- **Base**: 16px (minimum for accessibility)
+- **Increased**: 18px (for elderly users)
+- **Buttons**: 16-20px (large and readable)
+- **Headings**: 24px - 48px (h3 - h1)
 
-### Интерлиньяж
-- Увеличенный межстрочный интервал (leading-relaxed)
-- Улучшает читаемость для всех возрастов
+### Line Height
+- Increased line spacing (leading-relaxed)
+- Improves readability for all ages
 
-## 🎛️ Компоненты
+## 🎛️ Components
 
-### Кнопки
+### Buttons
 ```tsx
-<Button size="lg">Хочу помочь</Button>
-<Button variant="secondary">Подробнее</Button>
-<Button variant="outline">Отмена</Button>
+<Button size="lg">I Want to Help</Button>
+<Button variant="secondary">Learn More</Button>
+<Button variant="outline">Cancel</Button>
 ```
 
-**Характеристики:**
-- Большие размеры (h-12, h-16, h-20)
-- Округлые углы (rounded-xl)
-- Четкие тени (shadow-md, shadow-lg)
-- Анимация нажатия (active:scale-95)
-- Минимум 44x44px для touch targets
+**Characteristics:**
+- Large sizes (h-12, h-16, h-20)
+- Rounded corners (rounded-xl)
+- Clear shadows (shadow-md, shadow-lg)
+- Press animation (active:scale-95)
+- Minimum 44x44px for touch targets
 
-### Карточки
+### Cards
 ```tsx
 <Card>
   <CardHeader>
-    <CardTitle>Заголовок</CardTitle>
-    <CardDescription>Описание</CardDescription>
+    <CardTitle>Title</CardTitle>
+    <CardDescription>Description</CardDescription>
   </CardHeader>
-  <CardContent>Контент</CardContent>
+  <CardContent>Content</CardContent>
 </Card>
 ```
 
-**Характеристики:**
-- Округлые углы (rounded-2xl)
-- Белый фон с легкой оранжевой обводкой
-- Большие отступы (p-6)
-- Тени (shadow-lg)
-- Hover эффект (shadow-xl)
+**Characteristics:**
+- Rounded corners (rounded-2xl)
+- White background with light orange border
+- Large padding (p-6)
+- Shadows (shadow-lg)
+- Hover effect (shadow-xl)
 
-### Инпуты
+### Inputs
 ```tsx
 <div className="space-y-2">
-  <Label htmlFor="name">Имя</Label>
-  <Input id="name" placeholder="Введите имя" />
+  <Label htmlFor="name">Name</Label>
+  <Input id="name" placeholder="Enter name" />
 </div>
 ```
 
-**Характеристики:**
-- Большая высота (h-12)
-- Округлые углы (rounded-xl)
-- Двойная обводка (border-2)
-- Четкий focus (ring-2 ring-primary)
-- Удобно для пожилых пользователей
+**Characteristics:**
+- Large height (h-12)
+- Rounded corners (rounded-xl)
+- Double border (border-2)
+- Clear focus (ring-2 ring-primary)
+- Convenient for elderly users
 
-### Алерты
+### Alerts
 ```tsx
 <Alert variant="warning">
   <AlertCircle className="h-5 w-5" />
-  <AlertTitle>Внимание</AlertTitle>
-  <AlertDescription>Важная информация</AlertDescription>
+  <AlertTitle>Attention</AlertTitle>
+  <AlertDescription>Important information</AlertDescription>
 </Alert>
 ```
 
-**Варианты:**
-- `default` - обычная информация
-- `warning` - предупреждение (оранжевый)
-- `destructive` - ошибка (красный)
-- `success` - успех (зеленый)
+**Variants:**
+- `default` - general information
+- `warning` - warning (orange)
+- `destructive` - error (red)
+- `success` - success (green)
 
 ### Badges
 ```tsx
-<Badge>Активно</Badge>
-<Badge variant="destructive">Срочно</Badge>
-<Badge variant="accent">Завершено</Badge>
+<Badge>Active</Badge>
+<Badge variant="destructive">Urgent</Badge>
+<Badge variant="accent">Completed</Badge>
 ```
 
-## 🗺️ Стили карты
+## 🗺️ Map Styles
 
-### Маркеры
-- **Оранжевые**: Пункты сбора
-- **Синие**: Пункты распределения
-- **Зеленые**: Сервисы помощи
-- **Красные**: Экстренная помощь
+### Markers
+- **Orange**: Collection points
+- **Blue**: Distribution points
+- **Green**: Aid services
+- **Red**: Emergency assistance
 
-### Реализация
+### Implementation
 ```ts
 import { mapMarkerColors, createCustomMarker } from '@/lib/map-theme';
 
-const marker = createCustomMarker('collection'); // оранжевый маркер
+const marker = createCustomMarker('collection'); // orange marker
 ```
 
-## ♿ Доступность (Accessibility)
+## ♿ Accessibility
 
-### Контрастность
-- Все цветовые комбинации соответствуют WCAG AA
-- Высокий контраст для пожилых пользователей
+### Contrast
+- All color combinations comply with WCAG AA
+- High contrast for elderly users
 
-### Фокус
-- Видимые focus rings (outline-2, outline-primary)
-- Отступ от элемента (outline-offset-2)
-- На всех интерактивных элементах
+### Focus
+- Visible focus rings (outline-2, outline-primary)
+- Offset from element (outline-offset-2)
+- On all interactive elements
 
 ### Touch Targets
-- Минимум 44x44px для всех кнопок
-- Большие области нажатия
-- Удобно для пальцев любого размера
+- Minimum 44x44px for all buttons
+- Large hit areas
+- Convenient for fingers of any size
 
-### Типографика
-- Минимальный размер шрифта 16px
-- Увеличенный межстрочный интервал
-- Четкая иерархия заголовков
+### Typography
+- Minimum font size 16px
+- Increased line spacing
+- Clear heading hierarchy
 
-## 🎭 Эмоциональный тон
+## 🎭 Emotional Tone
 
-1. **Спокойствие и помощь** (синий, белый)
-   - Снижаем панику
-   - Внушаем доверие
+1. **Calm and Help** (blue, white)
+   - Reduce panic
+   - Instill trust
 
-2. **Срочность и действие** (оранжевый)
-   - Мотивируем к действию
-   - Показываем важность
+2. **Urgency and Action** (orange)
+   - Motivate to act
+   - Show importance
 
-3. **Природа и восстановление** (зеленый)
-   - Даем надежду
-   - Символизируем будущее
+3. **Nature and Recovery** (green)
+   - Give hope
+   - Symbolize the future
 
 ## 📱 Responsive Design
 
 ### Mobile First
-- Все компоненты оптимизированы для мобильных
-- Большие touch targets
-- Удобная навигация одной рукой
+- All components optimized for mobile
+- Large touch targets
+- Convenient one-hand navigation
 
 ### Breakpoints
 - Mobile: < 768px
 - Tablet: 768px - 1024px
 - Desktop: > 1024px
 
-## 🎬 Демо
+## 🎬 Demo
 
-Посетите `/theme-demo` чтобы увидеть все компоненты в действии.
+Visit `/theme-demo` to see all components in action.
 
-## 📊 Преимущества для хакатона
+## 📊 Advantages for Hackathon
 
-### Для судей
-1. **Профессионализм**: Выглядит как готовый продукт
-2. **Уникальность**: Средиземноморская палитра выделяется
-3. **Продуманность**: Каждый цвет имеет значение
-4. **Доступность**: Показывает заботу о пользователях
+### For Judges
+1. **Professionalism**: Looks like a finished product
+2. **Uniqueness**: Mediterranean palette stands out
+3. **Thoughtfulness**: Every color has meaning
+4. **Accessibility**: Shows care for users
 
 ### Narrative
-> "Мы разработали Cyprus Care с фокусом на доступность и пожилых пользователей.
-> Тема Mediterranean Relief UI использует большие кнопки, высокий контраст,
-> теплые успокаивающие цвета и простую архитектуру информации.
-> В кризисной ситуации простота спасает жизни."
+> "We developed Cyprus Care with a focus on accessibility and elderly users.
+> The Mediterranean Relief UI theme uses large buttons, high contrast,
+> warm calming colors and simple information architecture.
+> In a crisis situation, simplicity saves lives."
 
-## 🚀 Использование
+## 🚀 Usage
 
-### Импорт компонентов
+### Import Components
 ```tsx
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -227,7 +227,7 @@ import { Input } from '@/components/ui/input';
 import { Alert } from '@/components/ui/alert';
 ```
 
-### Использование цветов Tailwind
+### Use Tailwind Colors
 ```tsx
 className="bg-primary text-primary-foreground"
 className="bg-secondary text-secondary-foreground"
@@ -235,20 +235,19 @@ className="bg-accent text-accent-foreground"
 className="bg-destructive text-white"
 ```
 
-### Использование утилит
+### Use Utilities
 ```tsx
 className="rounded-xl shadow-lg p-6"
 className="text-lg leading-relaxed"
 ```
 
-## 📚 Дополнительные ресурсы
+## 📚 Additional Resources
 
-- `/lib/theme-guide.ts` - Полное руководство по теме
-- `/lib/map-theme.ts` - Конфигурация для карт
-- `/app/theme-demo/page.tsx` - Демонстрация компонентов
-- `/app/globals.css` - CSS переменные темы
+- `/lib/theme-guide.ts` - Complete theme guide
+- `/lib/map-theme.ts` - Map configuration
+- `/app/theme-demo/page.tsx` - Component demonstration
+- `/app/globals.css` - Theme CSS variables
 
 ---
 
-**Cyprus Care** - помощь в нужное время, в нужном месте 🇨🇾
-
+**Cyprus Care** - help at the right time, in the right place 🇨🇾

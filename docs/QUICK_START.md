@@ -1,8 +1,8 @@
 # Mediterranean Relief UI - Quick Start Guide
 
-## 🚀 Быстрый старт для разработчиков
+## 🚀 Quick Start for Developers
 
-### 1. Импортируйте готовые компоненты
+### 1. Import Ready-Made Components
 
 ```tsx
 import { Button } from "@/components/ui/button"
@@ -13,15 +13,15 @@ import { Badge } from "@/components/ui/badge"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 ```
 
-### 2. Используйте готовые классы
+### 2. Use Ready-Made Classes
 
 ```tsx
 import { quickClasses } from '@/lib/ui-builder';
 
 // Hero section
 <div className={quickClasses.hero}>
-  <h1 className={quickClasses.heroTitle}>Заголовок</h1>
-  <p className={quickClasses.heroDescription}>Описание</p>
+  <h1 className={quickClasses.heroTitle}>Heading</h1>
+  <p className={quickClasses.heroDescription}>Description</p>
 </div>
 
 // Grid layouts
@@ -30,91 +30,91 @@ import { quickClasses } from '@/lib/ui-builder';
 </div>
 ```
 
-### 3. Готовые паттерны кнопок
+### 3. Ready Button Patterns
 
 ```tsx
-// Primary action (оранжевая - срочность)
-<Button size="lg">Хочу помочь</Button>
+// Primary action (orange - urgency)
+<Button size="lg">I Want to Help</Button>
 
-// Secondary action (синяя - доверие)
+// Secondary action (blue - trust)
 <Button size="lg" variant="secondary">
-  Подробнее
+  Learn More
 </Button>
 
-// Accent (зеленая - надежда)
-<Button variant="accent">Завершено</Button>
+// Accent (green - hope)
+<Button variant="accent">Completed</Button>
 
-// Destructive (красная - срочно)
-<Button variant="destructive">Отменить помощь</Button>
+// Destructive (red - urgent)
+<Button variant="destructive">Cancel Help</Button>
 
 // Outline
-<Button variant="outline">Отмена</Button>
+<Button variant="outline">Cancel</Button>
 ```
 
-### 4. Карточки информации
+### 4. Information Cards
 
 ```tsx
 <Card>
   <CardHeader>
-    {/* Иконка в цветном боксе */}
+    {/* Icon in colored box */}
     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
       <Heart className="h-6 w-6 text-primary" />
     </div>
-    <CardTitle>Заголовок карточки</CardTitle>
-    <CardDescription>Описание</CardDescription>
+    <CardTitle>Card Title</CardTitle>
+    <CardDescription>Description</CardDescription>
   </CardHeader>
-  <CardContent>Дополнительный контент</CardContent>
+  <CardContent>Additional content</CardContent>
 </Card>
 ```
 
-### 5. Формы (elderly-friendly)
+### 5. Forms (elderly-friendly)
 
 ```tsx
 <form className="space-y-6">
   <div className="space-y-2">
-    <Label htmlFor="name">Имя и фамилия</Label>
+    <Label htmlFor="name">Full Name</Label>
     <Input
       id="name"
-      placeholder="Введите ваше имя"
-      className="text-lg" // Увеличенный шрифт для пожилых
+      placeholder="Enter your name"
+      className="text-lg" // Increased font size for elderly
     />
   </div>
 
   <Button size="lg" className="w-full">
-    Отправить
+    Submit
   </Button>
 </form>
 ```
 
-### 6. Алерты и оповещения
+### 6. Alerts and Notifications
 
 ```tsx
 import { AlertCircle, CheckCircle, Info } from 'lucide-react';
 
-// Предупреждение (оранжевое)
+// Warning (orange)
 <Alert variant="warning">
   <AlertCircle className="h-5 w-5" />
-  <AlertTitle>Внимание</AlertTitle>
+  <AlertTitle>Attention</AlertTitle>
   <AlertDescription>
-    В регионе объявлена повышенная пожарная опасность
+    High fire danger declared in the region
   </AlertDescription>
 </Alert>
 
-// Успех (зеленое)
+// Success (green)
 <Alert variant="success">
   <CheckCircle className="h-5 w-5" />
-  <AlertTitle>Спасибо!</AlertTitle>
+  <AlertTitle>Thank You!</AlertTitle>
   <AlertDescription>
-    Ваша заявка принята
+    Your application has been received
   </AlertDescription>
 </Alert>
 
-// Ошибка (красное)
+// Error (red)
 <Alert variant="destructive">
   <AlertCircle className="h-5 w-5" />
-  <AlertTitle>Ошибка</AlertTitle>
+  <AlertTitle>Error</AlertTitle>
   <AlertDescription>
-    Не удалось отправить данные
+    Failed to send data
   </AlertDescription>
 </Alert>
 ```
@@ -122,30 +122,30 @@ import { AlertCircle, CheckCircle, Info } from 'lucide-react';
 ### 7. Badges
 
 ```tsx
-<Badge>По умолчанию</Badge>
-<Badge variant="secondary">Вторичный</Badge>
-<Badge variant="accent">Успех</Badge>
-<Badge variant="destructive">Срочно</Badge>
-<Badge variant="outline">Обводка</Badge>
+<Badge>Default</Badge>
+<Badge variant="secondary">Secondary</Badge>
+<Badge variant="accent">Success</Badge>
+<Badge variant="destructive">Urgent</Badge>
+<Badge variant="outline">Outline</Badge>
 ```
 
 ### 8. Grid Layouts
 
 ```tsx
-// 2 колонки
+// 2 columns
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
   <Card>...</Card>
   <Card>...</Card>
 </div>
 
-// 3 колонки
+// 3 columns
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   <Card>...</Card>
   <Card>...</Card>
   <Card>...</Card>
 </div>
 
-// 4 колонки (для статистики)
+// 4 columns (for statistics)
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
   <Card>...</Card>
   <Card>...</Card>
@@ -157,51 +157,51 @@ import { AlertCircle, CheckCircle, Info } from 'lucide-react';
 ### 9. Icon Boxes
 
 ```tsx
-// Primary (оранжевый)
+// Primary (orange)
 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
   <Heart className="h-6 w-6 text-primary" />
 </div>
 
-// Secondary (синий)
+// Secondary (blue)
 <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
   <MapPin className="h-6 w-6 text-secondary" />
 </div>
 
-// Accent (зеленый)
+// Accent (green)
 <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
   <CheckCircle className="h-6 w-6 text-accent" />
 </div>
 ```
 
-### 10. Карты
+### 10. Maps
 
 ```tsx
 import { mapMarkerColors, createCustomMarker, mapTheme } from "@/lib/map-theme"
 
-// Оранжевые маркеры для пунктов сбора
+// Orange markers for collection points
 const collectionMarker = createCustomMarker("collection")
 
-// Синие маркеры для пунктов распределения
+// Blue markers for distribution points
 const distributionMarker = createCustomMarker("distribution")
 
-// Зеленые маркеры для сервисов
+// Green markers for services
 const serviceMarker = createCustomMarker("service")
 
-// Красные маркеры для экстренных случаев
+// Red markers for emergencies
 const emergencyMarker = createCustomMarker("emergency")
 ```
 
-## 🎨 Цветовые токены
+## 🎨 Color Tokens
 
-### Tailwind классы
+### Tailwind Classes
 
 ```tsx
 // Backgrounds
-className = "bg-primary" // Оранжевый
-className = "bg-secondary" // Синий
-className = "bg-accent" // Зеленый
-className = "bg-destructive" // Красный
-className = "bg-background" // Теплый белый
+className = "bg-primary" // Orange
+className = "bg-secondary" // Blue
+className = "bg-accent" // Green
+className = "bg-destructive" // Red
+className = "bg-background" // Warm white
 
 // Text colors
 className = "text-primary"
@@ -216,9 +216,9 @@ className = "border-accent"
 className = "border-destructive"
 ```
 
-## 📏 Размеры
+## 📏 Sizes
 
-### Кнопки
+### Buttons
 
 ```tsx
 <Button size="sm">Small</Button>        // h-10 (40px)
@@ -227,69 +227,69 @@ className = "border-destructive"
 <Button size="xl">Extra Large</Button>  // h-20 (80px)
 ```
 
-### Шрифты
+### Fonts
 
 ```tsx
-className = "text-base" // 16px - минимум для accessibility
-className = "text-lg" // 18px - рекомендуется для пожилых
-className = "text-xl" // 20px - кнопки, важный текст
+className = "text-base" // 16px - minimum for accessibility
+className = "text-lg" // 18px - recommended for elderly
+className = "text-xl" // 20px - buttons, important text
 className = "text-2xl" // 24px - h3
 className = "text-3xl" // 30px - h2
 className = "text-4xl" // 36px - h1
 ```
 
-## ✅ Checklist для новой страницы
+## ✅ Checklist for New Page
 
-- [ ] Используется шрифт Inter (автоматически из layout.tsx)
-- [ ] Минимальный размер шрифта 16px (text-base)
-- [ ] Кнопки размером минимум h-12 (48px)
-- [ ] Видимые focus states на интерактивных элементах
-- [ ] Высокий контраст текста (text-foreground на bg-background)
-- [ ] Округлые углы (rounded-xl для кнопок/инпутов, rounded-2xl для карточек)
-- [ ] Тени на карточках (shadow-lg)
-- [ ] Hover эффекты на интерактивных элементах
+- [ ] Uses Inter font (automatically from layout.tsx)
+- [ ] Minimum font size 16px (text-base)
+- [ ] Buttons minimum h-12 (48px)
+- [ ] Visible focus states on interactive elements
+- [ ] High contrast text (text-foreground on bg-background)
+- [ ] Rounded corners (rounded-xl for buttons/inputs, rounded-2xl for cards)
+- [ ] Shadows on cards (shadow-lg)
+- [ ] Hover effects on interactive elements
 - [ ] Responsive grid layouts (grid-cols-1 md:grid-cols-2 lg:grid-cols-3)
-- [ ] Увеличенные отступы (p-6) для карточек
+- [ ] Increased padding (p-6) for cards
 
-## 🚫 Чего избегать
+## 🚫 What to Avoid
 
-❌ Маленькие кнопки (< 44px)  
-❌ Мелкий текст (< 16px) для основного контента  
-❌ Низкий контраст цветов  
-❌ Слишком близкие интерактивные элементы  
-❌ Отсутствие focus states  
-❌ Темные цвета на темном фоне  
-❌ Светлые цвета на светлом фоне
+❌ Small buttons (< 44px)  
+❌ Small text (< 16px) for main content  
+❌ Low color contrast  
+❌ Too close interactive elements  
+❌ Absence of focus states  
+❌ Dark colors on dark background  
+❌ Light colors on light background
 
 ## 💡 Pro Tips
 
-1. **Для пожилых пользователей**
+1. **For Elderly Users**
 
-   - Используйте text-lg вместо text-base
-   - Кнопки size="lg" или size="xl"
-   - Увеличенные отступы между элементами
+   - Use text-lg instead of text-base
+   - Buttons size="lg" or size="xl"
+   - Increased spacing between elements
 
-2. **Для мобильных устройств**
+2. **For Mobile Devices**
 
-   - Минимум 48x48px для touch targets
-   - Используйте w-full для кнопок на мобилках
-   - Grid: grid-cols-1 на мобилках
+   - Minimum 48x48px for touch targets
+   - Use w-full for buttons on mobile
+   - Grid: grid-cols-1 on mobile
 
-3. **Для доступности**
+3. **For Accessibility**
 
-   - Всегда используйте Label с Input
-   - aria-label для иконочных кнопок
-   - Видимый focus (outline-2 outline-primary)
+   - Always use Label with Input
+   - aria-label for icon buttons
+   - Visible focus (outline-2 outline-primary)
 
-4. **Для производительности**
-   - Используйте готовые компоненты из /components/ui
-   - Не создавайте inline styles
-   - Используйте Tailwind классы
+4. **For Performance**
+   - Use ready-made components from /components/ui
+   - Don't create inline styles
+   - Use Tailwind classes
 
-## 📚 Ссылки
+## 📚 Links
 
-- Полная документация: [THEME.md](../THEME.md)
-- Демо: `/theme-demo`
+- Full documentation: [THEME.md](../THEME.md)
+- Demo: `/theme-demo`
 - UI Builder: `/lib/ui-builder.ts`
 - Tailwind Config: `/lib/tailwind-config.ts`
 - Map Theme: `/lib/map-theme.ts`

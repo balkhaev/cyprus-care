@@ -1,105 +1,105 @@
 # Map View and Venue Views Implementation
 
-## Обзор
+## Overview
 
-Реализована полная функциональность карты и просмотра площадок для трех типов пользователей: волонтеров, организаторов и получателей помощи.
+Full map and venue viewing functionality implemented for three types of users: volunteers, organizers, and beneficiaries.
 
-## Новые файлы
+## New Files
 
-### Типы данных
-- `types/response.ts` - типы для ответов волонтеров, обязательств получателей помощи и статусов нужд
-- `lib/mock-data/responses.ts` - мок-данные для тестирования ответов и обязательств
+### Data Types
+- `types/response.ts` - types for volunteer responses, beneficiary commitments and need statuses
+- `lib/mock-data/responses.ts` - mock data for testing responses and commitments
 
-### Компоненты представлений площадок
-- `components/venue-views/VolunteerVenueView.tsx` - представление для волонтеров
-- `components/venue-views/OrganizerVenueView.tsx` - представление для организаторов
-- `components/venue-views/BeneficiaryVenueView.tsx` - представление для получателей помощи
-- `components/UserRoleSwitcher.tsx` - переключатель ролей пользователя для тестирования
+### Venue View Components
+- `components/venue-views/VolunteerVenueView.tsx` - view for volunteers
+- `components/venue-views/OrganizerVenueView.tsx` - view for organizers
+- `components/venue-views/BeneficiaryVenueView.tsx` - view for beneficiaries
+- `components/UserRoleSwitcher.tsx` - user role switcher for testing
 
-## Основные возможности
+## Key Features
 
-### Map View (общий)
+### Map View (general)
 
-**Богатые попапы при наведении:**
-- Название и описание площадки
-- Список всех функций площадки (Collection Point, Distribution Point, Services Needed)
-- Детали по каждой функции (количество товаров/услуг)
+**Rich hover popups:**
+- Venue name and description
+- List of all venue functions (Collection Point, Distribution Point, Services Needed)
+- Details for each function (quantity of items/services)
 
-**Фильтрация:**
-- Фильтрация площадок по категориям товаров через CategoryTreeFilter
-- Фильтр находится слева на карте
+**Filtering:**
+- Filter venues by item categories through CategoryTreeFilter
+- Filter located on the left of the map
 
 **ETA (Estimated Time of Arrival):**
-- Автоматически рассчитывается и отображается для волонтеров и получателей помощи
-- Показывает расстояние и приблизительное время до площадки
-- Использует геолокацию пользователя
-- Средняя скорость: 30 км/ч
+- Automatically calculated and displayed for volunteers and beneficiaries
+- Shows distance and approximate time to venue
+- Uses user geolocation
+- Average speed: 30 km/h
 
-**Выделение точек распределения:**
-- Для получателей помощи площадки с Distribution Point выделяются зеленым маркером
-- Специальная иконка 📦 для визуального различия
+**Distribution point highlighting:**
+- For beneficiaries, venues with Distribution Point are highlighted with green marker
+- Special icon 📦 for visual distinction
 
 ### Venue View: Volunteer
 
-**Отображает:**
-- Все детали площадки
-- Количество нужных товаров с уровнем нужды (a lot, some, few)
-- Список нужных услуг с описаниями
-- Специальные требования для каждой функции
+**Displays:**
+- All venue details
+- Quantity of needed items with need level (a lot, some, few)
+- List of needed services with descriptions
+- Special requirements for each function
 
-**Функциональность:**
-- Кнопка "Respond" для каждого товара или услуги
-- Модальное окно для ввода:
-  - Количества предлагаемых товаров
-  - Сообщения с дополнительной информацией
-- Отправка ответа организатору
+**Functionality:**
+- "Respond" button for each item or service
+- Modal window for entering:
+  - Quantity of offered items
+  - Message with additional information
+- Send response to organizer
 
 ### Venue View: Organizer
 
-**Отображает:**
-- Все функции площадки
-- Прогнозируемую явку волонтеров для каждого товара/услуги
-- Количество откликов
-- Общее количество предложенных товаров
-- Список волонтеров с их предложениями
+**Displays:**
+- All venue functions
+- Predicted volunteer turnout for each item/service
+- Number of responses
+- Total quantity of offered items
+- List of volunteers with their offers
 
-**Функциональность:**
-- Три кнопки статуса для каждого товара/услуги:
-  - "Need a lot" (красная)
-  - "Need few more" (оранжевая)
-  - "Don't need" (зеленая)
-- Возможность раскрыть детали откликов
-- Просмотр сообщений от волонтеров
+**Functionality:**
+- Three status buttons for each item/service:
+  - "Need a lot" (red)
+  - "Need few more" (orange)
+  - "Don't need" (green)
+- Ability to expand response details
+- View messages from volunteers
 
-**Примечание:** Организатор видит этот интерфейс только для своих площадок
+**Note:** Organizer sees this interface only for their venues
 
 ### Venue View: Beneficiary
 
-**Отображает:**
-- Только точки распределения (Distribution Points)
-- Список доступных товаров
-- Часы работы точки распределения
-- Ожидаемое количество получателей
-- Важную информацию (Special Requests)
+**Displays:**
+- Only Distribution Points
+- List of available items
+- Distribution point hours
+- Expected number of beneficiaries
+- Important information (Special Requests)
 
-**Функциональность:**
-- Кнопка "I will be there" для подтверждения посещения
-- После подтверждения кнопка меняется на "Confirmed"
-- Помогает организаторам планировать раздачу
+**Functionality:**
+- "I will be there" button to confirm attendance
+- After confirmation, button changes to "Confirmed"
+- Helps organizers plan distribution
 
-**Примечание:** Другие функции площадки (Collection Point, Services Needed) отображаются только для информации
+**Note:** Other venue functions (Collection Point, Services Needed) are displayed for information only
 
-## Система ролей
+## Role System
 
-Текущая роль пользователя определяет:
-1. Какие маркеры выделены на карте
-2. Показывается ли ETA
-3. Какое представление площадки используется
-4. Какие действия доступны
+Current user role determines:
+1. Which markers are highlighted on map
+2. Whether ETA is shown
+3. Which venue view is used
+4. What actions are available
 
-### Переключение ролей (для тестирования)
+### Role Switching (for testing)
 
-Компонент `UserRoleSwitcher` позволяет переключаться между пользователями:
+`UserRoleSwitcher` component allows switching between users:
 - John Smith - Organizer (org-1)
 - Maria Garcia - Organizer (org-2)
 - Alex Johnson - Volunteer
@@ -107,62 +107,61 @@
 - Mohammed Ali - Beneficiary
 - Elena Petrov - Beneficiary
 
-## Технические детали
+## Technical Details
 
-### Расчет расстояния и ETA
+### Distance and ETA Calculation
 
-Используется формула Haversine для расчета расстояния по сфере:
+Haversine formula is used to calculate distance over a sphere:
 ```typescript
 function calculateDistance(lat1, lon1, lat2, lon2): number
 ```
 
-ETA рассчитывается исходя из средней скорости 30 км/ч:
+ETA calculated based on average speed of 30 km/h:
 ```typescript
 function calculateETA(distanceKm): string
 ```
 
-### Кастомные маркеры
+### Custom Markers
 
-Для точек распределения используется кастомная иконка:
-- Зеленый маркер в форме капли
-- Эмодзи 📦 в центре
-- Свечение для лучшей видимости
+Custom icon is used for distribution points:
+- Green teardrop-shaped marker
+- Emoji 📦 in center
+- Glow for better visibility
 
-### Интеграция с существующими компонентами
+### Integration with Existing Components
 
-- `LeafletMap` обновлен для поддержки:
-  - Богатых попапов с информацией о функциях
-  - Кастомных маркеров для выделения
-  - ETA в попапах
-- Все новые представления интегрированы в `/app/venues/[id]/page.tsx`
-- Карта на `/app/map/page.tsx` обновлена с новыми возможностями
+- `LeafletMap` updated to support:
+  - Rich popups with function information
+  - Custom markers for highlighting
+  - ETA in popups
+- All new views integrated into `/app/venues/[id]/page.tsx`
+- Map on `/app/map/page.tsx` updated with new capabilities
 
-## Использование
+## Usage
 
-### Просмотр карты как разные пользователи
+### View Map as Different Users
 
-1. Откройте `/map`
-2. Используйте UserRoleSwitcher для переключения роли
-3. Наблюдайте изменения в отображении карты:
-   - Volunteer: видит ETA, может откликаться на нужды
-   - Organizer: видит ETA, управляет статусами нужд
-   - Beneficiary: видит выделенные точки распределения, может подтвердить посещение
+1. Open `/map`
+2. Use UserRoleSwitcher to switch role
+3. Observe changes in map display:
+   - Volunteer: sees ETA, can respond to needs
+   - Organizer: sees ETA, manages need statuses
+   - Beneficiary: sees highlighted distribution points, can confirm attendance
 
-### Просмотр площадки
+### View Venue
 
-1. Кликните на маркер на карте или перейдите к `/venues/[id]`
-2. Представление автоматически адаптируется под роль пользователя
-3. Используйте соответствующие действия:
-   - Volunteer: нажмите "Respond" для отклика
-   - Organizer: обновите статусы нужд
-   - Beneficiary: нажмите "I will be there" для подтверждения
+1. Click on marker on map or go to `/venues/[id]`
+2. View automatically adapts to user role
+3. Use corresponding actions:
+   - Volunteer: click "Respond" to respond
+   - Organizer: update need statuses
+   - Beneficiary: click "I will be there" to confirm
 
-## Будущие улучшения
+## Future Improvements
 
-- Интеграция с реальным API для сохранения откликов и обязательств
-- Уведомления для организаторов о новых откликах
-- История откликов для волонтеров
-- Статистика для организаторов
-- Фильтрация по типу функций на карте
-- Маршрутизация к площадке через внешние карты
-
+- Integration with real API for saving responses and commitments
+- Notifications for organizers about new responses
+- Response history for volunteers
+- Statistics for organizers
+- Filter by function type on map
+- Routing to venue through external maps

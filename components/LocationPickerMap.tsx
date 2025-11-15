@@ -18,27 +18,27 @@ export default function LocationPickerMap({
   const isInitialized = useRef(false);
   const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null);
 
-  // Геокодирование координат в адрес
+  // Geocode coordinates to address
   const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ru`
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=en`
       );
       const data = await response.json();
       return data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
     } catch (error) {
-      console.error('Ошибка геокодирования:', error);
+      console.error('Geocoding error:', error);
       return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
     }
   };
 
-  // Инициализация карты
+  // Initialize map
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!mapContainerRef.current) return;
     if (isInitialized.current) return;
 
-    // Исправляем иконки
+    // Fix icons
     delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: () => void })._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
@@ -58,14 +58,14 @@ export default function LocationPickerMap({
         maxZoom: 19,
       }).addTo(map);
 
-      // Создаем маркер
+      // Create marker
       const marker = L.marker([initialLocation.lat, initialLocation.lng], {
         draggable: true,
       }).addTo(map);
 
-      marker.bindPopup('Перетащите маркер для выбора местоположения').openPopup();
+      marker.bindPopup('Drag the marker to select location').openPopup();
 
-      // Обработчик перетаскивания маркера
+      // Marker drag handler
       marker.on('dragend', async () => {
         const position = marker.getLatLng();
         setSelectedCoords({ lat: position.lat, lng: position.lng });
@@ -73,7 +73,7 @@ export default function LocationPickerMap({
         onLocationSelect({ lat: position.lat, lng: position.lng, address });
       });
 
-      // Обработчик клика по карте
+      // Map click handler
       map.on('click', async (e: L.LeafletMouseEvent) => {
         marker.setLatLng(e.latlng);
         setSelectedCoords({ lat: e.latlng.lat, lng: e.latlng.lng });
@@ -91,12 +91,12 @@ export default function LocationPickerMap({
         }
       }, 100);
 
-      // Установить начальный адрес
+      // Set initial address
       reverseGeocode(initialLocation.lat, initialLocation.lng).then((address) => {
         onLocationSelect({ ...initialLocation, address });
       });
     } catch (error) {
-      console.error('Ошибка инициализации карты:', error);
+      console.error('Map initialization error:', error);
     }
 
     return () => {
@@ -104,7 +104,7 @@ export default function LocationPickerMap({
         try {
           mapRef.current.remove();
         } catch (error) {
-          console.error('Ошибка при удалении карты:', error);
+          console.error('Error removing map:', error);
         }
         mapRef.current = null;
         isInitialized.current = false;
@@ -115,7 +115,7 @@ export default function LocationPickerMap({
   return (
     <div className="space-y-3">
       <div className="text-sm text-zinc-600 dark:text-zinc-400">
-        Кликните на карту или перетащите маркер для выбора местоположения
+        Click on the map or drag the marker to select location
       </div>
       <div
         ref={mapContainerRef}
@@ -123,7 +123,7 @@ export default function LocationPickerMap({
       />
       {selectedCoords && (
         <div className="text-xs text-zinc-500 dark:text-zinc-500">
-          Координаты: {selectedCoords.lat.toFixed(6)}, {selectedCoords.lng.toFixed(6)}
+          Coordinates: {selectedCoords.lat.toFixed(6)}, {selectedCoords.lng.toFixed(6)}
         </div>
       )}
     </div>

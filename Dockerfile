@@ -1,29 +1,29 @@
-# Этап 1: Установка зависимостей
+# Stage 1: Install dependencies
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Копируем файлы package
+# Copy package files
 COPY package*.json ./
 
-# Устанавливаем зависимости
+# Install dependencies
 RUN npm ci
 
-# Этап 2: Сборка приложения
+# Stage 2: Build application
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Копируем зависимости из предыдущего этапа
+# Copy dependencies from previous stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Отключаем телеметрию Next.js
+# Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Собираем приложение
+# Build application
 RUN npm run build
 
-# Этап 3: Production образ
+# Stage 3: Production image
 FROM node:20-alpine AS runner
 WORKDIR /app
 
@@ -33,7 +33,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Копируем необходимые файлы для production
+# Copy necessary files for production
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static

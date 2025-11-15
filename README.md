@@ -75,6 +75,7 @@ care/
 │   └── LocationPickerMap.tsx
 ├── lib/
 │   ├── utils.ts           # Utilities
+│   ├── theme-utils.ts     # Theme utility classes and helpers
 │   ├── theme-guide.ts     # Theme guide
 │   └── map-theme.ts       # Map settings
 └── types/
@@ -98,6 +99,37 @@ import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+```
+
+### Using Theme Utilities
+
+The project provides ready-made utility classes through `lib/theme-utils.ts`:
+
+```tsx
+import {
+  backgroundClasses,
+  textClasses,
+  headerClasses,
+  getIconContainerClasses,
+  interactiveClasses,
+} from "@/lib/theme-utils"
+
+// Use background classes
+<div className={backgroundClasses.page}>...</div>
+
+// Use text classes
+<h1 className={textClasses.heading}>Title</h1>
+<p className={textClasses.secondary}>Description</p>
+
+// Create icon container with color
+<div className={getIconContainerClasses('primary', 'md')}>
+  <Icon />
+</div>
+
+// Add hover effects
+<button className={interactiveClasses.hoverPrimary}>
+  Click me
+</button>
 ```
 
 ### Usage Examples

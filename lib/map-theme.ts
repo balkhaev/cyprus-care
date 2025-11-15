@@ -8,19 +8,19 @@
 export const mapMarkerColors = {
   collection: {
     primary: '#E36414', // Deep orange - fire, urgency
-    label: 'Пункт сбора',
+    label: 'Collection Point',
   },
   distribution: {
     primary: '#1E88E5', // Safe blue - trust, calm
-    label: 'Пункт распределения',
+    label: 'Distribution Point',
   },
   service: {
     primary: '#4CAF50', // Olive green - hope, nature
-    label: 'Сервис',
+    label: 'Service',
   },
   emergency: {
     primary: '#D32F2F', // Fire red - error/urgent
-    label: 'Экстренная помощь',
+    label: 'Emergency Aid',
   },
 };
 

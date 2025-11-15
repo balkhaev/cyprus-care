@@ -161,16 +161,16 @@ export default function DebugPanel() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Сбросить пользователя?</AlertDialogTitle>
+                    <AlertDialogTitle>Reset user?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Вы будете переключены на пользователя по умолчанию (John
-                      Smith - Organizer). Страница будет перезагружена.
+                      You will be switched to the default user (John Smith -
+                      Organizer). The page will be reloaded.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Отмена</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleResetConfirm}>
-                      Сбросить
+                      Reset
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

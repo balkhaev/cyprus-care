@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import type { Venue } from '@/types/venue';
 
-// Исправление иконок маркеров Leaflet
+// Fix Leaflet marker icons
 const fixLeafletIcons = () => {
   if (typeof window === 'undefined') return;
   
@@ -69,7 +69,7 @@ interface LeafletMapProps {
 
 export default function LeafletMap({
   markers = [],
-  center = [35.1264, 33.4299], // Кипр - Никосия по умолчанию
+  center = [35.1264, 33.4299], // Cyprus - Nicosia by default
   zoom = 13,
   onMarkerClick,
   userLocation,
@@ -82,17 +82,17 @@ export default function LeafletMap({
   const userMarkerRef = useRef<L.Marker | null>(null);
   const isInitialized = useRef(false);
 
-  // Инициализация карты
+  // Initialize map
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!mapContainerRef.current) return;
     if (isInitialized.current) return;
 
-    // Исправляем иконки
+    // Fix icons
     fixLeafletIcons();
 
     try {
-      // Создаем карту
+      // Create map
       const map = L.map(mapContainerRef.current, {
         center,
         zoom,
@@ -100,29 +100,29 @@ export default function LeafletMap({
         attributionControl: true,
       });
 
-      // Добавляем тайлы OpenStreetMap
+      // Add OpenStreetMap tiles
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
         minZoom: 3,
       }).addTo(map);
 
-      // Создаем слой для маркеров
+      // Create layer for markers
       markersLayerRef.current = L.layerGroup().addTo(map);
 
       mapRef.current = map;
       isInitialized.current = true;
 
-      console.log('Карта инициализирована успешно');
+      console.log('Map initialized successfully');
 
-      // Обработка изменения размера
+      // Handle size change
       setTimeout(() => {
         if (map) {
           map.invalidateSize();
         }
       }, 100);
     } catch (error) {
-      console.error('Ошибка инициализации карты:', error);
+      console.error('Map initialization error:', error);
     }
 
     // Cleanup
@@ -131,23 +131,23 @@ export default function LeafletMap({
         try {
           mapRef.current.remove();
         } catch (error) {
-          console.error('Ошибка при удалении карты:', error);
+          console.error('Error removing map:', error);
         }
         mapRef.current = null;
         isInitialized.current = false;
       }
     };
-  }, []); // Только при первом рендере
+  }, []); // Only on first render
 
-  // Обновление маркеров
+  // Update markers
   useEffect(() => {
     if (!mapRef.current || !markersLayerRef.current) return;
 
     try {
-      // Очищаем предыдущие маркеры
+      // Clear previous markers
       markersLayerRef.current.clearLayers();
 
-      // Добавляем новые маркеры
+      // Add new markers
       markers.forEach((markerData) => {
         // Create custom icon for distribution points if highlighted
         let markerIcon = undefined;
@@ -257,25 +257,25 @@ export default function LeafletMap({
         }
       });
 
-      console.log(`Добавлено маркеров: ${markers.length}`);
+      console.log(`Added markers: ${markers.length}`);
     } catch (error) {
-      console.error('Ошибка при обновлении маркеров:', error);
+      console.error('Error updating markers:', error);
     }
   }, [markers, onMarkerClick, highlightDistributionPoints, showETA, userLocation]);
 
-  // Обновление местоположения пользователя
+  // Update user location
   useEffect(() => {
     if (!mapRef.current) return;
 
     try {
-      // Удаляем предыдущий маркер пользователя
+      // Remove previous user marker
       if (userMarkerRef.current) {
         userMarkerRef.current.remove();
         userMarkerRef.current = null;
       }
 
       if (userLocation) {
-        // Создаем кастомную иконку для местоположения пользователя
+        // Create custom icon for user location
         const userIcon = L.divIcon({
           className: 'user-location-marker',
           html: `
@@ -294,23 +294,23 @@ export default function LeafletMap({
           iconAnchor: [10, 10],
         });
 
-        // Добавляем маркер пользователя
+        // Add user marker
         userMarkerRef.current = L.marker([userLocation.lat, userLocation.lng], {
           icon: userIcon,
         })
-          .bindPopup('<div style="padding: 8px; font-weight: bold; color: #18181b;">Ваше местоположение</div>')
+          .bindPopup('<div style="padding: 8px; font-weight: bold; color: #18181b;">Your location</div>')
           .addTo(mapRef.current);
 
-        // Центрируем карту на местоположении пользователя
+        // Center map on user location
         mapRef.current.setView([userLocation.lat, userLocation.lng], 15, {
           animate: true,
           duration: 1,
         });
 
-        console.log('Местоположение пользователя установлено:', userLocation);
+        console.log('User location set:', userLocation);
       }
     } catch (error) {
-      console.error('Ошибка при обновлении местоположения пользователя:', error);
+      console.error('Error updating user location:', error);
     }
   }, [userLocation]);
 

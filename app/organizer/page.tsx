@@ -1,7 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { User, Mail, Phone, MapPin, Calendar, Plus, Settings, LogOut, Building2 } from 'lucide-react';
+import { User, Mail, Phone, Calendar, Plus, Settings, LogOut, Building2, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  backgroundClasses,
+  textClasses,
+  headerClasses,
+  getIconContainerClasses,
+  borderClasses,
+  interactiveClasses,
+} from '@/lib/theme-utils';
 
 export default function OrganizerPage() {
   // Temporary organizer data
@@ -22,41 +32,44 @@ export default function OrganizerPage() {
       label: 'Active Venues',
       value: '3',
       icon: <Building2 className="h-5 w-5" />,
+      variant: 'primary' as const,
     },
     {
       label: 'Total Events',
       value: '12',
       icon: <Calendar className="h-5 w-5" />,
+      variant: 'secondary' as const,
     },
     {
       label: 'Volunteers',
       value: '45',
       icon: <User className="h-5 w-5" />,
+      variant: 'accent' as const,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div className={`min-h-screen ${backgroundClasses.page}`}>
       {/* Header */}
-      <header className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
+      <header className={`${headerClasses.container}`}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+            <h1 className={`text-2xl ${textClasses.heading}`}>
               Organizer Profile
             </h1>
             <div className="flex items-center gap-3">
               <Link
                 href="/organizer/settings"
-                className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+                className={`p-2 rounded-lg ${interactiveClasses.hoverPrimary}`}
                 title="Settings"
               >
-                <Settings className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />
+                <Settings className="h-5 w-5" />
               </Link>
               <button
-                className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+                className={`p-2 rounded-lg ${interactiveClasses.hoverPrimary}`}
                 title="Sign Out"
               >
-                <LogOut className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />
+                <LogOut className="h-5 w-5" />
               </button>
             </div>
           </div>
@@ -66,37 +79,37 @@ export default function OrganizerPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Profile card */}
-          <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+          <Card>
             {/* Banner */}
-            <div className="h-32 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900"></div>
+            <div className={`h-32 ${backgroundClasses.gradientPrimarySecondary}`}></div>
 
             {/* Information */}
-            <div className="px-6 pb-6">
+            <CardContent className="px-6 pb-6">
               <div className="flex items-start gap-6 -mt-16 mb-6">
                 {/* Avatar */}
-                <div className="w-32 h-32 rounded-full bg-zinc-900 dark:bg-zinc-100 border-4 border-white dark:border-zinc-900 flex items-center justify-center shadow-lg">
-                  <User className="h-16 w-16 text-white dark:text-zinc-900" />
+                <div className="w-32 h-32 rounded-full bg-primary border-4 border-card flex items-center justify-center shadow-lg">
+                  <User className="h-16 w-16 text-primary-foreground" />
                 </div>
 
                 {/* Main info */}
                 <div className="flex-1 pt-16">
-                  <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">
+                  <h2 className={`text-2xl ${textClasses.heading} mb-1`}>
                     {organizer.name}
                   </h2>
-                  <p className="text-zinc-600 dark:text-zinc-400 mb-3">
+                  <p className={textClasses.secondary}>
                     {organizer.role} • {organizer.organization}
                   </p>
 
-                  <div className="flex flex-wrap gap-4 text-sm">
-                    <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                  <div className="flex flex-wrap gap-4 text-sm mt-3">
+                    <div className={`flex items-center gap-2 ${textClasses.secondary}`}>
                       <Mail className="h-4 w-4" />
                       <span>{organizer.email}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                    <div className={`flex items-center gap-2 ${textClasses.secondary}`}>
                       <Phone className="h-4 w-4" />
                       <span>{organizer.phone}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                    <div className={`flex items-center gap-2 ${textClasses.secondary}`}>
                       <Calendar className="h-4 w-4" />
                       <span>Joined {organizer.joinedDate}</span>
                     </div>
@@ -105,128 +118,131 @@ export default function OrganizerPage() {
 
                 {/* Add venue button */}
                 <div className="pt-16">
-                  <Link
-                    href="/venues/new"
-                    className="flex items-center gap-2 px-6 py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shadow-lg"
-                  >
-                    <Plus className="h-5 w-5" />
-                    Add Venue
-                  </Link>
+                  <Button asChild size="lg">
+                    <Link href="/venues/new" className="flex items-center gap-2">
+                      <Plus className="h-5 w-5" />
+                      Add Venue
+                    </Link>
+                  </Button>
                 </div>
               </div>
 
               {/* Statistics */}
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-border">
                 {stats.map((stat) => (
                   <div key={stat.label} className="text-center">
-                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 mb-2">
+                    <div className={getIconContainerClasses(stat.variant, 'md') + ' mx-auto mb-2'}>
                       {stat.icon}
                     </div>
-                    <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">
+                    <div className={`text-2xl ${textClasses.heading} mb-1`}>
                       {stat.value}
                     </div>
-                    <div className="text-sm text-zinc-600 dark:text-zinc-400">
+                    <div className={`text-sm ${textClasses.secondary}`}>
                       {stat.label}
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Quick actions */}
-          <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
-              Quick Actions
-            </h3>
+          <Card>
+            <CardHeader>
+              <h3 className={`text-lg ${textClasses.heading}`}>
+                Quick Actions
+              </h3>
+            </CardHeader>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Link
-                href="/venues"
-                className="flex items-start gap-4 p-4 rounded-lg border-2 border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
-              >
-                <div className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-                  <MapPin className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-                    Manage Venues
-                  </h4>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    View and edit venues
-                  </p>
-                </div>
-              </Link>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Link
+                  href="/venues"
+                  className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverPrimary} hover:bg-primary/5 transition-all`}
+                >
+                  <div className={getIconContainerClasses('primary', 'md')}>
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className={`font-semibold ${textClasses.heading} mb-1`}>
+                      Manage Venues
+                    </h4>
+                    <p className={`text-sm ${textClasses.secondary}`}>
+                      View and edit venues
+                    </p>
+                  </div>
+                </Link>
 
-              <Link
-                href="/venues/new"
-                className="flex items-start gap-4 p-4 rounded-lg border-2 border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
-              >
-                <div className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-                  <Plus className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-                    Create Venue
-                  </h4>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    Add new collection point or shelter
-                  </p>
-                </div>
-              </Link>
+                <Link
+                  href="/venues/new"
+                  className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverPrimary} hover:bg-primary/5 transition-all`}
+                >
+                  <div className={getIconContainerClasses('primary', 'md')}>
+                    <Plus className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className={`font-semibold ${textClasses.heading} mb-1`}>
+                      Create Venue
+                    </h4>
+                    <p className={`text-sm ${textClasses.secondary}`}>
+                      Add new collection point or shelter
+                    </p>
+                  </div>
+                </Link>
 
-              <Link
-                href="/map"
-                className="flex items-start gap-4 p-4 rounded-lg border-2 border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
-              >
-                <div className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-                  <MapPin className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-                    Venue Map
-                  </h4>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    View all venues on map
-                  </p>
-                </div>
-              </Link>
+                <Link
+                  href="/map"
+                  className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverSecondary} hover:bg-secondary/5 transition-all`}
+                >
+                  <div className={getIconContainerClasses('secondary', 'md')}>
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className={`font-semibold ${textClasses.heading} mb-1`}>
+                      Venue Map
+                    </h4>
+                    <p className={`text-sm ${textClasses.secondary}`}>
+                      View all venues on map
+                    </p>
+                  </div>
+                </Link>
 
-              <Link
-                href="/organizer/settings"
-                className="flex items-start gap-4 p-4 rounded-lg border-2 border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
-              >
-                <div className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-                  <Settings className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-                    Profile Settings
-                  </h4>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    Change profile information
-                  </p>
-                </div>
-              </Link>
+                <Link
+                  href="/organizer/settings"
+                  className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverSecondary} hover:bg-secondary/5 transition-all`}
+                >
+                  <div className={getIconContainerClasses('secondary', 'md')}>
+                    <Settings className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className={`font-semibold ${textClasses.heading} mb-1`}>
+                      Profile Settings
+                    </h4>
+                    <p className={`text-sm ${textClasses.secondary}`}>
+                      Change profile information
+                    </p>
+                  </div>
+                </Link>
 
-              <Link
-                href="/organizer/custom-functions"
-                className="flex items-start gap-4 p-4 rounded-lg border-2 border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all"
-              >
-                <div className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-                  <Plus className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-                    Custom Functions
-                  </h4>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    Manage custom function types
-                  </p>
-                </div>
-              </Link>
-            </div>
-          </div>
+                <Link
+                  href="/organizer/custom-functions"
+                  className={`flex items-start gap-4 p-4 rounded-lg border-2 ${borderClasses.default} ${borderClasses.hoverAccent} hover:bg-accent/5 transition-all`}
+                >
+                  <div className={getIconContainerClasses('accent', 'md')}>
+                    <Plus className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className={`font-semibold ${textClasses.heading} mb-1`}>
+                      Custom Functions
+                    </h4>
+                    <p className={`text-sm ${textClasses.secondary}`}>
+                      Manage custom function types
+                    </p>
+                  </div>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>

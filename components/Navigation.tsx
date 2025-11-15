@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { MapPin, Building2 } from "lucide-react"
+import { textClasses, interactiveClasses } from "@/lib/theme-utils"
 
 export default function Navigation() {
   const pathname = usePathname()
@@ -11,13 +12,13 @@ export default function Navigation() {
   const isVenuesPage = pathname?.startsWith("/venues")
 
   return (
-    <nav className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg p-1">
+    <nav className="flex items-center gap-1 bg-muted rounded-lg p-1">
       <Link
         href="/venues"
         className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
           isVenuesPage
-            ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm"
-            : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+            ? "bg-card text-primary shadow-sm"
+            : `${textClasses.secondary} ${interactiveClasses.hoverPrimary}`
         }`}
       >
         <Building2 className="h-4 w-4" />
@@ -27,8 +28,8 @@ export default function Navigation() {
         href="/map"
         className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
           isMapPage
-            ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm"
-            : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+            ? "bg-card text-primary shadow-sm"
+            : `${textClasses.secondary} ${interactiveClasses.hoverPrimary}`
         }`}
       >
         <MapPin className="h-4 w-4" />

@@ -199,7 +199,7 @@ export default function MapPage() {
   }
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+    <div className="relative h-screen w-full overflow-hidden bg-bgsoft">
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 z-1000 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -256,23 +256,23 @@ export default function MapPage() {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-4">
+          <div className="md:hidden border-t border-primary/10 bg-white p-4 space-y-4">
             {/* Search (mobile) */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search on map..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-primary/20 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
             {/* Links */}
             <Link
               href="/login"
-              className="flex items-center gap-2 px-4 py-2 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-slate-900 hover:bg-bgsoft rounded-lg transition-colors"
             >
               <User className="h-5 w-5" />
               <span>Sign In</span>
@@ -308,7 +308,7 @@ export default function MapPage() {
           <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 p-4 z-1000 animate-slide-up max-h-[70vh] overflow-y-auto">
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1">
+                <h3 className="text-lg font-bold text-slate-900 mb-1">
                   {selectedMarker.title}
                 </h3>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
@@ -350,7 +350,7 @@ export default function MapPage() {
             <div className="flex gap-2">
               <button
                 onClick={handleBuildRoute}
-                className="flex-1 px-3 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+                className="flex-1 px-3 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/80 transition-colors"
               >
                 Build Route
               </button>

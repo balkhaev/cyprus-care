@@ -6,6 +6,21 @@ export type { UserRole };
 export type User = AuthUser;
 
 export const mockUsers: Record<string, User> = {
+  'user-guest': {
+    id: 0,
+    first_name: 'Guest',
+    last_name: 'User',
+    email: 'guest@example.com',
+    role: 'guest',
+    phone: '',
+    municipality: '',
+    is_organization: false,
+    organization_name: '',
+    volunteer_areas_of_interest: '',
+    volunteer_services: '',
+    interested_in_donations: false,
+    association_name: '',
+  },
   'user-org-1': {
     id: 1,
     first_name: 'John',
@@ -124,7 +139,7 @@ function getInitialUserId(): string {
       return stored;
     }
   }
-  return 'user-org-1'; // Default to organizer
+  return 'user-guest'; // Default to guest
 }
 
 let currentUserId = getInitialUserId();
@@ -164,5 +179,9 @@ export function isVolunteer(): boolean {
 
 export function isBeneficiary(): boolean {
   return getCurrentUserRole() === 'beneficiary';
+}
+
+export function isGuest(): boolean {
+  return getCurrentUserRole() === 'guest';
 }
 

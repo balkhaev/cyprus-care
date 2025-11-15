@@ -4,16 +4,17 @@
 
 A web application for coordinating volunteers and assistance during emergencies in Cyprus (fires, natural disasters, elderly care).
 
-## 🎨 Mediterranean Relief UI
+## 🎨 ENOCYPRUS Mediterranean Relief UI
 
-The project uses a specially designed **Mediterranean Relief UI** design system - a warm, trustworthy, and accessible theme inspired by the Cypriot Mediterranean.
+The project uses a specially designed **Mediterranean Relief UI** design system - a warm, trustworthy, and accessible theme inspired by the Cypriot Mediterranean and crisis relief.
 
 ### Color Palette
 
-- 🧡 **Deep Orange** (#d77040) - urgency, fire, Cypriot sunsets (less saturated)
-- 💙 **Safe Blue** (#4a8fc9) - trust, calm, sea (softer tone)
-- 💚 **Olive Green** (#65b365) - hope, nature, recovery (muted)
-- ❤️ **Fire Red** (#c95555) - urgent alerts (less intense)
+- 🧡 **Deep Orange** (#E36414) - fire, urgency, Cyprus sunsets (Primary)
+- 💙 **Safe Blue** (#1E88E5) - trust, calm, water / symbolically anti-fire (Secondary)
+- 🌿 **Olive Green** (#4CAF50) - hope, nature, recovery (Accent)
+- 🔥 **Fire Red** (#D32F2F) - error, urgent alerts (Danger)
+- 🤍 **Soft Warm White** (#F9F5F1) - friendly, readable for older people (Background)
 
 ### UI Features
 
@@ -22,6 +23,7 @@ The project uses a specially designed **Mediterranean Relief UI** design system 
 - ✅ Inter font (excellent readability)
 - ✅ Increased touch targets (44x44px+)
 - ✅ Clear focus states for accessibility
+- ✅ Warm background colors for comfort
 
 **📖 Complete Guide**: see [THEME.md](./THEME.md)  
 **🎨 Theme Demo**: run the project and open `/theme-demo`

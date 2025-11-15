@@ -9,11 +9,11 @@ const alertVariants = cva(
       variant: {
         default: "bg-card text-foreground border-border",
         destructive:
-          "border-destructive/50 bg-destructive/10 text-destructive [&>svg]:text-destructive",
+          "border-danger/50 bg-danger/10 text-danger [&>svg]:text-danger",
         success:
           "border-accent/50 bg-accent/10 text-accent-foreground [&>svg]:text-accent",
         warning:
-          "border-orange-500/50 bg-orange-50 text-orange-900 [&>svg]:text-orange-600",
+          "border-primary/50 bg-primary/10 text-primary [&>svg]:text-primary",
       },
     },
     defaultVariants: {

@@ -1,5 +1,5 @@
 'use client';
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { API_BASE_URL } from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Heart, Building, Users, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getCurrentUser } from '@/lib/mock-data/user-roles';
 
 type Role = 'beneficiary' | 'volunteer' | 'organizer';
 type Step = 1 | 2 | 3 | 4;
@@ -17,6 +18,14 @@ function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialRole = searchParams.get('role') as Role | null;
+  
+  // Redirect authenticated users to venues
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.role !== 'guest') {
+      router.replace('/venues');
+    }
+  }, [router]);
   
   const [currentStep, setCurrentStep] = useState<Step>(initialRole ? 2 : 1);
   const [role, setRole] = useState<Role>(initialRole || 'volunteer');
@@ -182,46 +191,55 @@ function SignupContent() {
   const canProceedToStep3 = formData.name && formData.surname && formData.email && formData.password && formData.confirmPassword && formData.phone;
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-10">
-      <Card className="w-full max-w-2xl">
+    <div className="min-h-screen bg-bgsoft flex items-center justify-center px-4 py-10">
+      <Card className="w-full max-w-2xl bg-white/90 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Create Your Account</CardTitle>
           <CardDescription>Join the relief network and make a difference</CardDescription>
           
           {/* Progress Indicator */}
-          <div className="flex items-center justify-between mt-6 relative">
+          <div className="flex items-center justify-between mt-6 px-4">
             {steps.map((step, index) => (
-              <div key={step.number} className="flex flex-col items-center relative z-10">
-                <div
-                  className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all",
-                    currentStep > step.number
-                      ? "bg-primary text-primary-foreground"
-                      : currentStep === step.number
-                      ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
-                      : "bg-muted text-muted-foreground"
-                  )}
-                >
-                  {currentStep > step.number ? (
-                    <Check className="h-5 w-5" />
-                  ) : (
-                    step.number
-                  )}
-                </div>
-                <span className="text-xs mt-2 text-muted-foreground hidden sm:block">
-                  {step.title}
-                </span>
+              <div key={step.number} className="flex flex-col items-center flex-1 relative">
+                {/* Connector line - before the circle */}
+                {index > 0 && (
+                  <div className="absolute top-5 right-1/2 w-full h-0.5 -translate-y-1/2">
+                    <div
+                      className={cn(
+                        "h-full transition-all duration-300",
+                        currentStep > step.number ? "bg-primary" : "bg-muted"
+                      )}
+                    />
+                  </div>
+                )}
                 
-                {/* Connector line */}
-                {index < steps.length - 1 && (
+                <div className="relative z-10">
                   <div
                     className={cn(
-                      "absolute top-5 left-[50%] w-full h-0.5 -z-10",
-                      currentStep > step.number ? "bg-primary" : "bg-muted"
+                      "w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300",
+                      currentStep > step.number
+                        ? "bg-primary text-primary-foreground shadow-md"
+                        : currentStep === step.number
+                        ? "bg-primary text-primary-foreground ring-4 ring-primary/20 shadow-lg scale-110"
+                        : "bg-muted text-muted-foreground"
                     )}
-                    style={{ width: 'calc(100% + 2rem)' }}
-                  />
-                )}
+                  >
+                    {currentStep > step.number ? (
+                      <Check className="h-6 w-6" />
+                    ) : (
+                      step.number
+                    )}
+                  </div>
+                </div>
+                
+                <span 
+                  className={cn(
+                    "text-xs mt-3 text-center transition-colors duration-300",
+                    currentStep >= step.number ? "text-foreground font-medium" : "text-muted-foreground"
+                  )}
+                >
+                  {step.title}
+                </span>
               </div>
             ))}
           </div>
@@ -479,8 +497,8 @@ function SignupContent() {
 export default function SignupPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-muted border-t-primary"></div>
+      <div className="min-h-screen bg-bgsoft flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-primary"></div>
       </div>
     }>
       <SignupContent />

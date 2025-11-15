@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Heart, Users, Building } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link"
+import { Heart, Users, Building } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 
 export default function Home() {
   const roles = [
@@ -36,51 +36,57 @@ export default function Home() {
       borderColor: "border-accent/20",
       iconBg: "bg-accent/10",
       textColor: "text-accent",
-      buttonVariant: "default" as const,
+      buttonVariant: "accent" as const,
     },
-  ];
+  ]
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-bgsoft flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 flex items-center justify-center px-4 py-12 md:py-20">
         <main className="w-full max-w-6xl">
           {/* Title Section */}
           <div className="text-center mb-12 md:mb-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 text-primary mb-6 shadow-sm">
               <Building className="h-8 w-8" />
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 tracking-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 tracking-tight">
               ENOCYPRUS
             </h1>
-            <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground leading-relaxed">
-              A platform to coordinate relief efforts during crises. Whether you need support,
-              want to volunteer, or organize aid, we connect people quickly and efficiently.
+            <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-700 leading-relaxed">
+              A platform to coordinate relief efforts during crises. Whether you
+              need support, want to volunteer, or organize aid, we connect
+              people quickly and efficiently.
             </p>
           </div>
 
           {/* Role Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {roles.map((item) => {
-              const Icon = item.icon;
+              const Icon = item.icon
               return (
-                <Card 
-                  key={item.role} 
-                  className={`group hover:shadow-lg transition-all duration-200 ${item.borderColor} border-2`}
+                <Card
+                  key={item.role}
+                  className={`group hover:shadow-xl transition-all duration-300 ${item.borderColor} border-2 bg-white/80 backdrop-blur-sm`}
                 >
-                  <CardContent className="p-6">
-                    <div className={`w-12 h-12 rounded-lg ${item.iconBg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200`}>
+                  <CardContent className="p-6 flex flex-col h-full">
+                    <div
+                      className={`w-12 h-12 rounded-lg ${item.iconBg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200`}
+                    >
                       <Icon className={`h-6 w-6 ${item.textColor}`} />
                     </div>
-                    <h3 className={`text-xl font-semibold mb-2 ${item.textColor}`}>
+                    <h3
+                      className={`text-xl font-semibold mb-2 ${item.textColor}`}
+                    >
                       {item.title}
                     </h3>
-                    <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
+                    <p className="text-gray-600 mb-6 text-sm leading-relaxed">
                       {item.description}
                     </p>
-                    <Button 
-                      asChild 
-                      className={`w-full ${item.bgColor} hover:opacity-90`}
+                    <Button
+                      asChild
+                      variant={item.buttonVariant}
+                      className="w-full mt-auto"
                       size="default"
                     >
                       <Link href={`/signup?role=${item.role}`}>
@@ -89,30 +95,34 @@ export default function Home() {
                     </Button>
                   </CardContent>
                 </Card>
-              );
+              )
             })}
           </div>
 
           {/* Sign In Section */}
           <div className="text-center">
-            <p className="text-muted-foreground mb-3">
-              Already have an account?
-            </p>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/login">
-                Sign in
-              </Link>
+            <p className="text-gray-600 mb-3">Already have an account?</p>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="border-primary text-primary hover:bg-primary hover:text-white transition-colors"
+            >
+              <Link href="/login">Sign in</Link>
             </Button>
           </div>
         </main>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border py-6 px-4">
-        <div className="container mx-auto text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} ENOCYPRUS. Helping communities in times of need.</p>
+      <footer className="border-t border-gray-300 py-6 px-4 bg-white/50">
+        <div className="container mx-auto text-center text-sm text-gray-600">
+          <p>
+            © {new Date().getFullYear()} ENOCYPRUS. Helping communities in times
+            of need.
+          </p>
         </div>
       </footer>
     </div>
-  );
+  )
 }

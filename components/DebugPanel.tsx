@@ -8,6 +8,7 @@ import {
   Package,
   Hand,
   RotateCcw,
+  UserCircle,
 } from "lucide-react"
 import {
   getCurrentUser,
@@ -31,9 +32,9 @@ export default function DebugPanel() {
   const [isOpen, setIsOpen] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string>(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("care_hub_current_user") || "user-org-1"
+      return localStorage.getItem("care_hub_current_user") || "user-guest"
     }
-    return "user-org-1"
+    return "user-guest"
   })
   const [currentUser, setCurrentUserState] = useState<User>(getCurrentUser())
   const [showResetDialog, setShowResetDialog] = useState(false)
@@ -67,7 +68,7 @@ export default function DebugPanel() {
   }
 
   const handleResetConfirm = () => {
-    handleUserChange("user-org-1")
+    handleUserChange("user-guest")
     setShowResetDialog(false)
   }
 
@@ -93,6 +94,13 @@ export default function DebugPanel() {
           icon: <Hand className="h-4 w-4" />,
           label: "Volunteer",
           description: "Can respond to needs",
+        }
+      case "guest":
+        return {
+          color: "bg-orange-500 dark:bg-orange-600",
+          icon: <UserCircle className="h-4 w-4" />,
+          label: "Guest",
+          description: "Limited access",
         }
       default:
         return {
@@ -192,8 +200,8 @@ export default function DebugPanel() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Reset user?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      You will be switched to the default user (John Smith -
-                      Organizer). The page will be reloaded.
+                      You will be switched to the default user (Guest). The page
+                      will be reloaded.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

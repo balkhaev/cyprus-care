@@ -3,12 +3,12 @@ module.exports = {
     theme: {
       extend: {
         colors: {
-          // Mediterranean Relief UI colors (from README.md)
-          primary: '#d77040',      // Deep Orange - urgency, fire, Cypriot sunsets
-          secondary: '#4a8fc9',    // Safe Blue - trust, calm, sea
-          accent: '#65b365',       // Olive Green - hope, nature, recovery
-          danger: '#c95555',       // Fire Red - urgent alerts
-          bgsoft: '#F9F5F1',       // Soft warm background
+          // ENOCYPRUS Mediterranean Relief UI colors
+          primary: '#E36414',      // Deep Orange - fire, urgency, Cyprus sunsets
+          secondary: '#5B9BD5',    // Soft Mediterranean Blue - trust, calm, water (less aggressive)
+          accent: '#4CAF50',       // Olive Green - hope, nature, recovery
+          danger: '#D32F2F',       // Fire Red - error/urgent
+          bgsoft: '#F9F5F1',       // Soft warm white - friendly, readable for older people
         },
       },
     },

@@ -4,7 +4,7 @@
 
 import { UUID, Timestamp, ApiResponse } from './common';
 
-export type UserRole = 'organizer' | 'volunteer' | 'beneficiary' | 'admin';
+export type UserRole = 'organizer' | 'volunteer' | 'beneficiary' | 'admin' | 'guest';
 
 // === User === 
 

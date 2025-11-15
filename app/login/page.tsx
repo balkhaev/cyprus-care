@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_BASE_URL } from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { backgroundClasses, textClasses } from '@/lib/theme-utils';
+import { getCurrentUser } from '@/lib/mock-data/user-roles';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +16,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Redirect authenticated users to venues
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.role !== 'guest') {
+      router.replace('/venues');
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,10 +96,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={`min-h-screen ${backgroundClasses.soft} w-full flex items-center justify-center px-4 py-10`}>
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-bgsoft w-full flex items-center justify-center px-4 py-10">
+      <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className={`text-2xl md:text-3xl ${textClasses.heading}`}>
+          <CardTitle className="text-2xl md:text-3xl text-gray-900">
             Welcome Back
           </CardTitle>
           <CardDescription className="text-base">
@@ -144,7 +152,7 @@ export default function LoginPage() {
         </CardContent>
         
         <CardFooter className="flex-col">
-          <p className={`text-center text-base ${textClasses.secondary}`}>
+          <p className="text-center text-base text-gray-600">
             Don't have an account?{' '}
             <a href="/signup" className="text-secondary font-semibold hover:underline">
               Sign up
